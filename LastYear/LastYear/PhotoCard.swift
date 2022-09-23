@@ -13,6 +13,10 @@ struct PhotoCard: View {
     
     var body: some View {
         image.image
+            .resizable()
+            .aspectRatio(1, contentMode: .fill)
+            .padding(4)
+            .cornerRadius(20)
     }
 }
 
