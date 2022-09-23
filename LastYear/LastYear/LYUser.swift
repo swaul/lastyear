@@ -34,4 +34,10 @@ public struct LYUser {
         self.userName = userName
         self.email = user.email ?? ""
     }
+    
+    public init?(data: [String: Any]) {
+        self.id = data["id"] as! String
+        self.email = data["email"] as! String
+        self.userName = data["userName"] as! String
+    }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseCore
+import FirebaseAuth
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication,
@@ -22,12 +23,34 @@ struct LastYearApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @ObservedObject var authService = AuthService.shared
     
+    @State var loading: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            if authService.loggedIn {
+            if loading {
+                Text("loadnig!")
+                    .onAppear {
+                        checkLogin()
+                    }
+            } else if authService.loggedIn {
                 ContentView()
             } else {
                 WelcomeView()
+            }
+        }
+    }
+    
+    func checkLogin() {
+        if let user = Auth.auth().currentUser {
+            FirebaseHandler.shared.getUser(by: user.uid) { result in
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    loading = false
+                case .success(let lyUser):
+                    authService.logIn(user: lyUser)
+                    loading = false
+                }
             }
         }
     }
