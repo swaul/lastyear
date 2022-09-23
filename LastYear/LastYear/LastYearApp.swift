@@ -6,18 +6,28 @@
 //
 
 import SwiftUI
+import FirebaseCore
+
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        return true
+    }
+}
 
 @main
 struct LastYearApp: App {
     
-    var loginRequired: Bool = true
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @ObservedObject var authService = AuthService.shared
     
     var body: some Scene {
         WindowGroup {
-            if loginRequired {
-                WelcomeView()
-            } else {
+            if authService.loggedIn {
                 ContentView()
+            } else {
+                WelcomeView()
             }
         }
     }

@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct WelcomeView: View {
+
+    @State var showRegistration: Bool = false
+    
     var body: some View {
         ZStack {
             Color("backgroundColor")
@@ -20,7 +23,7 @@ struct WelcomeView: View {
                     Text("Last")
                         .font(Font.custom("Poppins-Bold", size: 35))
                         .foregroundColor(Color("primary"))
-                    Text("Year")
+                    Text("Year.")
                         .font(Font.custom("Poppins-Bold", size: 35))
                         .foregroundColor(.white)
                 }
@@ -31,10 +34,11 @@ struct WelcomeView: View {
                     .frame(width: 200, height: 200, alignment: .center)
                 Spacer()
                 Button {
-                    print("hey")
+                    showRegistration = true
                 } label: {
                     Text("Start Your Journey")
-                        .padding()
+                        .font(Font.custom("Poppins-Bold", size: 18))
+                        .padding(8)
                         .frame(maxWidth: .infinity)
                         .foregroundColor(Color.black)
                         .background(Color.white)
@@ -43,6 +47,9 @@ struct WelcomeView: View {
                 Spacer()
             }
             .padding(16)
+            .sheet(isPresented: $showRegistration) {
+                ChoseAuthView()
+            }
         }
     }
 }

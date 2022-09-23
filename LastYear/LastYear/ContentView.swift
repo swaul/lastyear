@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @EnvironmentObject var authService: AuthService
+    
     let layout = [
         GridItem(.flexible()),
         GridItem(.flexible()),
