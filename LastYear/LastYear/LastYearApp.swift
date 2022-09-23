@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct LastYearApp: App {
+    
+    var loginRequired: Bool = true
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if loginRequired {
+                WelcomeView()
+            } else {
+                ContentView()
+            }
         }
     }
+    
 }

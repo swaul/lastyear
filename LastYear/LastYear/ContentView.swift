@@ -15,7 +15,7 @@ struct ContentView: View {
         GridItem(.flexible())
     ]
     
-    var photos = [
+    var mockPhotos = [
         PhotoData(id: UUID().uuidString, image: Image("Image1")),
         PhotoData(id: UUID().uuidString, image: Image("Image2")),
         PhotoData(id: UUID().uuidString, image: Image("Image3")),
@@ -27,11 +27,12 @@ struct ContentView: View {
     
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: layout) {
-                ForEach(photos) { photo in
+            LazyVGrid(columns: layout, spacing: 4) {
+                ForEach(mockPhotos) { photo in
                     PhotoCard(image: photo)
                 }
             }
+            .padding(12)
         }
     }
 }
