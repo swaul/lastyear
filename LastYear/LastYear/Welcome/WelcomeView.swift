@@ -28,7 +28,7 @@ struct WelcomeView: View {
                         .foregroundColor(.white)
                 }
                 Spacer()
-                Image(systemName: "clock")
+                Image("rocket")
                     .resizable()
                     .foregroundColor(.white)
                     .frame(width: 200, height: 200, alignment: .center)

@@ -28,7 +28,7 @@ struct LastYearApp: App {
     var body: some Scene {
         WindowGroup {
             if loading {
-                Text("loadnig!")
+                LoadingView()
                     .onAppear {
                         checkLogin()
                     }

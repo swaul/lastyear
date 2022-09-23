@@ -46,6 +46,7 @@
 		9EBDE92B28DE0EEA00264AF3 /* PasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE92A28DE0EEA00264AF3 /* PasswordView.swift */; };
 		9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE92C28DE507600264AF3 /* LYUser.swift */; };
 		9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE92E28DE54BA00264AF3 /* AuthService.swift */; };
+		9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93028DE660F00264AF3 /* LoadingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -86,6 +87,7 @@
 		9EBDE92A28DE0EEA00264AF3 /* PasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordView.swift; sourceTree = "<group>"; };
 		9EBDE92C28DE507600264AF3 /* LYUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LYUser.swift; sourceTree = "<group>"; };
 		9EBDE92E28DE54BA00264AF3 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		9EBDE93028DE660F00264AF3 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,6 +139,7 @@
 				9EBDE92828DE021200264AF3 /* FirebaseHandler.swift */,
 				9EBDE91828DDF97200264AF3 /* Helper.swift */,
 				9EBDE92C28DE507600264AF3 /* LYUser.swift */,
+				9EBDE93028DE660F00264AF3 /* LoadingView.swift */,
 			);
 			path = LastYear;
 			sourceTree = "<group>";
@@ -306,6 +309,7 @@
 				9EBDE8E428DDDCE900264AF3 /* PhotoCard.swift in Sources */,
 				9EBDE91528DDF44D00264AF3 /* ChoseAuthView.swift in Sources */,
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
+				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* ContentView.swift in Sources */,
