@@ -52,6 +52,9 @@ struct LastYearApp: App {
                     loading = false
                 }
             }
+        } else {
+            authService.loggedIn = false
+            loading = false
         }
     }
     
