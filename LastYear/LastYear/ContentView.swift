@@ -44,6 +44,14 @@ struct ContentView: View {
                                 .border(.white, width: 4)
                                 .padding()
                                 .cornerRadius(20)
+                        } else if photoViewModel.allPhotos.count >= 1 {
+                            photoViewModel.allPhotos.first!.image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(20)
+                                .border(.white, width: 4)
+                                .padding()
+                                .cornerRadius(20)
                         }
                         HStack {
                             VStack {
@@ -62,7 +70,7 @@ struct ContentView: View {
                                 
                             }
                             Spacer()
-                            Text("26.09.2021")
+                            Text(photoViewModel.formattedDateOneYearAgo)
                                 .font(Font.custom("Poppins-Regular", size: 24))
                                 .foregroundColor(.white)
                             Spacer()

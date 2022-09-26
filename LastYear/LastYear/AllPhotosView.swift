@@ -33,6 +33,7 @@ struct AllPhotosView: View {
                         }
                     }
                     .padding(12)
+                    Spacer()
                     VStack {
                         Text("\(photoViewModel.countFound) Photos found for " + photoViewModel.formattedDateOneYearAgo)
                             .font(Font.custom("Poppins-Regular", size: 18))

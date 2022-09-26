@@ -58,6 +58,7 @@ public class PhotosViewModel: ObservableObject {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
+        fetchOptions.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         countFound = results.count
@@ -86,9 +87,11 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func getBestImage() {
-        if !allPhotos.isEmpty, (countFound + requestsFailed) == allPhotos.count {
+        if !allPhotos.isEmpty, countFound == (allPhotos.count + requestsFailed) {
             let sorted = allPhotos.sorted()
             bestImage = sorted.first!
+        } else if allPhotos.count == 1 && countFound == 1 {
+            bestImage = allPhotos.first!
         }
     }
     
