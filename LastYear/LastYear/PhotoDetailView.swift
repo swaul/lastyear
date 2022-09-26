@@ -27,10 +27,11 @@ struct PhotoDetailView: View {
                 HStack {
                     Spacer()
                     VStack {
-                        Text(formatter.string(from: image.date!) ?? "")
+                        Text(formatter.string(from: image.date!))
                         Text(image.city ?? "No locaton")
                     }
                 }
+                .padding()
                 Button {
                     shareToStory()
                 } label: {
