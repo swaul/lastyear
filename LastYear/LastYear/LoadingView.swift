@@ -31,6 +31,7 @@ struct LoadingView: View {
         GeometryReader { reader in
             ZStack {
                 Color("backgroundColor")
+                    .ignoresSafeArea()
                 GeometryReader { imageReader in
                     Image("stars")
                         .resizable()

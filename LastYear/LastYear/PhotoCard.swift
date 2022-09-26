@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct PhotoCard: View {
     
@@ -17,6 +18,8 @@ struct PhotoCard: View {
         return formatter
     }
     
+    @State var locality: String = ""
+    
     var body: some View {
         VStack {
             image.image
@@ -25,8 +28,24 @@ struct PhotoCard: View {
                 .cornerRadius(20)
             if let date = image.date {
                 Text(formatter.string(from: date))
+                    .foregroundColor(.white)
             }
-            Text(image.location?.description ?? "No location")
+            Text(locality)
+                .foregroundColor(.white)
+        }
+        .onAppear {
+            guard let location = image.location else { return }
+            getCity(location: location)
+        }
+    }
+    
+    func getCity(location: CLLocation) {
+        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
+            if let error {
+                print(error.localizedDescription)
+            } else {
+                locality = placemarks?.first?.locality ?? "No location"
+            }
         }
     }
 }

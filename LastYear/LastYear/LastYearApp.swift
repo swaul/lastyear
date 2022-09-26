@@ -32,10 +32,13 @@ struct LastYearApp: App {
                     .onAppear {
                         checkLogin()
                     }
+                    .preferredColorScheme(.dark)
             } else if authService.loggedIn {
                 PermissionView()
+                    .preferredColorScheme(.dark)
             } else {
                 WelcomeView()
+                    .preferredColorScheme(.dark)
             }
         }
     }

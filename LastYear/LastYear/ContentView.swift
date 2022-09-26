@@ -34,20 +34,24 @@ struct ContentView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                LazyVGrid(columns: layout) {
-                    ForEach(allPhotos) { photo in
-                        NavigationLink {
-                            PhotoDetailView(image: photo)
-                        } label: {
-                            PhotoCard(image: photo)
+            ZStack {
+                Color("backgroundColor")
+                    .ignoresSafeArea()
+                ScrollView {
+                    LazyVGrid(columns: layout) {
+                        ForEach(allPhotos) { photo in
+                            NavigationLink {
+                                PhotoDetailView(image: photo)
+                            } label: {
+                                PhotoCard(image: photo)
+                            }
                         }
                     }
+                    .onAppear {
+                        getAllPhotos()
+                    }
+                    .padding(12)
                 }
-                .onAppear {
-                    getAllPhotos()
-                }
-                .padding(12)
             }
         }
     }

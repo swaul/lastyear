@@ -22,16 +22,4 @@ public class PermissionHandler: ObservableObject {
         PHPhotoLibrary.authorizationStatus()
     }
     
-    func requestAccess() {
-        let photos = PHPhotoLibrary.authorizationStatus()
-        if photos == .notDetermined {
-            PHPhotoLibrary.requestAuthorization({status in
-                if status == .authorized {
-                    self.authorized = true
-                } else {
-                    self.authorized = false
-                }
-            })
-        }
-    }
 }
