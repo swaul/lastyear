@@ -24,6 +24,9 @@ struct PhotoCard: View {
         VStack {
             image.image
                 .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                .clipped()
                 .aspectRatio(1, contentMode: .fit)
                 .cornerRadius(20)
             if let date = image.date {

@@ -57,7 +57,7 @@ struct LoadingView: View {
                     .aspectRatio(1, contentMode: .fit)
                     .frame(width: reader.size.width / 2, alignment: .center)
                     .offset(x: -offset, y: offset)
-                    .animation(Animation.spring(response: 0.8, dampingFraction: 0.4, blendDuration: 0.2).repeatForever(autoreverses: true), value: animating)
+                    .animation(Animation.spring(response: 0.5, dampingFraction: 0.4, blendDuration: 0.2).repeatForever(autoreverses: true), value: animating)
                     .offset(y: loaded ? -1000 : 0)
                     .animation(.easeIn(duration: 1), value: loaded)
                     .onAppear {

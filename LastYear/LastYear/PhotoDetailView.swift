@@ -14,7 +14,7 @@ struct PhotoDetailView: View {
     var body: some View {
         image.image
             .resizable()
-            .aspectRatio(1, contentMode: .fit)
+            .aspectRatio(contentMode: .fit)
             .padding()
     }
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
+		9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */; };
 		9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */; };
 		9EBDE8D828DDD58A00264AF3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D728DDD58A00264AF3 /* ContentView.swift */; };
 		9EBDE8DA28DDD58C00264AF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */; };
@@ -54,6 +55,7 @@
 
 /* Begin PBXFileReference section */
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
+		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
 		9EBDE8D228DDD58A00264AF3 /* LastYear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastYear.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastYearApp.swift; sourceTree = "<group>"; };
 		9EBDE8D728DDD58A00264AF3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -138,6 +140,7 @@
 				9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */,
 				9EBDE93228E18DCE00264AF3 /* PermissionView.swift */,
 				9EBDE8D728DDD58A00264AF3 /* ContentView.swift */,
+				9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */,
 				9E98039128E1C8770036AFEC /* PermissionHandler.swift */,
 				9EBDE8E328DDDCE900264AF3 /* PhotoCard.swift */,
 				9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */,
@@ -322,6 +325,7 @@
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
+				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* ContentView.swift in Sources */,
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
