@@ -47,6 +47,8 @@
 		9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE92C28DE507600264AF3 /* LYUser.swift */; };
 		9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE92E28DE54BA00264AF3 /* AuthService.swift */; };
 		9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93028DE660F00264AF3 /* LoadingView.swift */; };
+		9EBDE93328E18DCE00264AF3 /* PermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93228E18DCE00264AF3 /* PermissionView.swift */; };
+		9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +90,8 @@
 		9EBDE92C28DE507600264AF3 /* LYUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LYUser.swift; sourceTree = "<group>"; };
 		9EBDE92E28DE54BA00264AF3 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		9EBDE93028DE660F00264AF3 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		9EBDE93228E18DCE00264AF3 /* PermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionView.swift; sourceTree = "<group>"; };
+		9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +134,7 @@
 				9EBDE91328DDF44100264AF3 /* Login */,
 				9EBDE91A28DDFCC300264AF3 /* Register */,
 				9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */,
+				9EBDE93228E18DCE00264AF3 /* PermissionView.swift */,
 				9EBDE8D728DDD58A00264AF3 /* ContentView.swift */,
 				9EBDE8E328DDDCE900264AF3 /* PhotoCard.swift */,
 				9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */,
@@ -140,6 +145,7 @@
 				9EBDE91828DDF97200264AF3 /* Helper.swift */,
 				9EBDE92C28DE507600264AF3 /* LYUser.swift */,
 				9EBDE93028DE660F00264AF3 /* LoadingView.swift */,
+				9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */,
 			);
 			path = LastYear;
 			sourceTree = "<group>";
@@ -304,6 +310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9EBDE93328E18DCE00264AF3 /* PermissionView.swift in Sources */,
 				9EBDE8E928DDED0800264AF3 /* WelcomeView.swift in Sources */,
 				9EBDE92B28DE0EEA00264AF3 /* PasswordView.swift in Sources */,
 				9EBDE8E428DDDCE900264AF3 /* PhotoCard.swift in Sources */,
@@ -311,6 +318,7 @@
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
+				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* ContentView.swift in Sources */,
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
@@ -374,7 +382,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -428,7 +436,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -455,12 +463,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = de.lichtenberg.LastYear;
+				PRODUCT_BUNDLE_IDENTIFIER = at.lichtenberg.LastYear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -485,12 +494,13 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = de.lichtenberg.LastYear;
+				PRODUCT_BUNDLE_IDENTIFIER = at.lichtenberg.LastYear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
