@@ -19,7 +19,7 @@ struct AllPhotosView: View {
     
     var body: some View {
         ZStack {
-            Color("primary")
+            Color("backgroundColor")
                 .ignoresSafeArea()
             ScrollView {
                 VStack {
