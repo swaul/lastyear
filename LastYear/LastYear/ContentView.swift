@@ -65,7 +65,7 @@ struct ContentView: View {
         
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        fetchOptions.predicate = NSPredicate(format: "creationDate == %@", lastYear as NSDate)
+//        fetchOptions.predicate = NSPredicate(format: "creationDate == %@", lastYear as NSDate)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         
@@ -75,15 +75,28 @@ struct ContentView: View {
                 let size = CGSize(width: 700, height: 700) //You can change size here
                 manager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: requestOptions) { (image, _) in
                     if let image = image {
-                        let photo = PhotoData(id: asset.localIdentifier, image: Image(uiImage: image))
-                        self.allPhotos.append(photo)
+                        let photo = PhotoData(id: asset.localIdentifier, image: Image(uiImage: image), date: asset.creationDate, location: asset.location)
+                        if let date = asset.creationDate, isSameDay(date1: date, date2: lastYear) {
+                            self.allPhotos.append(photo)
+                        }
                     } else {
                         print("error asset to image")
                     }
                 }
             }
         } else {
-            print("No photos to display")
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd.MM.yyyy"
+            print("No photos to display for ", formatter.string(from: lastYear))
+        }
+    }
+    
+    func isSameDay(date1: Date, date2: Date) -> Bool {
+        let diff = Calendar.current.dateComponents([.day], from: date1, to: date2)
+        if diff.day == 0 {
+            return true
+        } else {
+            return false
         }
     }
 }

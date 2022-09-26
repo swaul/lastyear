@@ -11,11 +11,23 @@ struct PhotoCard: View {
     
     var image: PhotoData
     
+    var formatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter
+    }
+    
     var body: some View {
-        image.image
-            .resizable()
-            .aspectRatio(1, contentMode: .fit)
-            .cornerRadius(20)
+        VStack {
+            image.image
+                .resizable()
+                .aspectRatio(1, contentMode: .fit)
+                .cornerRadius(20)
+            if let date = image.date {
+                Text(formatter.string(from: date))
+            }
+            Text(image.location?.description ?? "No location")
+        }
     }
 }
 

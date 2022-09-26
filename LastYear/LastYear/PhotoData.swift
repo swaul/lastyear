@@ -7,8 +7,11 @@
 
 import Foundation
 import SwiftUI
+import CoreLocation
 
 public struct PhotoData: Identifiable {
     public var id: String
     public var image: Image
+    public var date: Date?
+    public var location: CLLocation?
 }
