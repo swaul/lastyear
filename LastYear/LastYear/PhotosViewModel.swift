@@ -47,8 +47,8 @@ public class PhotosViewModel: ObservableObject {
         requestsFailed = 0
         countFound = 0
         
-        let oneBeforeLastYear: NSDate = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)! as NSDate
-        let oneAfterLastYear: NSDate = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)! as NSDate
+        let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)!.endOfDay
+        let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)!.startOfDay
         
         let manager = PHImageManager.default()
         let requestOptions = PHImageRequestOptions()
@@ -57,7 +57,7 @@ public class PhotosViewModel: ObservableObject {
 
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear, oneAfterLastYear)
+        fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         countFound = results.count
@@ -100,11 +100,14 @@ public class PhotosViewModel: ObservableObject {
 }
 
 extension Date {
-    func startOfMonth() -> Date {
-        return Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: self)))!
+    var startOfDay: Date {
+        return Calendar.current.startOfDay(for: self)
     }
-    
-    func endOfMonth() -> Date {
-        return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: self.startOfMonth())!
+
+    var endOfDay: Date {
+        var components = DateComponents()
+        components.day = 1
+        components.second = -1
+        return Calendar.current.date(byAdding: components, to: startOfDay)!
     }
 }
