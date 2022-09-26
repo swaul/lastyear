@@ -31,7 +31,7 @@ struct PermissionView: View {
                     }
             }
         } else {
-            ContentView()
+            MainView()
         }
     }
     
