@@ -49,7 +49,7 @@ struct ContentView: View {
                 }
                 .padding(12)
             }
-    }
+        }
     }
     
     fileprivate func getAllPhotos() {
@@ -65,7 +65,7 @@ struct ContentView: View {
         
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-//        fetchOptions.predicate = NSPredicate(format: "creationDate == %@", lastYear as NSDate)
+        //        fetchOptions.predicate = NSPredicate(format: "creationDate == %@", lastYear as NSDate)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         

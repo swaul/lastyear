@@ -11,18 +11,15 @@ import Photos
 
 struct PermissionView: View {
     
-   var authorized: Bool {
-       let status = PHPhotoLibrary.authorizationStatus()
-       return status == .authorized
-   }
+    @ObservedObject var permission = PermissionHandler()
     
     var body: some View {
-        if !authorized {
+        if !permission.authorized {
             VStack {
                 Spacer()
                 Text("Bitte gib zugriff auf alle Bilder!")
                     .onAppear {
-                        requestAccess()
+                        permission.requestAccess()
                     }
             }
         } else {
@@ -30,18 +27,6 @@ struct PermissionView: View {
         }
     }
     
-    func requestAccess() {
-        let photos = PHPhotoLibrary.authorizationStatus()
-        if photos == .notDetermined {
-            PHPhotoLibrary.requestAuthorization({status in
-                if status == .authorized {
-                    print("Access")
-                } else {
-                    fatalError()
-                }
-            })
-        }
-    }
 }
 
 struct PermissionView_Previews: PreviewProvider {
