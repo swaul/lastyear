@@ -23,7 +23,7 @@ struct ContentView: View {
                             .font(Font.custom("Poppins-Bold", size: 24))
                             .foregroundColor(.white)
                     }
-                } else if photoViewModel.allPhotos.count == photoViewModel.countFound {
+                } else if photoViewModel.allPhotos.count == (photoViewModel.countFound + photoViewModel.requestsFailed) {
                     VStack {
                         HStack(spacing: 0) {
                             Text("About")

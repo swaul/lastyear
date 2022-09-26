@@ -15,6 +15,7 @@ public struct PhotoData: Identifiable, Comparable {
     
     public var id: String
     public var image: Image
+    public var uiImage: UIImage
     public var date: Date?
     public var location: CLLocation?
     public var isFavorite: Bool
@@ -28,7 +29,7 @@ public struct PhotoData: Identifiable, Comparable {
         self.location = location
         self.isFavorite = isFavorite
         self.sourceType = sourceType
-        
+        self.uiImage = image
         let ciImage = CIImage(image: image)!
         let options = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
         let faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: options)!

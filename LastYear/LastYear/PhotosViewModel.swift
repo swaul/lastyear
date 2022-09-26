@@ -47,8 +47,8 @@ public class PhotosViewModel: ObservableObject {
         requestsFailed = 0
         countFound = 0
         
-        let startOfMonthLastYear: NSDate = lastYear.startOfMonth() as NSDate
-        let endOfMonthLastYear: NSDate = lastYear.endOfMonth() as NSDate
+        let oneBeforeLastYear: NSDate = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)! as NSDate
+        let oneAfterLastYear: NSDate = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)! as NSDate
         
         let manager = PHImageManager.default()
         let requestOptions = PHImageRequestOptions()
@@ -57,7 +57,7 @@ public class PhotosViewModel: ObservableObject {
 
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        fetchOptions.predicate = NSPredicate(format: "creationDate >= %@ && creationDate <= %@", startOfMonthLastYear, endOfMonthLastYear)
+        fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear, oneAfterLastYear)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         countFound = results.count
@@ -71,6 +71,8 @@ public class PhotosViewModel: ObservableObject {
 
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
                             self.allPhotos.append(photo)
+                        } else {
+                            self.countFound -= 1
                         }
                     } else {
                         self.requestsFailed += 1
@@ -84,19 +86,16 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func getBestImage() {
-        if !allPhotos.isEmpty, countFound == allPhotos.count {
+        if !allPhotos.isEmpty, (countFound + requestsFailed) == allPhotos.count {
             let sorted = allPhotos.sorted()
             bestImage = sorted.first!
         }
     }
     
     func isSameDay(date1: Date, date2: Date) -> Bool {
-        let diff = Calendar.current.dateComponents([.day], from: date1, to: date2)
-        if diff.day == 0 {
-            return true
-        } else {
-            return false
-        }
+        let one = Calendar.current.dateComponents([.day], from: date1)
+        let two = Calendar.current.dateComponents([.day], from: date2)
+        return one.day == two.day
     }
 }
 
