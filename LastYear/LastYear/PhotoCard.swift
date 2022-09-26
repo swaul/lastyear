@@ -17,9 +17,7 @@ struct PhotoCard: View {
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }
-    
-    @State var locality: String = ""
-    
+        
     var body: some View {
         VStack {
             image.image
@@ -33,22 +31,8 @@ struct PhotoCard: View {
                 Text(formatter.string(from: date))
                     .foregroundColor(.white)
             }
-            Text(locality)
+            Text(image.city ?? "No location")
                 .foregroundColor(.white)
-        }
-        .onAppear {
-            guard let location = image.location else { return }
-            getCity(location: location)
-        }
-    }
-    
-    func getCity(location: CLLocation) {
-        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
-            if let error {
-                print(error.localizedDescription)
-            } else {
-                locality = placemarks?.first?.locality ?? "No location"
-            }
         }
     }
 }

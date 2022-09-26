@@ -11,6 +11,12 @@ struct PhotoDetailView: View {
     
     var image: PhotoData
     
+    var formatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter
+    }
+    
     var body: some View {
         ZStack {
             VStack {
@@ -18,6 +24,13 @@ struct PhotoDetailView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .padding()
+                HStack {
+                    Spacer()
+                    VStack {
+                        Text(formatter.string(from: image.date!) ?? "")
+                        Text(image.city ?? "No locaton")
+                    }
+                }
                 Button {
                     shareToStory()
                 } label: {

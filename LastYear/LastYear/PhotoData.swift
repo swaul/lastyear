@@ -11,7 +11,11 @@ import CoreLocation
 import UIKit
 import Photos
 
-public struct PhotoData: Identifiable, Comparable {
+public class PhotoData: Identifiable, Comparable {
+    
+    public static func == (lhs: PhotoData, rhs: PhotoData) -> Bool {
+        lhs.id == rhs.id
+    }
     
     public var id: String
     public var image: Image
@@ -21,6 +25,7 @@ public struct PhotoData: Identifiable, Comparable {
     public var isFavorite: Bool
     public var sourceType: PHAssetSourceType
     public var faces: Int
+    public var city: String? = nil
     
     init(id: String, image: UIImage, date: Date? = nil, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
         self.id = id
@@ -39,6 +44,8 @@ public struct PhotoData: Identifiable, Comparable {
         if !faces.isEmpty {
             print("I found \(faces.count) in this image!")
         }
+        guard let location = location else { return }
+        getCity(location: location)
     }
     
     public static func < (lhs: PhotoData, rhs: PhotoData) -> Bool {
@@ -52,6 +59,15 @@ public struct PhotoData: Identifiable, Comparable {
         }
     }
     
+    func getCity(location: CLLocation) {
+        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
+            if let error {
+                print(error.localizedDescription)
+            } else {
+                self.city = placemarks?.first?.locality ?? "No location"
+            }
+        }
+    }
 }
 
 extension PHAssetSourceType {
