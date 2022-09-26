@@ -10,19 +10,46 @@ import Photos
 import AVFoundation
 import CoreData
 import SwiftUI
-
+import VisionKit
+    
 public class PhotosViewModel: ObservableObject {
     
-    @Published var allPhotos = [PhotoData]()
+    @Published var allPhotos = [PhotoData]() {
+        didSet {
+            getBestImage()
+        }
+    }
+    @Published var countFound = 0
+    @Published var requestsFailed = 0
+    @Published var dateOneYearAgo: Date? {
+        didSet {
+            guard let dateOneYearAgo else { return }
+            formattedDateOneYearAgo = formatter.string(from: dateOneYearAgo)
+        }
+    }
+    @Published var formattedDateOneYearAgo: String = ""
+    @Published var bestImage: PhotoData? = nil
+    
+    var formatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        return formatter
+    }
 
     init() {
+        dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         getAllPhotos()
     }
     
     func getAllPhotos() {
-        let lastYear = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
-        guard let lastYear = lastYear, allPhotos.isEmpty else { return }
-                
+        guard let lastYear = dateOneYearAgo, allPhotos.isEmpty else { return }
+        
+        requestsFailed = 0
+        countFound = 0
+        
+        let startOfMonthLastYear: NSDate = lastYear.startOfMonth() as NSDate
+        let endOfMonthLastYear: NSDate = lastYear.endOfMonth() as NSDate
+        
         let manager = PHImageManager.default()
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = false
@@ -30,29 +57,36 @@ public class PhotosViewModel: ObservableObject {
 
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-//        fetchOptions.predicate = NSPredicate(format: "creationDate = %@", lastYear as NSDate)
+        fetchOptions.predicate = NSPredicate(format: "creationDate >= %@ && creationDate <= %@", startOfMonthLastYear, endOfMonthLastYear)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        
+        countFound = results.count
         if results.count > 0 {
             for i in 0..<results.count {
                 let asset = results.object(at: i)
 //                let size = CGSize(width: 700, height: 700) //You can change size here
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
-                    if let image = image {
-                        let photo = PhotoData(id: asset.localIdentifier, image: Image(uiImage: image), date: asset.creationDate, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+                    if let image = image, !asset.isHidden {
+                        let photo = PhotoData(id: asset.localIdentifier, image: image, date: asset.creationDate, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
                             self.allPhotos.append(photo)
                         }
                     } else {
+                        self.requestsFailed += 1
                         print("error asset to image")
                     }
                 }
             }
         } else {
-            let formatter = DateFormatter()
-            formatter.dateFormat = "dd.MM.yyyy"
             print("No photos to display for ", formatter.string(from: lastYear))
+        }
+    }
+    
+    func getBestImage() {
+        if !allPhotos.isEmpty, countFound == allPhotos.count {
+            let sorted = allPhotos.sorted()
+            bestImage = sorted.first!
         }
     }
     
@@ -63,5 +97,15 @@ public class PhotosViewModel: ObservableObject {
         } else {
             return false
         }
+    }
+}
+
+extension Date {
+    func startOfMonth() -> Date {
+        return Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: Calendar.current.startOfDay(for: self)))!
+    }
+    
+    func endOfMonth() -> Date {
+        return Calendar.current.date(byAdding: DateComponents(month: 1, day: -1), to: self.startOfMonth())!
     }
 }
