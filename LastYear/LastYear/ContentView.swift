@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import Photos
+import AVFoundation
+import CoreData
 
 struct ContentView: View {
     
@@ -27,14 +30,60 @@ struct ContentView: View {
         PhotoData(id: UUID().uuidString, image: Image("Image7"))
     ]
     
+    @State var allPhotos = [PhotoData]()
+    
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: layout, spacing: 4) {
-                ForEach(mockPhotos) { photo in
-                    PhotoCard(image: photo)
+        NavigationView {
+            ScrollView {
+                LazyVGrid(columns: layout) {
+                    ForEach(allPhotos) { photo in
+                        NavigationLink {
+                            PhotoDetailView(image: photo)
+                        } label: {
+                            PhotoCard(image: photo)
+                        }
+                    }
+                }
+                .onAppear {
+                    getAllPhotos()
+                }
+                .padding(12)
+            }
+    }
+    }
+    
+    fileprivate func getAllPhotos() {
+        let lastYear = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
+        guard let lastYear = lastYear else { return }
+        
+        let nsDate = NSDate(timeIntervalSinceNow: lastYear.timeIntervalSinceNow)
+        
+        let manager = PHImageManager.default()
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = true
+        requestOptions.deliveryMode = .highQualityFormat
+        
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        fetchOptions.predicate = NSPredicate(format: "creationDate == %@", lastYear as NSDate)
+        
+        let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        
+        if results.count > 0 {
+            for i in 0..<results.count {
+                let asset = results.object(at: i)
+                let size = CGSize(width: 700, height: 700) //You can change size here
+                manager.requestImage(for: asset, targetSize: size, contentMode: .aspectFill, options: requestOptions) { (image, _) in
+                    if let image = image {
+                        let photo = PhotoData(id: asset.localIdentifier, image: Image(uiImage: image))
+                        self.allPhotos.append(photo)
+                    } else {
+                        print("error asset to image")
+                    }
                 }
             }
-            .padding(12)
+        } else {
+            print("No photos to display")
         }
     }
 }

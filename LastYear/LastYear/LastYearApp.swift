@@ -33,7 +33,7 @@ struct LastYearApp: App {
                         checkLogin()
                     }
             } else if authService.loggedIn {
-                ContentView()
+                PermissionView()
             } else {
                 WelcomeView()
             }
@@ -46,15 +46,24 @@ struct LastYearApp: App {
                 switch result {
                 case .failure(let error):
                     print(error.localizedDescription)
-                    loading = false
+                    loaded()
                 case .success(let lyUser):
                     authService.logIn(user: lyUser)
-                    loading = false
+                    loaded()
                 }
             }
         } else {
             authService.loggedIn = false
-            loading = false
+            loaded()
+        }
+    }
+    
+    func loaded() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            loadingDone.send(true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                loading = false
+            }
         }
     }
     

@@ -6,16 +6,25 @@
 //
 
 import SwiftUI
+import Combine
+
+let loadingDone = PassthroughSubject<Bool, Never>()
 
 struct LoadingView: View {
     
     @State var animating: Bool = false
+    @State var loaded: Bool = false
+    
     var animation = Animation
         .easeInOut(duration: 2)
         .repeatForever()
     
     var offset: CGFloat {
-        animating ? 50 : -50
+        if loaded {
+            return 0
+        } else {
+            return animating ? 50 : -50
+        }
     }
     
     var body: some View {
@@ -48,10 +57,16 @@ struct LoadingView: View {
                     .frame(width: reader.size.width / 2, alignment: .center)
                     .offset(x: -offset, y: offset)
                     .animation(Animation.spring(response: 0.8, dampingFraction: 0.4, blendDuration: 0.2).repeatForever(autoreverses: true), value: animating)
+                    .offset(y: loaded ? -1000 : 0)
+                    .animation(.easeIn(duration: 1), value: loaded)
                     .onAppear {
                         animating.toggle()
                     }
-                
+                    .onReceive(loadingDone) { value in
+                        withAnimation {
+                            loaded = value
+                        }
+                    }
                 VStack {
                     Spacer()
                     Text("Loading")
