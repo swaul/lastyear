@@ -46,11 +46,14 @@ struct LoginView: View {
                         Text("Password")
                     }
                     .textFieldStyle(.roundedBorder)
+                    .keyboardType(.emailAddress)
+                    .textContentType(.emailAddress)
                 } else {
                     SecureField(text: $password) {
                         Text("Password")
                     }
                     .textFieldStyle(.roundedBorder)
+                    .textContentType(.password)
                 }
                 Button {
                     withAnimation {

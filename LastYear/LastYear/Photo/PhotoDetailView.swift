@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct PhotoDetailView: View {
     
     var image: PhotoData
-    
+        
     var formatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
@@ -20,10 +21,25 @@ struct PhotoDetailView: View {
     var body: some View {
         ZStack {
             VStack {
-                image.image
+                HStack(spacing: 0) {
+                    Text("About")
+                        .font(Font.custom("Poppins-Bold", size: 35))
+                        .foregroundColor(.white)
+                    Text("Last")
+                        .font(Font.custom("Poppins-Bold", size: 35))
+                        .foregroundColor(Color("primary"))
+                    Text("Year.")
+                        .font(Font.custom("Poppins-Bold", size: 35))
+                        .foregroundColor(.white)
+                }
+                .padding()
+                Image(uiImage: image.uiImage.addWatermark())
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .cornerRadius(20)
+                    .border(.white, width: 4)
                     .padding()
+                    .cornerRadius(20)
                 HStack {
                     Button {
                         shareToStory()
@@ -52,8 +68,8 @@ struct PhotoDetailView: View {
                 guard let imageData = image.uiImage.pngData() else { return }
                 let pasteboardItems: [String: Any] = [
                     "com.instagram.sharedSticker.stickerImage": imageData,
-                    "com.instagram.sharedSticker.backgroundTopColor": "#636e72",
-                    "com.instagram.sharedSticker.backgroundBottomColor": "#b2bec3"
+                    "com.instagram.sharedSticker.backgroundTopColor": "#F8B729",
+                    "com.instagram.sharedSticker.backgroundBottomColor": "#242424"
                 ]
                 let pasteboardOptions = [
                     UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(300)
@@ -67,5 +83,47 @@ struct PhotoDetailView: View {
                 print("Sorry the application is not installed")
             }
         }
+    }
+}
+
+extension UIImage {
+    func addWatermark() -> UIImage {
+        if let watermark = UIImage(named: "aboutlastyear") {
+            
+            let rect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
+            let resizedWatermark =  watermark.resizeToWidth(scaledToWidth: rect.width / 2)
+            
+            UIGraphicsBeginImageContextWithOptions(self.size, true, 0)
+            let context = UIGraphicsGetCurrentContext()!
+            
+            context.setFillColor(UIColor.white.cgColor)
+            context.fill(rect)
+            
+            let y = (rect.height - resizedWatermark.size.height - 68)
+            let x = (rect.width / 2 - resizedWatermark.size.width / 2)
+            
+            self.draw(in: rect, blendMode: .normal, alpha: 1)
+            resizedWatermark.draw(in: CGRectMake(x, y, resizedWatermark.size.width, resizedWatermark.size.height), blendMode: .normal, alpha: 1)
+            
+            guard let result = UIGraphicsGetImageFromCurrentImageContext() else { return self }
+            UIGraphicsEndImageContext()
+            return result
+        } else {
+            return self
+        }
+    }
+    
+    func resizeToWidth(scaledToWidth: CGFloat) -> UIImage {
+        let oldWidth = self.size.width
+        let scaleFactor = scaledToWidth / oldWidth
+
+        let newHeight = self.size.height * scaleFactor
+        let newWidth = oldWidth * scaleFactor
+
+        UIGraphicsBeginImageContext(CGSize(width:newWidth, height:newHeight))
+        self.draw(in: CGRect(x:0, y:0, width:newWidth, height:newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
     }
 }

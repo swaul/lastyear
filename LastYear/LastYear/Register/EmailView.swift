@@ -25,11 +25,13 @@ struct EmailView: View {
         VStack(alignment: .leading) {
             Text("Benutzernamen erstellen")
                 .font(Font.custom("Poppins-Bold", size: 14))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
             TextField(text: $email) {
                 Text("E-Mail")
             }
             .textFieldStyle(.roundedBorder)
+            .keyboardType(.emailAddress)
+            .textContentType(.emailAddress)
             NavigationLink {
                 PasswordView(email: email, userName: username)
             } label: {

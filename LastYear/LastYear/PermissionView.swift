@@ -19,7 +19,7 @@ struct PermissionView: View {
         if !permission.authorized {
             VStack {
                 Spacer()
-                Text("Bitte gib zugriff auf alle Bilder!")
+                Text("Please grant the app access to all your photos!")
                     .onAppear {
                         requestAccess()
                     }
@@ -27,7 +27,22 @@ struct PermissionView: View {
                         requestAccess()
                     }
                     .fullScreenCover(isPresented: $permissionDeniedShowing) {
-                        Text("Du musst in die einstellungen gehen und permissions für fotos geben....")
+                        VStack {
+                            Text("You need to head to settings to grant access to all photos...")
+                                .font(Font.custom("Poppins-Bold", size: 24))
+                                .foregroundColor(.white)
+                            Button {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                                UIApplication.shared.open(url)
+                            } label: {
+                                Text("Settings")
+                                    .font(Font.custom("Poppins-Bold", size: 24))
+                                    .padding()
+                                    .backgroundStyle(Color.white)
+                                    .foregroundColor(Color("backgroundColor"))
+                            }
+                        }
+                        .padding(16)
                     }
             }
         } else {
@@ -43,6 +58,8 @@ struct PermissionView: View {
                     DispatchQueue.main.async {
                         permission.authorized = true
                     }
+                } else if status == .denied {
+                    permissionDeniedShowing = true
                 } else {
                     DispatchQueue.main.async {
                         permission.authorized = false

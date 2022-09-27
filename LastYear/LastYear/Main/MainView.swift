@@ -24,7 +24,7 @@ struct MainView: View {
                             .font(Font.custom("Poppins-Bold", size: 24))
                             .foregroundColor(.white)
                     }
-                } else if (photoViewModel.allPhotos.count + photoViewModel.requestsFailed) == photoViewModel.countFound {
+                } else if (photoViewModel.allPhotos.count + photoViewModel.screenShots.count + photoViewModel.requestsFailed) == photoViewModel.countFound {
                     VStack {
                         HStack(spacing: 0) {
                             Text("About")
@@ -56,8 +56,10 @@ struct MainView: View {
                         }
                         HStack {
                             VStack {
-                                Button {
-                                    print("share")
+                                NavigationLink {
+                                    if let image = photoViewModel.bestImage {
+                                        PhotoDetailView(image: image)
+                                    }
                                 } label: {
                                     Image(systemName: "square.and.arrow.up")
                                         .resizable()
@@ -106,7 +108,7 @@ struct MainView: View {
                         Text("Loading your Meomories")
                             .font(Font.custom("Poppins-Bold", size: 24))
                             .foregroundColor(.white)
-                        ProgressView(value: Double(photoViewModel.allPhotos.count), total: Double(photoViewModel.countFound))
+                        ProgressView(value: Double(photoViewModel.allPhotos.count + photoViewModel.screenShots.count + photoViewModel.requestsFailed), total: Double(photoViewModel.countFound))
                             .foregroundColor(Color("primary"))
                     }
                 }

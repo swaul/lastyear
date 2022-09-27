@@ -23,7 +23,7 @@ struct ChoseAuthView: View {
                 VStack(alignment: .leading) {
                     Text("Benutzernamen erstellen")
                         .font(Font.custom("Poppins-Bold", size: 14))
-                        .foregroundColor(.black)
+                        .foregroundColor(.white)
                     TextField(text: $username) {
                         Text("Username")
                     }
@@ -49,7 +49,7 @@ struct ChoseAuthView: View {
                 HStack(alignment: .center, spacing: 2) {
                     Text("I already have an account.")
                         .font(Font.custom("Poppins-Regular", size: 12))
-                        .foregroundColor(Color.black)
+                        .foregroundColor(Color.white)
                     NavigationLink {
                         LoginView()
                     } label: {

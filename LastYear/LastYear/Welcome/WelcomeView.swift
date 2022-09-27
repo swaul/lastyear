@@ -14,6 +14,7 @@ struct WelcomeView: View {
     var body: some View {
         ZStack {
             Color("backgroundColor")
+                .ignoresSafeArea()
             VStack {
                 Spacer()
                 HStack(spacing: 0) {

@@ -25,18 +25,20 @@ struct PasswordView: View {
         VStack(alignment: .leading) {
             Text("Set your Password")
                 .font(Font.custom("Poppins-Bold", size: 14))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
             HStack {
                 if showPassword {
                     TextField(text: $password) {
                         Text("Password")
                     }
                     .textFieldStyle(.roundedBorder)
+                    .textContentType(.newPassword)
                 } else {
                     SecureField(text: $password) {
                         Text("Password")
                     }
                     .textFieldStyle(.roundedBorder)
+                    .textContentType(.newPassword)
                 }
                 Button {
                     withAnimation {

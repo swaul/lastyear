@@ -19,6 +19,7 @@ public class PhotosViewModel: ObservableObject {
             getBestImage()
         }
     }
+    @Published var screenShots = [PhotoData]()
     @Published var countFound = 0
     @Published var requestsFailed = 0
     @Published var dateOneYearAgo: Date? {
@@ -58,10 +59,9 @@ public class PhotosViewModel: ObservableObject {
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
-//        fetchOptions.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.image.rawValue)
-        
+
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        countFound = results.count
+        countFound = results.countOfAssets(with: .image)
         if results.count > 0 {
             for i in 0..<results.count {
                 let asset = results.object(at: i)
@@ -71,13 +71,17 @@ public class PhotosViewModel: ObservableObject {
                         let photo = PhotoData(id: asset.localIdentifier, image: image, date: asset.creationDate, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
 
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
-                            self.allPhotos.append(photo)
+                            if asset.mediaSubtypes == .photoScreenshot {
+                                self.screenShots.append(photo)
+                            } else {
+                                self.allPhotos.append(photo)
+                            }
                         } else {
                             self.countFound -= 1
                         }
                     } else {
                         self.requestsFailed += 1
-                        print("error asset to image")
+                        print("error asset to image ", asset.mediaSubtypes)
                     }
                 }
             }
@@ -87,7 +91,7 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func getBestImage() {
-        if !allPhotos.isEmpty, countFound == (allPhotos.count + requestsFailed) {
+        if !allPhotos.isEmpty, countFound == (allPhotos.count + screenShots.count + requestsFailed) {
             let sorted = allPhotos.sorted()
             bestImage = sorted.first!
         } else if allPhotos.count == 1 && countFound == 1 {
