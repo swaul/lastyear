@@ -63,7 +63,9 @@ class NotificationCenter: ObservableObject {
         content.subtitle = "Take a look and share it with your friends!"
         content.sound = UNNotificationSound.default
         
-        let lastYearTomorrowWithHour = Calendar.current.date(bySetting: .hour, value: 12, of: lastYearTomorrow)!
+        let today = Date.now
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        let lastYearTomorrowWithHour = Calendar.current.date(bySetting: .hour, value: 12, of: tomorrow)!
         
         let components = Calendar.current.dateComponents([.year, .month, .day, .hour], from: lastYearTomorrowWithHour)
 
