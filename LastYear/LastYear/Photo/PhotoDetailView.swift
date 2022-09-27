@@ -92,9 +92,10 @@ extension UIImage {
             
             let rect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
             let resizedWatermark = watermark.resizeToWidth(scaledToWidth: rect.width * 0.5)
+            print("full image width: \(rect.width). watermark width: \(resizedWatermark.size.width)")
             
             let text = text.drawImagesAndText(imageSize: rect.size)
-            let resizedText = text.resizeToWidth(scaledToWidth: resizedWatermark.size.width * 0.5)
+            let resizedText = text.resizeToWidth(scaledToWidth: resizedWatermark.size.width * 0.75)
 
             UIGraphicsBeginImageContextWithOptions(self.size, true, 0)
             let context = UIGraphicsGetCurrentContext()!

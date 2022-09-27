@@ -7,19 +7,33 @@
 
 import Foundation
 import Photos
+import UserNotifications
 
 public class PermissionHandler: ObservableObject {
     
-    @Published var authorized: Bool = false
+    @Published var photosAuthorized: Bool = false
+    @Published var notificationsAuthorized: Bool = false
+    
+    @Published var notDetermined: Bool = false
     
     public static let shared = PermissionHandler()
     
     init() {
-        self.authorized = getStatus() == .authorized
+        self.photosAuthorized = getPhotoStatus() == .authorized
+        getNotiStatus()
     }
     
-    func getStatus() -> PHAuthorizationStatus {
+    func getPhotoStatus() -> PHAuthorizationStatus {
         PHPhotoLibrary.authorizationStatus()
     }
     
+    func getNotiStatus() {
+        let center = UNUserNotificationCenter.current()
+        center.getNotificationSettings { [weak self] settings in
+            DispatchQueue.main.async {
+                self?.notificationsAuthorized = settings.authorizationStatus == .authorized
+                self?.notDetermined = settings.authorizationStatus == .notDetermined
+            }
+        }
+    }
 }

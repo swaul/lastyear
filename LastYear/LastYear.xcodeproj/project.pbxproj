@@ -12,6 +12,8 @@
 		9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */; };
 		9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2828E2FBD000F93097 /* SettingsView.swift */; };
+		9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */; };
+		9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */; };
 		9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */; };
 		9EBDE8D828DDD58A00264AF3 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D728DDD58A00264AF3 /* MainView.swift */; };
 		9EBDE8DA28DDD58C00264AF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */; };
@@ -61,6 +63,8 @@
 		9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPhotosView.swift; sourceTree = "<group>"; };
 		9EAADB2128E2633B00F93097 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		9EAADB2828E2FBD000F93097 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionView.swift; sourceTree = "<group>"; };
+		9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
 		9EBDE8D228DDD58A00264AF3 /* LastYear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastYear.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastYearApp.swift; sourceTree = "<group>"; };
 		9EBDE8D728DDD58A00264AF3 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -178,6 +182,8 @@
 				9EAADB2528E2685900F93097 /* Main */,
 				9EBDE93228E18DCE00264AF3 /* PermissionView.swift */,
 				9E98039128E1C8770036AFEC /* PermissionHandler.swift */,
+				9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */,
+				9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */,
 				9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */,
 				9EBDE92628DE005300264AF3 /* GoogleService-Info.plist */,
 				9EBDE8DB28DDD58C00264AF3 /* Preview Content */,
@@ -359,10 +365,12 @@
 				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* MainView.swift in Sources */,
+				9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */,
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
 				9EBDE8E628DDDD4B00264AF3 /* PhotoData.swift in Sources */,
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
 				9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */,
+				9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */,
 				9EBDE92928DE021200264AF3 /* FirebaseHandler.swift in Sources */,
 				9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */,
 				9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */,

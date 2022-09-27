@@ -8,23 +8,25 @@
 import SwiftUI
 import AVFoundation
 import Photos
+import UserNotifications
 
 struct PermissionView: View {
     
     @ObservedObject var permission = PermissionHandler.shared
     
+    @State var askForNotiShowing: Bool = false
     @State var permissionDeniedShowing: Bool = false
     
     var body: some View {
-        if !permission.authorized {
+        if !permission.photosAuthorized {
             VStack {
                 Spacer()
                 Text("Please grant the app access to all your photos!")
                     .onAppear {
-                        requestAccess()
+                        requestPhotoAccess()
                     }
                     .onTapGesture {
-                        requestAccess()
+                        requestPhotoAccess()
                     }
                     .fullScreenCover(isPresented: $permissionDeniedShowing) {
                         VStack {
@@ -45,34 +47,48 @@ struct PermissionView: View {
                         .padding(16)
                     }
             }
+            .onChange(of: permission.photosAuthorized, perform: { newValue in
+                if permission.notDetermined {
+                    askForNotiShowing = true
+                }
+            })
+            .onAppear {
+                if permission.notDetermined {
+                    askForNotiShowing = true
+                }
+            }
+            .fullScreenCover(isPresented: $askForNotiShowing) {
+                NotificationPermissionView()
+            }
+        } else if permission.notDetermined {
+            NotificationPermissionView()
         } else {
             MainView()
         }
     }
     
-    func requestAccess() {
+    func requestPhotoAccess() {
         let photos = PHPhotoLibrary.authorizationStatus()
         if !(photos == .authorized) {
             PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
                 if status == .authorized {
                     DispatchQueue.main.async {
-                        permission.authorized = true
+                        permission.photosAuthorized = true
                     }
                 } else if status == .denied {
                     permissionDeniedShowing = true
                 } else {
                     DispatchQueue.main.async {
-                        permission.authorized = false
+                        permission.photosAuthorized = false
                     }
                 }
             }
         } else {
             DispatchQueue.main.async {
-                permission.authorized = true
+                permission.photosAuthorized = true
             }
         }
     }
-    
 }
 
 struct PermissionView_Previews: PreviewProvider {
