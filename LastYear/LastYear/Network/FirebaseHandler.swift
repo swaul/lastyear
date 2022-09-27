@@ -61,13 +61,14 @@ public class FirebaseHandler {
         }
     }
     
-    public func logout() {
+    public func logout(completion: ((Result<Void, FirebaseError>) -> Void)?) {
         do {
             try Auth.auth().signOut()
             AuthService.shared.logOut()
-
-        } catch {
+            completion?(.success(()))
+        } catch let error {
             print("Oh oh")
+            completion?(.failure(.error(error: error)))
         }
     }
     

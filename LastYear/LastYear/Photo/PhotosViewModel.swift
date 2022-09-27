@@ -11,6 +11,7 @@ import AVFoundation
 import CoreData
 import SwiftUI
 import VisionKit
+import Combine
     
 public class PhotosViewModel: ObservableObject {
     
@@ -25,26 +26,41 @@ public class PhotosViewModel: ObservableObject {
     @Published var dateOneYearAgo: Date? {
         didSet {
             guard let dateOneYearAgo else { return }
-            formattedDateOneYearAgo = formatter.string(from: dateOneYearAgo)
+            formattedDateOneYearAgo = Formatters.dateFormatter.string(from: dateOneYearAgo)
         }
     }
     @Published var formattedDateOneYearAgo: String = ""
     @Published var bestImage: PhotoData? = nil
     
-    var formatter: DateFormatter {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yyyy"
-        return formatter
-    }
+    @ObservedObject var authService = AuthService.shared
+    
+    var cancellabels = Set<AnyCancellable>()
 
     init() {
+        setupBinding()
         dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         getAllPhotos()
     }
     
+    func reset() {
+        allPhotos.removeAll()
+        screenShots.removeAll()
+        bestImage = nil
+        countFound = 0
+        requestsFailed = 0
+    }
+    
+    func setupBinding() {
+        authService.$loggedIn.sink { [weak self] isLoggedIn in
+            if !isLoggedIn {
+                self?.reset()
+            }
+        }.store(in: &cancellabels)
+    }
+    
     func getAllPhotos() {
         guard let lastYear = dateOneYearAgo, allPhotos.isEmpty else { return }
-        
+                
         requestsFailed = 0
         countFound = 0
         
@@ -68,7 +84,7 @@ public class PhotosViewModel: ObservableObject {
 //                let size = CGSize(width: 700, height: 700) //You can change size here
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
                     if let image = image, !asset.isHidden {
-                        let photo = PhotoData(id: asset.localIdentifier, image: image, date: asset.creationDate, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+                        let photo = PhotoData(id: asset.localIdentifier, image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
 
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
                             if asset.mediaSubtypes == .photoScreenshot {
@@ -86,7 +102,7 @@ public class PhotosViewModel: ObservableObject {
                 }
             }
         } else {
-            print("No photos to display for ", formatter.string(from: lastYear))
+            print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
     }
     

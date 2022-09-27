@@ -33,7 +33,7 @@ struct PhotoDetailView: View {
                         .foregroundColor(.white)
                 }
                 .padding()
-                Image(uiImage: image.uiImage.addWatermark())
+                Image(uiImage: image.uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .cornerRadius(20)
@@ -87,23 +87,29 @@ struct PhotoDetailView: View {
 }
 
 extension UIImage {
-    func addWatermark() -> UIImage {
-        if let watermark = UIImage(named: "aboutlastyear") {
+    func addWatermark(text: String) -> UIImage {
+        if let watermark = UIImage(named: "aboutlastyear")  {
             
             let rect = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
-            let resizedWatermark =  watermark.resizeToWidth(scaledToWidth: rect.width / 2)
+            let resizedWatermark =  watermark.resizeToWidth(scaledToWidth: rect.width * 0.5)
             
+            let text = text.drawImagesAndText(watermarkSize: resizedWatermark.size.width)
+            let resizedText = text.resizeToWidth(scaledToWidth: resizedWatermark.size.width * 0.5)
+
             UIGraphicsBeginImageContextWithOptions(self.size, true, 0)
             let context = UIGraphicsGetCurrentContext()!
             
             context.setFillColor(UIColor.white.cgColor)
             context.fill(rect)
             
-            let y = (rect.height - resizedWatermark.size.height - 68)
-            let x = (rect.width / 2 - resizedWatermark.size.width / 2)
+            let watermarkY = (rect.height - resizedWatermark.size.height - 68)
+            let watermarkX = (rect.width / 2 - resizedWatermark.size.width / 2)
+            let dateY = (watermarkY - resizedText.size.height - 12)
+            let dateX = (rect.width / 2 - resizedText.size.width / 2)
             
             self.draw(in: rect, blendMode: .normal, alpha: 1)
-            resizedWatermark.draw(in: CGRectMake(x, y, resizedWatermark.size.width, resizedWatermark.size.height), blendMode: .normal, alpha: 1)
+            resizedWatermark.draw(in: CGRectMake(watermarkX, watermarkY, resizedWatermark.size.width, resizedWatermark.size.height), blendMode: .normal, alpha: 1)
+            resizedText.draw(in: CGRectMake(dateX, dateY, text.size.width, text.size.height), blendMode: .normal, alpha: 1)
             
             guard let result = UIGraphicsGetImageFromCurrentImageContext() else { return self }
             UIGraphicsEndImageContext()
@@ -126,4 +132,42 @@ extension UIImage {
         UIGraphicsEndImageContext()
         return newImage!
     }
+}
+
+extension String {
+    
+    func drawImagesAndText(watermarkSize: CGFloat) -> UIImage {
+        // 1
+        let size = CGSize(width: watermarkSize * 0.5, height: 200)
+        let renderer = UIGraphicsImageRenderer(size: size)
+
+        let img = renderer.image { ctx in
+            // 2
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .center
+
+            let shadow = NSShadow()
+            shadow.shadowColor = UIColor.black
+            shadow.shadowBlurRadius = 5
+            
+            // 3
+            let attrs: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 90),
+                .paragraphStyle: paragraphStyle,
+                .foregroundColor: UIColor.white,
+                .shadow: shadow
+            ]
+
+            // 4
+            let attributedString = NSAttributedString(string: self, attributes: attrs)
+
+            // 5
+            attributedString.draw(with: CGRect(x: 0, y: 0, width: watermarkSize * 0.5, height: 200), options: .usesLineFragmentOrigin, context: nil)
+
+        }
+
+        return img
+        // 6
+    }
+    
 }

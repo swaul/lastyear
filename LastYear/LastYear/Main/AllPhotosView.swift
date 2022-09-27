@@ -34,19 +34,20 @@ struct AllPhotosView: View {
                         .font(Font.custom("Poppins-Bold", size: 35))
                         .foregroundColor(.white)
                 }
-                HStack {
-                    Spacer()
+                ZStack {
                     Text(photoViewModel.formattedDateOneYearAgo)
                         .font(Font.custom("Poppins-Regular", size: 24))
                         .foregroundColor(.white)
                         .padding(.horizontal, 16)
-                    Spacer()
-                    Button {
-                        photoViewModel.getAllPhotos()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 16)
+                    HStack {
+                        Spacer()    
+                        Button {
+                            photoViewModel.getAllPhotos()
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
+                        }
                     }
                 }
                 ScrollView {

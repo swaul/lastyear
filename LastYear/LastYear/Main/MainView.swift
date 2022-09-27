@@ -13,6 +13,8 @@ struct MainView: View {
     @EnvironmentObject var authService: AuthService
     @ObservedObject var photoViewModel = PhotosViewModel()
     
+    @State var settingsShowing: Bool = false
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -26,6 +28,18 @@ struct MainView: View {
                     }
                 } else if (photoViewModel.allPhotos.count + photoViewModel.screenShots.count + photoViewModel.requestsFailed) == photoViewModel.countFound {
                     VStack {
+                        HStack {
+                            Spacer()
+                            Button {
+                                settingsShowing = true
+                            } label: {
+                                Image(systemName: "ellipsis")
+                                    .foregroundColor(.white)
+                            }
+                            .sheet(isPresented: $settingsShowing) {
+                                SettingsView()
+                            }
+                        }
                         HStack(spacing: 0) {
                             Text("About")
                                 .font(Font.custom("Poppins-Bold", size: 35))
@@ -37,8 +51,8 @@ struct MainView: View {
                                 .font(Font.custom("Poppins-Bold", size: 35))
                                 .foregroundColor(.white)
                         }
-                        if let image = photoViewModel.bestImage?.image {
-                            image
+                        if let image = photoViewModel.bestImage?.uiImage {
+                            Image(uiImage: image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(20)
@@ -46,11 +60,11 @@ struct MainView: View {
                                 .padding()
                                 .cornerRadius(20)
                         } else if photoViewModel.allPhotos.count >= 1 {
-                            photoViewModel.allPhotos.first!.image
+                            Image(uiImage: photoViewModel.allPhotos.first!.uiImage)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(20)
-                                .border(.white, width: 4)
+                                .border(.yellow, width: 4)
                                 .padding()
                                 .cornerRadius(20)
                         }

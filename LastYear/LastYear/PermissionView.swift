@@ -66,8 +66,6 @@ struct PermissionView: View {
                     }
                 }
             }
-        } else if photos == .denied {
-            let url = UIApplication.openSettingsURLString
         } else {
             DispatchQueue.main.async {
                 permission.authorized = true

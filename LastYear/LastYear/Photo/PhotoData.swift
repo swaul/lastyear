@@ -13,28 +13,27 @@ import Photos
 
 public class PhotoData: Identifiable, Comparable {
     
-    public static func == (lhs: PhotoData, rhs: PhotoData) -> Bool {
-        lhs.id == rhs.id
-    }
-    
     public var id: String
     public var image: Image
     public var uiImage: UIImage
     public var date: Date?
+    public var formattedDate: String
     public var location: CLLocation?
     public var isFavorite: Bool
     public var sourceType: PHAssetSourceType
     public var faces: Int
     public var city: String? = nil
+    public var postalCode: String? = nil
     
-    init(id: String, image: UIImage, date: Date? = nil, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
+    init(id: String, image: UIImage, date: Date? = nil, formattedDate: String, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
         self.id = id
         self.image = Image(uiImage: image)
         self.date = date
         self.location = location
         self.isFavorite = isFavorite
         self.sourceType = sourceType
-        self.uiImage = image
+        self.formattedDate = formattedDate
+        self.uiImage = image.addWatermark(text: formattedDate)
         let ciImage = CIImage(image: image)!
         let options = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
         let faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: options)!
@@ -44,8 +43,13 @@ public class PhotoData: Identifiable, Comparable {
         if !faces.isEmpty {
             print("I found \(faces.count) in this image!")
         }
+        
         guard let location = location else { return }
         getCity(location: location)
+    }
+    
+    public static func == (lhs: PhotoData, rhs: PhotoData) -> Bool {
+        lhs.id == rhs.id
     }
     
     public static func < (lhs: PhotoData, rhs: PhotoData) -> Bool {
@@ -65,11 +69,8 @@ public class PhotoData: Identifiable, Comparable {
                 print(error.localizedDescription)
             } else {
                 self.city = placemarks?.first?.locality ?? "No location"
+                self.postalCode = placemarks?.first?.postalCode ?? "No zip"
             }
         }
     }
-}
-
-extension PHAssetSourceType {
-    
 }

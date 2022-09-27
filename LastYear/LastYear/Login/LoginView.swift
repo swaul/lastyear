@@ -32,14 +32,14 @@ struct LoginView: View {
         VStack(alignment: .leading) {
             Text("Email")
                 .font(Font.custom("Poppins-Bold", size: 14))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
             TextField(text: $email) {
                 Text("example@mail.com")
             }
             .textFieldStyle(.roundedBorder)
             Text("Password")
                 .font(Font.custom("Poppins-Bold", size: 14))
-                .foregroundColor(.black)
+                .foregroundColor(.white)
             HStack {
                 if showPassword {
                     TextField(text: $password) {
