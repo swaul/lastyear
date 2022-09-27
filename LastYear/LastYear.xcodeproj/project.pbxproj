@@ -134,6 +134,7 @@
 		9EAADB2428E2683900F93097 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */,
 				9EBDE92828DE021200264AF3 /* FirebaseHandler.swift */,
 			);
 			path = Network;
@@ -151,6 +152,16 @@
 				9EBDE93028DE660F00264AF3 /* LoadingView.swift */,
 			);
 			path = Main;
+			sourceTree = "<group>";
+		};
+		9EAADB2E28E3949F00F93097 /* Permissions */ = {
+			isa = PBXGroup;
+			children = (
+				9EBDE93228E18DCE00264AF3 /* PermissionView.swift */,
+				9E98039128E1C8770036AFEC /* PermissionHandler.swift */,
+				9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */,
+			);
+			path = Permissions;
 			sourceTree = "<group>";
 		};
 		9EBDE8C928DDD58A00264AF3 = {
@@ -172,6 +183,7 @@
 		9EBDE8D428DDD58A00264AF3 /* LastYear */ = {
 			isa = PBXGroup;
 			children = (
+				9EAADB2E28E3949F00F93097 /* Permissions */,
 				9EAADB2428E2683900F93097 /* Network */,
 				9EBDE91128DDEF9200264AF3 /* Info.plist */,
 				9EBDE8EA28DDEED400264AF3 /* Font */,
@@ -180,14 +192,10 @@
 				9EBDE91A28DDFCC300264AF3 /* Register */,
 				9EAADB2328E2681400F93097 /* Photo */,
 				9EAADB2528E2685900F93097 /* Main */,
-				9EBDE93228E18DCE00264AF3 /* PermissionView.swift */,
-				9E98039128E1C8770036AFEC /* PermissionHandler.swift */,
-				9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */,
-				9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */,
+				9EAADB2128E2633B00F93097 /* Formatters.swift */,
 				9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */,
 				9EBDE92628DE005300264AF3 /* GoogleService-Info.plist */,
 				9EBDE8DB28DDD58C00264AF3 /* Preview Content */,
-				9EAADB2128E2633B00F93097 /* Formatters.swift */,
 			);
 			path = LastYear;
 			sourceTree = "<group>";
