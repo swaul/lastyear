@@ -32,15 +32,23 @@ class NotificationCenter: ObservableObject {
     }
     
     func scheduleTomorrows() {
+        let today = Date.now
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        
         center.getPendingNotificationRequests { requests in
-            if requests.isEmpty {
-                self.scheduleTomorrowsWithFotos()
-                
+            let calendarNotis = requests.map { $0.trigger as? UNCalendarNotificationTrigger }
+            let scheduled = calendarNotis.contains(where: {
+                guard let date = $0?.nextTriggerDate() else { return false }
+                return Calendar.current.isDate(date, inSameDayAs: tomorrow)
+            })
+            
+            if !scheduled {
+                self.scheduleTomorrowsWithFotos(tomorrow: tomorrow)
             }
         }
     }
     
-    func scheduleTomorrowsWithFotos() {
+    func scheduleTomorrowsWithFotos(tomorrow: Date) {
         let dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         let dateTomorrowOYA = Calendar.current.date(byAdding: .day, value: 1, to: dateOneYearAgo!)
         guard let lastYearTomorrow = dateTomorrowOYA else { return }
@@ -63,11 +71,8 @@ class NotificationCenter: ObservableObject {
         content.subtitle = "Take a look and share it with your friends!"
         content.sound = UNNotificationSound.default
         
-        let today = Date.now
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-        let lastYearTomorrowWithHour = Calendar.current.date(bySetting: .hour, value: 12, of: tomorrow)!
-        
-        let components = Calendar.current.dateComponents([.year, .month, .day, .hour], from: lastYearTomorrowWithHour)
+        var components = Calendar.current.dateComponents([.year, .month, .day, .hour], from: tomorrow)
+        components.hour = Int.random(in: 9...14)
 
         // show this notification five seconds from now
         let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
