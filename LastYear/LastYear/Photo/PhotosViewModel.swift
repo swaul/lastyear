@@ -71,15 +71,18 @@ public class PhotosViewModel: ObservableObject {
         let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)!.startOfDay
         
         let manager = PHImageManager.default()
+        
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = false
         requestOptions.deliveryMode = .highQualityFormat
-        
+        requestOptions.isNetworkAccessAllowed = true
+
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        
         countFound = results.countOfAssets(with: .image)
         if results.count > 0 {
             for i in 0..<results.count {
@@ -100,16 +103,19 @@ public class PhotosViewModel: ObservableObject {
                             self.countFound -= 1
                         }
                     } else {
-                        self.requestsFailed += 1
-                        print("error asset to image ", asset.mediaSubtypes)
-                    }
-                }
+                        if asset.mediaSubtypes == .photoLive {
+                            print("ITs a live!")
+                        } else {
+                            self.requestsFailed += 1
+                            print("error asset to image ", asset.mediaSubtypes)
+                        }
+                    }                }
             }
         } else {
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
     }
-    
+
     func appendImage(image: UIImage, id: String) {
         
         // Save image in userdefaults
