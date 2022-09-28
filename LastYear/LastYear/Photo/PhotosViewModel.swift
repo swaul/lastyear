@@ -12,6 +12,7 @@ import CoreData
 import SwiftUI
 import VisionKit
 import Combine
+import WidgetKit
     
 public class PhotosViewModel: ObservableObject {
     
@@ -37,6 +38,7 @@ public class PhotosViewModel: ObservableObject {
     var cancellabels = Set<AnyCancellable>()
 
     init() {
+        Helper.removeAll()
         setupBinding()
         dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         getAllPhotos()
@@ -91,6 +93,7 @@ public class PhotosViewModel: ObservableObject {
                                 self.screenShots.append(photo)
                             } else {
                                 self.allPhotos.append(photo)
+                                self.appendImage(image: photo.uiImage)
                             }
                         } else {
                             self.countFound -= 1
@@ -104,6 +107,35 @@ public class PhotosViewModel: ObservableObject {
         } else {
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
+    }
+    
+    func appendImage(image: UIImage) {
+         
+         // Save image in userdefaults
+         if let userDefaults = UserDefaults(suiteName: appGroupName) {
+             
+             if let jpegRepresentation = image.jpegData(compressionQuality: 0.5) {
+                 
+                 let id = UUID().uuidString
+                 userDefaults.set(jpegRepresentation, forKey: id)
+                 
+                 // Append the list and save
+                 saveIntoUserDefaults()
+                 
+                 // Notify the widget to reload all items
+                 WidgetCenter.shared.reloadAllTimelines()
+             }
+         }
+     }
+    
+    private func saveIntoUserDefaults() {
+        if let userDefaults = UserDefaults(suiteName: appGroupName) {
+            
+            let data = try! JSONEncoder().encode(allPhotos.map { $0.id })
+            userDefaults.set(data, forKey: userDefaultsPhotosKey)
+        }
+        
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
     func getBestImage() {
