@@ -6,20 +6,23 @@
 //
 
 import WidgetKit
+import OSLog
 import SwiftUI
-import Intents
 
-struct Provider: IntentTimelineProvider {
+struct Provider: TimelineProvider {
+
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), imageID: nil)
+        SimpleEntry(date: Date(), imageID: nil, dateString: "")
     }
-    
-    func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), imageID: nil)
+
+    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
+        let imageIds = Helper.getImageIdsFromUserDefault()
+        
+        let entry = SimpleEntry(date: Date(), imageID: imageIds.first!, dateString: "")
         completion(entry)
     }
     
-    func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         var entries: [SimpleEntry] = []
         
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
@@ -36,7 +39,12 @@ struct Provider: IntentTimelineProvider {
             
             let entryDate = Calendar.current.date(byAdding: .second, value: index * timeRangeInSecond, to: currentDate)!
             
-            let entry = SimpleEntry(date: entryDate, imageID: imageIds[index])
+            var components = imageIds[index].split(separator: "@", omittingEmptySubsequences: true)
+            var dateString: String?
+            if components.count > 1 {
+                dateString = String(components.last!)
+            }
+            let entry = SimpleEntry(date: entryDate, imageID: imageIds[index], dateString: dateString)
             
             entries.append(entry)
         }
@@ -49,46 +57,87 @@ struct Provider: IntentTimelineProvider {
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let imageID: String?
+    let dateString: String?
 }
 
 struct LYwidgetEntryView : View {
-    var entry: Provider.Entry
+    @Environment(\.widgetFamily) var widgetFamily
+
+    var imageID: String?
+    var dateString: String?
     
     var body: some View {
-        if let imageID = entry.imageID {
-            Image(uiImage: Helper.getImageFromUserDefaults(key: imageID))
-                .resizable()
-                .scaledToFill()
-                .onAppear {
-                    print("tapped")
+        if let imageID = imageID {
+            ZStack {
+                Image(uiImage: Helper.getImageFromUserDefaults(key: imageID))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    .clipped()
+                VStack(spacing: 0) {
+                    Spacer()
+                    if let dateString = dateString {
+                        Text(dateString)
+                            .font(Font.custom("Poppins-Bold", size: 20))
+                            .foregroundColor(.white)
+                    }
+                    HStack(spacing: 0) {
+                        Text("About")
+                            .font(Font.custom("Poppins-Bold", size: 16))
+                            .foregroundColor(.white)
+                        Text("Last")
+                            .font(Font.custom("Poppins-Bold", size: 16))
+                            .foregroundColor(Color("primary"))
+                        Text("Year.")
+                            .font(Font.custom("Poppins-Bold", size: 16))
+                            .foregroundColor(.white)
+                    }
+                    .padding(2)
                 }
+            }
         } else {
-            Image("fallback")
-                .resizable()
-                .scaledToFill()
-                .onAppear {
-                    print("tapped")
-                }
+            ZStack {
+                Color.white
+                Image("fallback")
+                    .resizable()
+                    .scaledToFill()
+                    .cornerRadius(20)
+            }
+
         }
     }
 }
 
 @main
 struct LYwidget: Widget {
+    
     let kind: String = "LYwidget"
     
     var body: some WidgetConfiguration {
-        IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
-            LYwidgetEntryView(entry: entry)
+        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+            LYwidgetEntryView(imageID: entry.imageID, dateString: entry.dateString)
+                .onAppear {
+                    os_log("IMAGE %{public}@", log: OSLog.default, type: .error, entry.imageID ?? "no image")
+                }
         }
-        .configurationDisplayName("My Widget")
-        .description("This is an example widget.")
+        .configurationDisplayName("Last Year")
+        .description("The time machine widget.")
     }
 }
 
 struct LYwidget_Previews: PreviewProvider {
     static var previews: some View {
-        LYwidgetEntryView(entry: SimpleEntry(date: Date(), imageID: nil))
+        LYwidgetEntryView(imageID: nil, dateString: "")
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
+}
+
+extension Color {
+    
+    public static var random: Color {
+        return Color(red: .random(in: 0...1),
+                             green: .random(in: 0...1),
+                             blue: .random(in: 0...1))
+    }
+    
 }

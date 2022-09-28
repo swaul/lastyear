@@ -126,6 +126,7 @@ struct MainView: View {
                             .foregroundColor(Color("primary"))
                     }
                 }
+                
             }
         }
     }

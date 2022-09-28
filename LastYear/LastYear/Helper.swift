@@ -20,20 +20,19 @@ struct Helper {
     static func getImageFromUserDefaults(key: String) -> UIImage {
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
             if let imageData = userDefaults.object(forKey: key) as? Data,
-                let image = UIImage(data: imageData) {
+               let image = UIImage(data: imageData) {
                 return image
+            } else {
+                return UIImage(named: "fallback")!
             }
+        } else {
+            return UIImage(named: "fallback")!
         }
-        
-        return UIImage(systemName: "photo.fill.on.rectangle.fill")!
     }
     
     static func removeAll() {
-        let imageIds = getImageIdsFromUserDefault()
         if let defaults = UserDefaults(suiteName: appGroupName) {
-            _ = imageIds.map {
-                defaults.removeObject(forKey: $0)
-            }
+            defaults.removeObject(forKey: userDefaultsPhotosKey)
         }
     }
 }
