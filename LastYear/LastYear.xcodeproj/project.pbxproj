@@ -14,6 +14,15 @@
 		9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2828E2FBD000F93097 /* SettingsView.swift */; };
 		9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */; };
 		9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */; };
+		9EAADB3628E3968400F93097 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAADB3528E3968400F93097 /* WidgetKit.framework */; };
+		9EAADB3828E3968400F93097 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAADB3728E3968400F93097 /* SwiftUI.framework */; };
+		9EAADB3B28E3968400F93097 /* LYwidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB3A28E3968400F93097 /* LYwidget.swift */; };
+		9EAADB3E28E3968600F93097 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EAADB3D28E3968600F93097 /* Assets.xcassets */; };
+		9EAADB4028E3968600F93097 /* LYwidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */; };
+		9EAADB4128E3968600F93097 /* LYwidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */; };
+		9EAADB4428E3968600F93097 /* LYwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9EAADB3328E3968400F93097 /* LYwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9EAADB4C28E3976900F93097 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB4B28E3976900F93097 /* Helper.swift */; };
+		9EAADB4D28E397C500F93097 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB4B28E3976900F93097 /* Helper.swift */; };
 		9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */; };
 		9EBDE8D828DDD58A00264AF3 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D728DDD58A00264AF3 /* MainView.swift */; };
 		9EBDE8DA28DDD58C00264AF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */; };
@@ -57,6 +66,30 @@
 		9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9EAADB4228E3968600F93097 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9EBDE8CA28DDD58A00264AF3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9EAADB3228E3968400F93097;
+			remoteInfo = LYwidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9EAADB4828E3968600F93097 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				9EAADB4428E3968600F93097 /* LYwidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
@@ -65,6 +98,16 @@
 		9EAADB2828E2FBD000F93097 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9EAADB2A28E37A4A00F93097 /* NotificationPermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionView.swift; sourceTree = "<group>"; };
 		9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCenter.swift; sourceTree = "<group>"; };
+		9EAADB3328E3968400F93097 /* LYwidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LYwidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EAADB3528E3968400F93097 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		9EAADB3728E3968400F93097 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		9EAADB3A28E3968400F93097 /* LYwidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LYwidget.swift; sourceTree = "<group>"; };
+		9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = LYwidget.intentdefinition; sourceTree = "<group>"; };
+		9EAADB3D28E3968600F93097 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9EAADB3F28E3968600F93097 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9EAADB4B28E3976900F93097 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
+		9EAADB4E28E426B700F93097 /* LastYear.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LastYear.entitlements; sourceTree = "<group>"; };
+		9EAADB4F28E426EC00F93097 /* LYwidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LYwidgetExtension.entitlements; sourceTree = "<group>"; };
 		9EBDE8D228DDD58A00264AF3 /* LastYear.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastYear.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastYearApp.swift; sourceTree = "<group>"; };
 		9EBDE8D728DDD58A00264AF3 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -107,6 +150,15 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		9EAADB3028E3968400F93097 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9EAADB3828E3968400F93097 /* SwiftUI.framework in Frameworks */,
+				9EAADB3628E3968400F93097 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9EBDE8CF28DDD58A00264AF3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -127,6 +179,7 @@
 				9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */,
 				9EBDE8E528DDDD4B00264AF3 /* PhotoData.swift */,
 				9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */,
+				9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */,
 			);
 			path = Photo;
 			sourceTree = "<group>";
@@ -147,7 +200,6 @@
 				9EBDE92C28DE507600264AF3 /* LYUser.swift */,
 				9EBDE8D728DDD58A00264AF3 /* MainView.swift */,
 				9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */,
-				9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */,
 				9EBDE8E328DDDCE900264AF3 /* PhotoCard.swift */,
 				9EBDE93028DE660F00264AF3 /* LoadingView.swift */,
 			);
@@ -164,10 +216,33 @@
 			path = Permissions;
 			sourceTree = "<group>";
 		};
+		9EAADB3428E3968400F93097 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9EAADB3528E3968400F93097 /* WidgetKit.framework */,
+				9EAADB3728E3968400F93097 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9EAADB3928E3968400F93097 /* LYwidget */ = {
+			isa = PBXGroup;
+			children = (
+				9EAADB3A28E3968400F93097 /* LYwidget.swift */,
+				9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */,
+				9EAADB3D28E3968600F93097 /* Assets.xcassets */,
+				9EAADB3F28E3968600F93097 /* Info.plist */,
+			);
+			path = LYwidget;
+			sourceTree = "<group>";
+		};
 		9EBDE8C928DDD58A00264AF3 = {
 			isa = PBXGroup;
 			children = (
+				9EAADB4F28E426EC00F93097 /* LYwidgetExtension.entitlements */,
 				9EBDE8D428DDD58A00264AF3 /* LastYear */,
+				9EAADB3928E3968400F93097 /* LYwidget */,
+				9EAADB3428E3968400F93097 /* Frameworks */,
 				9EBDE8D328DDD58A00264AF3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -176,6 +251,7 @@
 			isa = PBXGroup;
 			children = (
 				9EBDE8D228DDD58A00264AF3 /* LastYear.app */,
+				9EAADB3328E3968400F93097 /* LYwidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -183,6 +259,7 @@
 		9EBDE8D428DDD58A00264AF3 /* LastYear */ = {
 			isa = PBXGroup;
 			children = (
+				9EAADB4E28E426B700F93097 /* LastYear.entitlements */,
 				9EAADB2E28E3949F00F93097 /* Permissions */,
 				9EAADB2428E2683900F93097 /* Network */,
 				9EBDE91128DDEF9200264AF3 /* Info.plist */,
@@ -196,6 +273,7 @@
 				9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */,
 				9EBDE92628DE005300264AF3 /* GoogleService-Info.plist */,
 				9EBDE8DB28DDD58C00264AF3 /* Preview Content */,
+				9EAADB4B28E3976900F93097 /* Helper.swift */,
 			);
 			path = LastYear;
 			sourceTree = "<group>";
@@ -264,6 +342,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		9EAADB3228E3968400F93097 /* LYwidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9EAADB4528E3968600F93097 /* Build configuration list for PBXNativeTarget "LYwidgetExtension" */;
+			buildPhases = (
+				9EAADB2F28E3968400F93097 /* Sources */,
+				9EAADB3028E3968400F93097 /* Frameworks */,
+				9EAADB3128E3968400F93097 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LYwidgetExtension;
+			productName = LYwidgetExtension;
+			productReference = 9EAADB3328E3968400F93097 /* LYwidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		9EBDE8D128DDD58A00264AF3 /* LastYear */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9EBDE8E028DDD58C00264AF3 /* Build configuration list for PBXNativeTarget "LastYear" */;
@@ -271,10 +366,12 @@
 				9EBDE8CE28DDD58A00264AF3 /* Sources */,
 				9EBDE8CF28DDD58A00264AF3 /* Frameworks */,
 				9EBDE8D028DDD58A00264AF3 /* Resources */,
+				9EAADB4828E3968600F93097 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				9EAADB4328E3968600F93097 /* PBXTargetDependency */,
 			);
 			name = LastYear;
 			packageProductDependencies = (
@@ -294,9 +391,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 1340;
 				TargetAttributes = {
+					9EAADB3228E3968400F93097 = {
+						CreatedOnToolsVersion = 14.0;
+					};
 					9EBDE8D128DDD58A00264AF3 = {
 						CreatedOnToolsVersion = 13.4.1;
 					};
@@ -319,11 +419,20 @@
 			projectRoot = "";
 			targets = (
 				9EBDE8D128DDD58A00264AF3 /* LastYear */,
+				9EAADB3228E3968400F93097 /* LYwidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		9EAADB3128E3968400F93097 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9EAADB3E28E3968600F93097 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9EBDE8D028DDD58A00264AF3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -356,6 +465,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		9EAADB2F28E3968400F93097 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9EAADB3B28E3968400F93097 /* LYwidget.swift in Sources */,
+				9EAADB4028E3968600F93097 /* LYwidget.intentdefinition in Sources */,
+				9EAADB4D28E397C500F93097 /* Helper.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9EBDE8CE28DDD58A00264AF3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -369,6 +488,7 @@
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
+				9EAADB4128E3968600F93097 /* LYwidget.intentdefinition in Sources */,
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
@@ -381,13 +501,80 @@
 				9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */,
 				9EBDE92928DE021200264AF3 /* FirebaseHandler.swift in Sources */,
 				9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */,
+				9EAADB4C28E3976900F93097 /* Helper.swift in Sources */,
 				9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		9EAADB4328E3968600F93097 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9EAADB3228E3968400F93097 /* LYwidgetExtension */;
+			targetProxy = 9EAADB4228E3968600F93097 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		9EAADB4628E3968600F93097 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = LYwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2B6FWRNH2M;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LYwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LYwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "at.kuehnel.LastYear-test.LYwidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		9EAADB4728E3968600F93097 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = LYwidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2B6FWRNH2M;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LYwidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = LYwidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "at.kuehnel.LastYear-test.LYwidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		9EBDE8DE28DDD58C00264AF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -537,8 +724,10 @@
 		9EBDE8E228DDD58C00264AF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = LastYear/LastYear.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LastYear/Preview Content\"";
@@ -569,6 +758,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9EAADB4528E3968600F93097 /* Build configuration list for PBXNativeTarget "LYwidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9EAADB4628E3968600F93097 /* Debug */,
+				9EAADB4728E3968600F93097 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9EBDE8CD28DDD58A00264AF3 /* Build configuration list for PBXProject "LastYear" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
