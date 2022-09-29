@@ -67,7 +67,8 @@ struct PhotoDetailView: View {
             if UIApplication.shared.canOpenURL(storiesUrl) {
                 guard let imageData = image.uiImage.pngData() else { return }
                 let pasteboardItems: [String: Any] = [
-                    "com.instagram.sharedSticker.stickerImage": imageData,
+                    "com.instagram.sharedSticker.backgroundImage": imageData,
+//                    "com.instagram.sharedSticker.stickerImage": imageData,
                     "com.instagram.sharedSticker.backgroundTopColor": "#F8B729",
                     "com.instagram.sharedSticker.backgroundBottomColor": "#242424"
                 ]
