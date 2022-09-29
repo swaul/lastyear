@@ -67,6 +67,7 @@ class NotificationCenter: ObservableObject {
         let content = UNMutableNotificationContent()
         
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        guard results.count != 0 else { return }
         content.title = "You have \(results.count) pictures to look back on from \(Formatters.dateFormatter.string(from: lastYearTomorrow))"
         content.subtitle = "Take a look and share it with your friends!"
         content.sound = UNNotificationSound.default

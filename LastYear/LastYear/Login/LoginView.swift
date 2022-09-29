@@ -31,14 +31,16 @@ struct LoginView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text("Email")
-                .font(Font.custom("Poppins-Bold", size: 14))
+                .font(Font.custom("Poppins-Bold", size: 16))
                 .foregroundColor(.white)
             TextField(text: $email) {
                 Text("example@mail.com")
             }
             .textFieldStyle(.roundedBorder)
+            .keyboardType(.emailAddress)
+            .textContentType(.emailAddress)
             Text("Password")
-                .font(Font.custom("Poppins-Bold", size: 14))
+                .font(Font.custom("Poppins-Bold", size: 16))
                 .foregroundColor(.white)
             HStack {
                 if showPassword {
@@ -46,8 +48,7 @@ struct LoginView: View {
                         Text("Password")
                     }
                     .textFieldStyle(.roundedBorder)
-                    .keyboardType(.emailAddress)
-                    .textContentType(.emailAddress)
+                    .textContentType(.password)
                 } else {
                     SecureField(text: $password) {
                         Text("Password")

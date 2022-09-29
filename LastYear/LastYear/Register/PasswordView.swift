@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAnalytics
 
 struct PasswordView: View {
     
@@ -13,6 +14,8 @@ struct PasswordView: View {
     
     @State var password: String = ""
     @State var showPassword: Bool = false
+    @State var appTrackingAccepted: Bool = false
+    @State var termsAndConditionsAccepted: Bool = false
     
     var email: String
     var userName: String
@@ -21,10 +24,14 @@ struct PasswordView: View {
         password.count >= 8
     }
     
+    var buttonEnabled: Bool {
+        isValidPassword && termsAndConditionsAccepted
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("Set your Password")
-                .font(Font.custom("Poppins-Bold", size: 14))
+                .font(Font.custom("Poppins-Bold", size: 16))
                 .foregroundColor(.white)
             HStack {
                 if showPassword {
@@ -60,6 +67,56 @@ struct PasswordView: View {
                     }
                 }
             }
+            
+            Text("Agreements:")
+                .font(Font.custom("Poppins-Bold", size: 16))
+                .foregroundColor(.white)
+            
+            HStack {
+                Button {
+                    appTrackingAccepted.toggle()
+                } label: {
+                    Image(systemName: appTrackingAccepted ? "square.fill" : "square")
+                        .foregroundColor(Color("primary"))
+                }
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("(Optional)")
+                        .font(Font.custom("Poppins-Light", size: 12))
+                        .foregroundColor(.white)
+                    Text("You can track crashes and actions of my app!")
+                        .font(Font.custom("Poppins-Regular", size: 14))
+                        .foregroundColor(.white)
+                }
+                .padding(.leading)
+            }
+            
+            HStack {
+                Button {
+                    termsAndConditionsAccepted.toggle()
+                } label: {
+                    Image(systemName: termsAndConditionsAccepted ? "square.fill" : "square")
+                        .foregroundColor(Color("primary"))
+                }
+                HStack(spacing: 0) {
+                    Text("Yes, I agree to ")
+                        .font(Font.custom("Poppins-Regular", size: 14))
+                        .foregroundColor(.white)
+                        .padding(.leading)
+                    Text("terms an conditions")
+                        .font(Font.custom("Poppins-Regular", size: 14))
+                        .underline()
+                        .foregroundColor(Color("primary"))
+                        .onTapGesture {
+                            openTermsAndConditions()
+                        }
+                    Text("!")
+                        .font(Font.custom("Poppins-Regular", size: 14))
+                        .foregroundColor(.white)
+                }
+            }
+            .padding(.vertical)
+            
+            Spacer()
             Button {
                 createUser()
             } label: {
@@ -72,20 +129,27 @@ struct PasswordView: View {
                     .cornerRadius(10)
             }
             .padding()
-            .disabled(!isValidPassword)
-            Spacer()
+            .disabled(!buttonEnabled)
         }
         .padding()
         .navigationTitle("Password")
     }
     
+    func openTermsAndConditions() {
+        guard let url = URL(string: "https://www.google.com"),
+                UIApplication.shared.canOpenURL(url) else { return }
+        
+        UIApplication.shared.open(url)
+    }
+    
     func createUser() {
-        FirebaseHandler.shared.registerUser(email: email, password: password, userName: userName) { result in
+        FirebaseHandler.shared.registerUser(email: email, password: password, userName: userName, appTracking: appTrackingAccepted) { result in
             switch result {
             case .failure(let error):
                 print("[LOG] - Registring failed with error", error)
             case .success(let user):
                 print("[LOG] - Register successful for", user)
+                Analytics.setAnalyticsCollectionEnabled(appTrackingAccepted)
                 presentationMode.wrappedValue.dismiss()
             }
         }

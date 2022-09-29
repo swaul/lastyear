@@ -16,7 +16,7 @@ public class FirebaseHandler {
     
     let firestoreUsers = Firestore.firestore().collection("users")
     
-    public func registerUser(email: String, password: String, userName: String, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
+    public func registerUser(email: String, password: String, userName: String, appTracking: Bool, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
             if let error = error {
                 completion?(.failure(.error(error: error)))
@@ -25,7 +25,10 @@ public class FirebaseHandler {
                     completion?(.failure(.genericError()))
                     return
                 }
-                self?.saveUser(user: LYUser(user: user, userName: userName), completion: { result in
+                Analytics.setUserID(user.uid)
+                Analytics.setConsent([.analyticsStorage: appTracking ? .granted : .denied])
+                
+                self?.saveUser(user: LYUser(user: user, userName: userName, appTracking: appTracking), completion: { result in
                     switch result {
                     case .failure(let error):
                         completion?(.failure(error))
@@ -54,6 +57,7 @@ public class FirebaseHandler {
                         completion?(.failure(.error(error: error)))
                     case .success(let lyUser):
                         AuthService.shared.logIn(user: lyUser)
+                        Analytics.setAnalyticsCollectionEnabled(lyUser.appTracking)
                         completion?(.success(user))
                     }
                 }

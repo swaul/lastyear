@@ -19,10 +19,8 @@ struct SettingsView: View {
             ZStack {
                 Color("backgroundColor")
                     .ignoresSafeArea()
-                VStack(alignment: .leading) {
-                    Text("Hallo \(userService.loggedInUser?.userName ?? "")")
-                        .font(Font.custom("Poppins-Regular", size: 24))
-                        .foregroundColor(.white)
+                VStack {
+                    Spacer()
                     Button {
                         logoutDialogShowing = true
                     } label: {
@@ -30,13 +28,16 @@ struct SettingsView: View {
                             .font(Font.custom("Poppins-Regular", size: 24))
                             .foregroundColor(.white)
                     }
+                    .padding()
+                    .alert(isPresented: $logoutDialogShowing) {
+                        Alert(title:Text("Do you want to log out?"),
+                              primaryButton: .destructive(Text("Logout"), action: {
+                            logout()
+                        }),
+                              secondaryButton: .cancel())
+                    }
                 }
                 .padding()
-                .alert(isPresented: $logoutDialogShowing) {
-                    Alert(title:Text("Do you want to log out?"),
-                          primaryButton: .destructive(Text("Logout")),
-                          secondaryButton: .cancel())
-                }
             }
             .navigationTitle("Settings")
         }

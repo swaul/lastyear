@@ -100,9 +100,11 @@ struct AllPhotosView: View {
                             Text("\(photoViewModel.countFound) Photos found for " + photoViewModel.formattedDateOneYearAgo)
                                 .font(Font.custom("Poppins-Regular", size: 18))
                                 .foregroundColor(Color("primary"))
-                            Text("\(photoViewModel.requestsFailed) Photos couldn't be imported")
-                                .font(Font.custom("Poppins-Regular", size: 18))
-                                .foregroundColor(.red)
+                            if photoViewModel.requestsFailed > 0 {
+                                Text("\(photoViewModel.requestsFailed) Photos couldn't be imported")
+                                    .font(Font.custom("Poppins-Regular", size: 18))
+                                    .foregroundColor(.red)
+                            }
                         }
                     }
                 }
