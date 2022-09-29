@@ -11,6 +11,12 @@ import CoreLocation
 import UIKit
 import Photos
 
+public enum PhotoType {
+    case photo
+    case screenshot
+    case live
+}
+
 public class PhotoData: Identifiable, Comparable {
     
     public var id: String
@@ -24,6 +30,7 @@ public class PhotoData: Identifiable, Comparable {
     public var faces: Int
     public var city: String? = nil
     public var postalCode: String? = nil
+    public var photoType: PhotoType = .photo
     
     init(id: String, image: UIImage, date: Date? = nil, formattedDate: String, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
         self.id = id

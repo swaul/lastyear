@@ -18,12 +18,15 @@ public class PhotosViewModel: ObservableObject {
     
     @Published var allPhotos = [PhotoData]() {
         didSet {
+            countDone = allPhotos.count
             getBestImage()
+            checkIfDone()
         }
     }
-    @Published var screenShots = [PhotoData]()
     @Published var countFound = 0
+    @Published var countDone = 0
     @Published var requestsFailed = 0
+    @Published var loadingState: LoadingState = .idle
     @Published var dateOneYearAgo: Date? {
         didSet {
             guard let dateOneYearAgo else { return }
@@ -31,7 +34,8 @@ public class PhotosViewModel: ObservableObject {
         }
     }
     @Published var formattedDateOneYearAgo: String = ""
-    @Published var bestImage: PhotoData? = nil
+    @Published var bestImage: PhotoData?
+    var many: Bool = false
 
     @ObservedObject var authService = AuthService.shared
     
@@ -47,9 +51,9 @@ public class PhotosViewModel: ObservableObject {
     
     func reset() {
         allPhotos.removeAll()
-        screenShots.removeAll()
         bestImage = nil
         countFound = 0
+        countDone = 0
         requestsFailed = 0
     }
     
@@ -60,12 +64,20 @@ public class PhotosViewModel: ObservableObject {
             }
         }.store(in: &cancellabels)
     }
-    
+        
     func getAllPhotos() {
-        guard let lastYear = dateOneYearAgo, allPhotos.isEmpty else { return }
+        withAnimation {
+            loadingState = .loading
+        }
+
+        guard let lastYear = dateOneYearAgo, allPhotos.isEmpty else {
+            loadingState = .failed
+            return
+        }
         
         requestsFailed = 0
         countFound = 0
+        countDone = 0
         
         let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)!.endOfDay
         let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)!.startOfDay
@@ -84,18 +96,24 @@ public class PhotosViewModel: ObservableObject {
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         
         countFound = results.countOfAssets(with: .image)
+        
+        many = countFound > 20
+        
         if results.count > 0 {
             for i in 0..<results.count {
                 let asset = results.object(at: i)
-                //                let size = CGSize(width: 700, height: 700) //You can change size here
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
                     if let image = image, !asset.isHidden {
                         let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
-                        
+
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
                             if asset.mediaSubtypes == .photoScreenshot {
-                                self.screenShots.append(photo)
+                                photo.photoType = .screenshot
+                                self.allPhotos.append(photo)
                             } else {
+                                if asset.mediaSubtypes == .photoLive {
+                                    photo.photoType = .live
+                                }
                                 self.allPhotos.append(photo)
                                 self.appendImage(image: image, id: photo.id)
                             }
@@ -103,15 +121,13 @@ public class PhotosViewModel: ObservableObject {
                             self.countFound -= 1
                         }
                     } else {
-                        if asset.mediaSubtypes == .photoLive {
-                            print("ITs a live!")
-                        } else {
-                            self.requestsFailed += 1
-                            print("error asset to image ", asset.mediaSubtypes)
-                        }
-                    }                }
+                        self.requestsFailed += 1
+                        print("error asset to image ", asset.mediaSubtypes)
+                    }
+                }
             }
         } else {
+            loadingState = .noPictures
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
     }
@@ -155,11 +171,29 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func getBestImage() {
-        if !allPhotos.isEmpty, countFound == (allPhotos.count + screenShots.count + requestsFailed) {
+        if !allPhotos.isEmpty, countFound == (allPhotos.count + requestsFailed) {
             let sorted = allPhotos.sorted()
             bestImage = sorted.first!
         } else if allPhotos.count == 1 && countFound == 1 {
             bestImage = allPhotos.first!
+        } else if !allPhotos.isEmpty {
+            bestImage = allPhotos.first!
+        }
+    }
+    
+    func checkIfDone() {
+        if countDone >= 1 && many {
+            withAnimation {
+                loadingState = .done
+            }
+        }
+        if countDone == countFound {
+            withAnimation {
+                loadingState = .done
+            }
+            withAnimation {
+                many = false
+            }
         }
     }
     
@@ -199,6 +233,15 @@ public class PhotosViewModel: ObservableObject {
         
         return newImage!
     }
+}
+
+public enum LoadingState {
+    case loading
+    case loadingMany
+    case idle
+    case failed
+    case noPictures
+    case done
 }
 
 extension Date {

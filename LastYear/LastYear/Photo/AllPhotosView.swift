@@ -62,7 +62,7 @@ struct AllPhotosView: View {
                             }
                         }
                         .padding(12)
-                        if !photoViewModel.screenShots.isEmpty {
+                        if !photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.isEmpty {
                             Button {
                                 withAnimation {
                                     expanded.toggle()
@@ -84,7 +84,7 @@ struct AllPhotosView: View {
                             .padding()
                             if expanded {
                                 LazyVGrid(columns: layout) {
-                                    ForEach(photoViewModel.screenShots.sorted()) { photo in
+                                    ForEach(photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()) { photo in
                                         NavigationLink {
                                             PhotoDetailView(image: photo)
                                         } label: {

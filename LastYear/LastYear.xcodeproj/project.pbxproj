@@ -64,6 +64,7 @@
 		9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93028DE660F00264AF3 /* LoadingView.swift */; };
 		9EBDE93328E18DCE00264AF3 /* PermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93228E18DCE00264AF3 /* PermissionView.swift */; };
 		9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */; };
+		9EBEE6EE28E5C1E000F9FCCC /* LogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBEE6ED28E5BF7700F9FCCC /* LogoView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -147,6 +148,7 @@
 		9EBDE93028DE660F00264AF3 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		9EBDE93228E18DCE00264AF3 /* PermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionView.swift; sourceTree = "<group>"; };
 		9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoDetailView.swift; sourceTree = "<group>"; };
+		9EBEE6ED28E5BF7700F9FCCC /* LogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,6 +272,7 @@
 				9EAADB2328E2681400F93097 /* Photo */,
 				9EAADB2528E2685900F93097 /* Main */,
 				9EAADB2128E2633B00F93097 /* Formatters.swift */,
+				9EBEE6ED28E5BF7700F9FCCC /* LogoView.swift */,
 				9EBDE8D928DDD58C00264AF3 /* Assets.xcassets */,
 				9EBDE92628DE005300264AF3 /* GoogleService-Info.plist */,
 				9EBDE8DB28DDD58C00264AF3 /* Preview Content */,
@@ -499,6 +502,7 @@
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
 				9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */,
 				9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */,
+				9EBEE6EE28E5C1E000F9FCCC /* LogoView.swift in Sources */,
 				9EBDE92928DE021200264AF3 /* FirebaseHandler.swift in Sources */,
 				9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */,
 				9EAADB4C28E3976900F93097 /* Helper.swift in Sources */,
