@@ -22,12 +22,12 @@ class NotificationCenter: NSObject, ObservableObject {
     
     func scheduleFirst() {
         let content = UNMutableNotificationContent()
-        content.title = "Feed the cat"
-        content.subtitle = "It looks hungry"
+        content.title = "This is your first notification!"
+        content.subtitle = "Lets take a look at last year."
         content.sound = UNNotificationSound.default
         
         // show this notification five seconds from now
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
         
         // choose a random identifier
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)

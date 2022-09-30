@@ -20,33 +20,38 @@ struct PermissionView: View {
     var body: some View {
         if !permission.photosAuthorized {
             VStack {
-                Spacer()
                 Text("Please grant the app access to all your photos!")
-                    .onAppear {
-                        requestPhotoAccess()
-                    }
-                    .onTapGesture {
-                        requestPhotoAccess()
-                    }
-                    .fullScreenCover(isPresented: $permissionDeniedShowing) {
-                        VStack {
-                            Text("Please head to settings to grant access to all photos")
+                    .font(Font.custom("Poppins-Bold", size: 24))
+                    .foregroundColor(Color.white)
+                Button {
+                    requestPhotoAccess()
+                } label: {
+                    Text("Decide!")
+                        .font(Font.custom("Poppins-Bold", size: 20))
+                        .foregroundColor(Color("backgroundColor"))
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                }
+                .fullScreenCover(isPresented: $permissionDeniedShowing) {
+                    VStack {
+                        Text("Please head to settings to grant access to all photos")
+                            .font(Font.custom("Poppins-Bold", size: 24))
+                            .foregroundColor(.white)
+                        Button {
+                            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                            UIApplication.shared.open(url)
+                        } label: {
+                            Text("Settings")
                                 .font(Font.custom("Poppins-Bold", size: 24))
-                                .foregroundColor(.white)
-                            Button {
-                                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                                UIApplication.shared.open(url)
-                            } label: {
-                                Text("Settings")
-                                    .font(Font.custom("Poppins-Bold", size: 24))
-                                    .foregroundColor(Color("backgroundColor"))
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(20)
-                            }
+                                .foregroundColor(Color("backgroundColor"))
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(20)
                         }
-                        .padding(16)
                     }
+                    .padding(16)
+                }
             }
         } else if permission.notDetermined {
             NotificationPermissionView()

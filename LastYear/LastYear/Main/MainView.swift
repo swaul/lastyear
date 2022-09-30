@@ -42,16 +42,22 @@ struct MainView: View {
                             Spacer()
                         }
                         if visible {
-                            Image(uiImage: photoViewModel.bestImage?.uiImage ?? UIImage(named: "fallback")!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(20)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(photoViewModel.allPhotos.isEmpty ? Color("primary") : .white, lineWidth: 3)
-                                )
-                                .padding()
-                                .transition(.scale)
+                            NavigationLink {
+                                if let image = photoViewModel.bestImage {
+                                    PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
+                                }
+                            } label: {
+                                Image(uiImage: photoViewModel.bestImage?.uiImage ?? UIImage(named: "fallback")!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .cornerRadius(20)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke(photoViewModel.allPhotos.isEmpty ? Color("primary") : .white, lineWidth: 3)
+                                    )
+                                    .padding()
+                                    .transition(.scale)
+                            }
                         }
                         Spacer()
                         if visible {
