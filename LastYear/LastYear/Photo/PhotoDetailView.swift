@@ -9,37 +9,62 @@ import SwiftUI
 import UIKit
 
 struct PhotoDetailView: View {
-    
-    var image: PhotoData
-        
+            
     var formatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }
     
+    var images: [PhotoData]
+    
+    @State var selected: String
+    @State var indexIsLimit: Bool = false {
+        didSet {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                withAnimation {
+                    indexIsLimit = false
+                }
+            }
+        }
+    }
+    
+    var selectedImage: UIImage? {
+        return images.first(where: { $0.id == selected })?.uiImage
+    }
+    
     var body: some View {
         ZStack {
             VStack {
-                HStack(spacing: 0) {
-                    Text("About")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(.white)
-                    Text("Last")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(Color("primary"))
-                    Text("Year.")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(.white)
-                }
+                LogoView()
                 .padding()
-                Image(uiImage: image.uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .cornerRadius(20)
-                    .border(.white, width: 4)
-                    .padding()
-                    .cornerRadius(20)
+                Spacer()
+                GeometryReader { reader in
+                    TabView(selection: $selected) {
+                        ForEach(images, id: \.id) { image in
+                            Image(uiImage: image.uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(20)
+                                .border(.white, width: 4)
+                                .padding()
+                                .cornerRadius(20)
+                                .tag(images)
+                        }
+                    }
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                    .onTapGesture { point in
+                        let half = reader.size.width / 2
+                        if point.x < half {
+                            toLeft()
+                        } else {
+                            toRight()
+                        }
+                    }
+                    .offset(x: indexIsLimit ? -8 : 0)
+                    .animation(Animation.default.repeatCount(3, autoreverses: true).speed(6), value: indexIsLimit)
+                }
+                Spacer()
                 HStack {
                     Button {
                         shareToStory()
@@ -51,9 +76,12 @@ struct PhotoDetailView: View {
                             .foregroundColor(.white)
                     }
                     Spacer()
-                    VStack {
-                        Text(formatter.string(from: image.date!))
-                        Text(image.city ?? "No locaton")
+                    
+                    if let image = images.first(where: { $0.id == selected }) {
+                        VStack {
+                            Text(formatter.string(from: image.date!))
+                            Text(image.city ?? "No locaton")
+                        }
                     }
                 }
                 .padding()
@@ -62,10 +90,34 @@ struct PhotoDetailView: View {
         }
     }
     
+    func toLeft() {
+        let index = images.firstIndex(of: images.first(where: { $0.id == selected })!)
+        guard let index, index > 0 else {
+            simpleError()
+            withAnimation {
+                indexIsLimit = true
+            }
+            return
+        }
+        selected = images[images.index(before: index)].id
+    }
+    
+    func toRight() {
+        let index = images.firstIndex(of: images.first(where: { $0.id == selected })!)
+        guard let index, index < (images.count - 1) else {
+            simpleError()
+            withAnimation {
+                indexIsLimit = true
+            }
+            return
+        }
+        selected = images[images.index(after: index)].id
+    }
+    
     func shareToStory() {
-        if let storiesUrl = URL(string: "instagram-stories://share") {
+        if let storiesUrl = URL(string: "instagram-stories://share"), let image = selectedImage {
             if UIApplication.shared.canOpenURL(storiesUrl) {
-                guard let imageData = image.uiImage.pngData() else { return }
+                guard let imageData = image.pngData() else { return }
                 let pasteboardItems: [String: Any] = [
                     "com.instagram.sharedSticker.backgroundImage": imageData,
 //                    "com.instagram.sharedSticker.stickerImage": imageData,
@@ -76,6 +128,9 @@ struct PhotoDetailView: View {
                     UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(300)
                 ]
                 UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
+                
+                simpleSuccess()
+                
                 UIApplication.shared.open(storiesUrl, options: [:], completionHandler: nil)
                 
             } else if let url = URL(string: "https://instagram.com"), UIApplication.shared.canOpenURL(url) {
@@ -84,6 +139,16 @@ struct PhotoDetailView: View {
                 print("Sorry the application is not installed")
             }
         }
+    }
+    
+    func simpleError() {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.error)
+    }
+    
+    func simpleSuccess() {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(.success)
     }
 }
 

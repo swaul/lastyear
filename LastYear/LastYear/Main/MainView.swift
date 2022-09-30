@@ -96,6 +96,9 @@ struct MainView: View {
                             }
                         }
                     }
+                    .onAppear {
+                        NotificationCenter.shared.scheduleTomorrows()
+                    }
                 case .noPictures:
                     VStack {
                         Text("Keine Bilder gefunden für " + photoViewModel.formattedDateOneYearAgo)
@@ -170,7 +173,7 @@ struct MainView: View {
             VStack {
                 NavigationLink {
                     if let image = photoViewModel.bestImage {
-                        PhotoDetailView(image: image)
+                        PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
                     }
                 } label: {
                     Image(systemName: "square.and.arrow.up")

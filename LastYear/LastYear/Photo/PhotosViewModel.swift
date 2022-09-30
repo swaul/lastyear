@@ -13,6 +13,7 @@ import SwiftUI
 import VisionKit
 import Combine
 import WidgetKit
+import Vision
 
 public class PhotosViewModel: ObservableObject {
     
@@ -40,6 +41,10 @@ public class PhotosViewModel: ObservableObject {
     @ObservedObject var authService = AuthService.shared
     
     var cancellabels = Set<AnyCancellable>()
+    
+    var animalRecognitionRequest = VNRecognizeAnimalsRequest(completionHandler: nil)
+    
+    private let animalRecognitionWorkQueue = DispatchQueue(label: "PetClassifierRequest", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     
     init() {
         Helper.removeAll()
@@ -70,7 +75,7 @@ public class PhotosViewModel: ObservableObject {
             loadingState = .loading
         }
 
-        guard let lastYear = dateOneYearAgo, allPhotos.isEmpty else {
+        guard let lastYear = dateOneYearAgo else {
             loadingState = .failed
             return
         }
@@ -110,11 +115,13 @@ public class PhotosViewModel: ObservableObject {
                             if asset.mediaSubtypes == .photoScreenshot {
                                 photo.photoType = .screenshot
                                 self.allPhotos.append(photo)
+//                                self.animalClassifier(uiImage: photo.uiImage)
                             } else {
                                 if asset.mediaSubtypes == .photoLive {
                                     photo.photoType = .live
                                 }
                                 self.allPhotos.append(photo)
+//                                self.animalClassifier(uiImage: photo.uiImage)
                                 self.appendImage(image: image, id: photo.id)
                             }
                         } else {
@@ -131,6 +138,56 @@ public class PhotosViewModel: ObservableObject {
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
     }
+    
+//    public func animalClassifier(uiImage: UIImage) {
+//        guard let cgImage = uiImage.cgImage else { return }
+//
+//        animalRecognitionWorkQueue.async {
+//            let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+//            do {
+//                try requestHandler.perform([self.animalRecognitionRequest])
+//            } catch {
+//                print(error)
+//            }
+//        }
+//    }
+//
+//    private func setupAnimalCheck() {
+//        animalRecognitionRequest = VNRecognizeAnimalsRequest { [weak self] request, error in
+//            guard error == nil else { return }
+//
+//                if let results = request.results as? [VNRecognizedObjectObservation] {
+//                    var detectionString = ""
+//                    var animalCount = 0
+//                    for result in results
+//                    {
+//                        let animals = result.labels
+//
+//                        for animal in animals {
+//
+//                            animalCount = animalCount + 1
+//                            var animalLabel = ""
+//
+//                            if animal.identifier == "Cat" {
+//                                animalLabel = "🐱"
+//                            }
+//                            else if animal.identifier == "Dog" {
+//                                animalLabel = "🐶"
+//                            }
+//
+//                            let string = "#\(animalCount) \(animal.identifier) \(animalLabel) confidence is \(animal.confidence)\n"
+//                            detectionString = detectionString + string
+//
+//                            print("[animal]", detectionString)
+//                        }
+//                    }
+//
+//                    if detectionString.isEmpty{
+//                        detectionString = "Neither cat nor dog"
+//                    }
+//                }
+//            }
+//    }
 
     func appendImage(image: UIImage, id: String) {
         

@@ -103,6 +103,13 @@ public class FirebaseHandler {
         }
     }
     
+    public func changeUserTracking(to granted: Bool) {
+        guard let user = Auth.auth().currentUser else { return }
+        Analytics.setUserID(user.uid)
+        Analytics.setConsent([.analyticsStorage: granted ? .granted : .denied])
+        Analytics.setAnalyticsCollectionEnabled(granted)
+    }
+    
 }
 
 public class FirebaseError: Error {

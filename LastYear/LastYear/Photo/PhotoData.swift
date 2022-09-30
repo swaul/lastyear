@@ -17,7 +17,7 @@ public enum PhotoType {
     case live
 }
 
-public class PhotoData: Identifiable, Comparable {
+public class PhotoData: Identifiable, Comparable, Hashable {
     
     public var id: String
     public var image: Image
@@ -31,6 +31,7 @@ public class PhotoData: Identifiable, Comparable {
     public var city: String? = nil
     public var postalCode: String? = nil
     public var photoType: PhotoType = .photo
+    public var animal: AnimalType = .none
     
     init(id: String, image: UIImage, date: Date? = nil, formattedDate: String, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
         self.id = id
@@ -44,9 +45,10 @@ public class PhotoData: Identifiable, Comparable {
         let ciImage = CIImage(image: image)!
         let options = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
         let faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: options)!
-
+        
         let faces = faceDetector.features(in: ciImage)
         self.faces = faces.count
+        
         if !faces.isEmpty {
             print("I found \(faces.count) in this image!")
         }
@@ -54,6 +56,11 @@ public class PhotoData: Identifiable, Comparable {
         guard let location = location else { return }
         getCity(location: location)
     }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
     
     public static func == (lhs: PhotoData, rhs: PhotoData) -> Bool {
         lhs.id == rhs.id
@@ -80,4 +87,10 @@ public class PhotoData: Identifiable, Comparable {
             }
         }
     }
+}
+
+public enum AnimalType {
+    case cat
+    case dog
+    case none
 }

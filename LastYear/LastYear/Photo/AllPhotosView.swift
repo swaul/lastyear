@@ -23,17 +23,7 @@ struct AllPhotosView: View {
             Color("backgroundColor")
                 .ignoresSafeArea()
             VStack {
-                HStack(spacing: 0) {
-                    Text("About")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(.white)
-                    Text("Last")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(Color("primary"))
-                    Text("Year.")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(.white)
-                }
+                LogoView()
                 ZStack {
                     Text(photoViewModel.formattedDateOneYearAgo)
                         .font(Font.custom("Poppins-Regular", size: 24))
@@ -52,10 +42,11 @@ struct AllPhotosView: View {
                 }
                 ScrollView {
                     VStack {
+                        let sortedImages = photoViewModel.allPhotos.sorted()
                         LazyVGrid(columns: layout) {
-                            ForEach(photoViewModel.allPhotos.sorted()) { photo in
+                            ForEach(sortedImages) { photo in
                                 NavigationLink {
-                                    PhotoDetailView(image: photo)
+                                    PhotoDetailView(images: sortedImages, selected: photo.id)
                                 } label: {
                                     PhotoCard(image: photo)
                                 }
@@ -83,10 +74,11 @@ struct AllPhotosView: View {
                             .contentShape(Rectangle())
                             .padding()
                             if expanded {
+                                let sortedScreenshots = photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()
                                 LazyVGrid(columns: layout) {
-                                    ForEach(photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()) { photo in
+                                    ForEach(sortedScreenshots) { photo in
                                         NavigationLink {
-                                            PhotoDetailView(image: photo)
+                                            PhotoDetailView(images: sortedScreenshots, selected: photo.id)
                                         } label: {
                                             PhotoCard(image: photo)
                                         }

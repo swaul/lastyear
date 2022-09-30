@@ -30,7 +30,7 @@ struct PermissionView: View {
                     }
                     .fullScreenCover(isPresented: $permissionDeniedShowing) {
                         VStack {
-                            Text("You need to head to settings to grant access to all photos...")
+                            Text("Please head to settings to grant access to all photos")
                                 .font(Font.custom("Poppins-Bold", size: 24))
                                 .foregroundColor(.white)
                             Button {
@@ -39,26 +39,14 @@ struct PermissionView: View {
                             } label: {
                                 Text("Settings")
                                     .font(Font.custom("Poppins-Bold", size: 24))
-                                    .padding()
-                                    .backgroundStyle(Color.white)
                                     .foregroundColor(Color("backgroundColor"))
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(20)
                             }
                         }
                         .padding(16)
                     }
-            }
-            .onChange(of: permission.photosAuthorized, perform: { newValue in
-                if permission.notDetermined {
-                    askForNotiShowing = true
-                }
-            })
-            .onAppear {
-                if permission.notDetermined {
-                    askForNotiShowing = true
-                }
-            }
-            .fullScreenCover(isPresented: $askForNotiShowing) {
-                NotificationPermissionView()
             }
         } else if permission.notDetermined {
             NotificationPermissionView()

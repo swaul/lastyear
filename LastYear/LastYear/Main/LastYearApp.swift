@@ -33,9 +33,6 @@ struct LastYearApp: App {
                         checkLogin()
                     }
                     .preferredColorScheme(.dark)
-                    .onAppear {
-                        NotificationCenter.shared.scheduleTomorrows()
-                    }
             } else if authService.loggedIn {
                 PermissionView()
                     .preferredColorScheme(.dark)

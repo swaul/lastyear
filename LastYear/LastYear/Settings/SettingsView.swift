@@ -20,6 +20,17 @@ struct SettingsView: View {
                 Color("backgroundColor")
                     .ignoresSafeArea()
                 VStack {
+                    Button {
+                        openSettings()
+                    } label: {
+                        Text("Licences")
+                    }
+                    NavigationLink {
+                        PrivacyView()
+                    } label: {
+                        Text("Privacy")
+                    }
+                    
                     Spacer()
                     Button {
                         logoutDialogShowing = true
@@ -41,6 +52,11 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
         }
+    }
+    
+    func openSettings() {
+        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+        UIApplication.shared.open(url)
     }
     
     func logout() {

@@ -17,17 +17,7 @@ struct WelcomeView: View {
                 .ignoresSafeArea()
             VStack {
                 Spacer()
-                HStack(spacing: 0) {
-                    Text("About")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(.white)
-                    Text("Last")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(Color("primary"))
-                    Text("Year.")
-                        .font(Font.custom("Poppins-Bold", size: 35))
-                        .foregroundColor(.white)
-                }
+                LogoView()
                 Spacer()
                 Image("rocket")
                     .resizable()

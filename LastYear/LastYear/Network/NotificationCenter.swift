@@ -9,11 +9,16 @@ import Foundation
 import UserNotifications
 import Photos
 
-class NotificationCenter: ObservableObject {
+class NotificationCenter: NSObject, ObservableObject {
     
     static let shared = NotificationCenter()
     
     @Published var center = UNUserNotificationCenter.current()
+    
+    override init() {
+        super.init()
+        center.delegate = self
+    }
     
     func scheduleFirst() {
         let content = UNMutableNotificationContent()
@@ -29,6 +34,13 @@ class NotificationCenter: ObservableObject {
         
         // add our notification request
         center.add(request)
+    }
+    
+    func checkPermissionAndScheduleTomorrows() {
+        center.getNotificationSettings { settings in
+            guard settings.authorizationStatus == .authorized else { return }
+            self.scheduleTomorrows()
+        }
     }
     
     func scheduleTomorrows() {
@@ -84,4 +96,12 @@ class NotificationCenter: ObservableObject {
         // add our notification request
         center.add(request)
     }
+}
+
+extension NotificationCenter: UNUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.badge, .banner, .sound])
+    }
+    
 }
