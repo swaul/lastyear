@@ -170,7 +170,7 @@ struct MainView: View {
                     SettingsView()
                 }
             }
-            LogoView()
+            LogoView(size: 35)
         }
     }
     

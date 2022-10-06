@@ -23,7 +23,7 @@ struct AllPhotosView: View {
             Color("backgroundColor")
                 .ignoresSafeArea()
             VStack {
-                LogoView()
+                LogoView(size: 35)
                 ZStack {
                     Text(photoViewModel.formattedDateOneYearAgo)
                         .font(Font.custom("Poppins-Regular", size: 24))
@@ -63,16 +63,14 @@ struct AllPhotosView: View {
                                     Text("Show screenshots")
                                         .font(Font.custom("Poppins-Regular", size: 18))
                                         .foregroundColor(Color.white)
-                                        .padding(.horizontal, 16)
                                     Spacer()
                                     Image(systemName: "chevron.down")
                                         .foregroundColor(.white)
                                         .rotationEffect(Angle(degrees: expanded ? 180 : 0))
-                                        .padding(.horizontal, 16)
                                 }
+                                .padding(.horizontal, 12)
                             }
                             .contentShape(Rectangle())
-                            .padding()
                             if expanded {
                                 let sortedScreenshots = photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()
                                 LazyVGrid(columns: layout) {

@@ -19,38 +19,79 @@ struct PermissionView: View {
     
     var body: some View {
         if !permission.photosAuthorized {
-            VStack {
-                Text("Please grant the app access to all your photos!")
-                    .font(Font.custom("Poppins-Bold", size: 24))
-                    .foregroundColor(Color.white)
-                Button {
-                    requestPhotoAccess()
-                } label: {
-                    Text("Decide!")
-                        .font(Font.custom("Poppins-Bold", size: 20))
-                        .foregroundColor(Color("backgroundColor"))
-                        .padding()
-                        .background(Color.white)
-                        .cornerRadius(10)
-                }
-                .fullScreenCover(isPresented: $permissionDeniedShowing) {
+            ZStack {
+                Color("backgroundColor")
+                    .ignoresSafeArea()
+                VStack {
                     VStack {
-                        Text("Please head to settings to grant access to all photos")
-                            .font(Font.custom("Poppins-Bold", size: 24))
-                            .foregroundColor(.white)
-                        Button {
-                            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                            UIApplication.shared.open(url)
-                        } label: {
-                            Text("Settings")
-                                .font(Font.custom("Poppins-Bold", size: 24))
-                                .foregroundColor(Color("backgroundColor"))
+                        ZStack {
+                            Image("stars2")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                                 .padding()
-                                .background(Color.white)
-                                .cornerRadius(20)
+                            VStack {
+                                Image("rocket_tilted")
+                                VStack(spacing: -4) {
+                                    Text("Find")
+                                        .font(Font.custom("Poppins-Bold", size: 48))
+                                        .foregroundColor(Color.white)
+                                    Text("Your")
+                                        .font(Font.custom("Poppins-Bold", size: 48))
+                                        .foregroundColor(Color("primary"))
+                                    Text("Memories.")
+                                        .font(Font.custom("Poppins-Bold", size: 48))
+                                        .foregroundColor(Color.white)
+                                }
+                            }
                         }
                     }
-                    .padding(16)
+                    Spacer()
+                    HStack(spacing: 0) {
+                        Text("Please grant the app access to ")
+                            .font(Font.custom("Poppins-Light", size: 14))
+                            .foregroundColor(Color.white)
+                        Text("all")
+                            .font(Font.custom("Poppins-Light", size: 14))
+                            .foregroundColor(Color("primary"))
+                        Text(" your photos!")
+                            .font(Font.custom("Poppins-Light", size: 14))
+                            .foregroundColor(Color.white)
+                    }
+                    Button {
+                        requestPhotoAccess()
+                    } label: {
+                        Text("Lets find Photos")
+                            .font(Font.custom("Poppins-Bold", size: 20))
+                            .foregroundColor(Color("backgroundColor"))
+                            .padding()
+                            .background(Color.white)
+                            .cornerRadius(10)
+                    }
+                    Spacer()
+                }
+                .padding()
+                .fullScreenCover(isPresented: $permissionDeniedShowing) {
+                    ZStack {
+                        Color("backgroundColor")
+                            .ignoresSafeArea()
+                        VStack {
+                            Text("Please head to settings to grant access to all photos")
+                                .font(Font.custom("Poppins-Bold", size: 24))
+                                .foregroundColor(.white)
+                            Button {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                                UIApplication.shared.open(url)
+                            } label: {
+                                Text("Settings")
+                                    .font(Font.custom("Poppins-Bold", size: 24))
+                                    .foregroundColor(Color("backgroundColor"))
+                                    .padding()
+                                    .background(Color.white)
+                                    .cornerRadius(20)
+                            }
+                        }
+                        .padding(16)
+                    }
                 }
             }
         } else if permission.notDetermined {

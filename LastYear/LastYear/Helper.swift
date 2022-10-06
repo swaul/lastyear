@@ -6,6 +6,17 @@ let userDefaultsPhotosKey = "photos"
 
 struct Helper {
     
+    static func defaultsContainId(id: String) -> Bool {
+        if let userDefaults = UserDefaults(suiteName: appGroupName) {
+            if let data = userDefaults.data(forKey: userDefaultsPhotosKey) {
+                let ids = try! JSONDecoder().decode([String].self, from: data)
+                return ids.contains(id)
+            }
+        }
+        
+        return false
+    }
+    
     static func getImageIdsFromUserDefault() -> [String] {
         
         if let userDefaults = UserDefaults(suiteName: appGroupName) {

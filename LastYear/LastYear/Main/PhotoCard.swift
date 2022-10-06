@@ -37,8 +37,8 @@ struct PhotoCard: View {
     }
 }
 
-//struct PhotoCard_Previews: PreviewProvider {
-//    static var previews: some View {
-//        PhotoCard(image: <#Image#>)
-//    }
-//}
+struct PhotoCard_Previews: PreviewProvider {
+    static var previews: some View {
+        PhotoCard(image: PhotoData.dummy)
+    }
+}

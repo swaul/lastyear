@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 struct PhotoDetailView: View {
-            
+    
     var formatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
@@ -19,6 +19,8 @@ struct PhotoDetailView: View {
     var images: [PhotoData]
     
     @State var selected: String
+    @State var isShowingiMessages = false
+    @State var isShowingShare = false
     @State var indexIsLimit: Bool = false {
         didSet {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -35,9 +37,11 @@ struct PhotoDetailView: View {
     
     var body: some View {
         ZStack {
+            Color("backgroundColor")
+                .ignoresSafeArea()
             VStack {
-                LogoView()
-                .padding()
+                LogoView(size: 35)
+                    .padding()
                 Spacer()
                 GeometryReader { reader in
                     TabView(selection: $selected) {
@@ -46,9 +50,11 @@ struct PhotoDetailView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(20)
-                                .border(.white, width: 4)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(.white, lineWidth: 3)
+                                )
                                 .padding()
-                                .cornerRadius(20)
                                 .tag(images)
                         }
                     }
@@ -66,17 +72,65 @@ struct PhotoDetailView: View {
                 }
                 Spacer()
                 HStack {
-                    Button {
-                        shareToStory()
-                    } label: {
-                        Image("instagram")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 48)
-                            .foregroundColor(.white)
+                    VStack(spacing: 0) {
+                        Button {
+                            shareToStory()
+                        } label: {
+                            Image("instagram")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 48)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 4)
+                        Text("Instagram")
+                            .font(Font.custom("Poppins-Bold", size: 12))
+                            .foregroundColor(Color.white)
+                    }
+                    VStack(spacing: 0) {
+                        Button {
+                            isShowingiMessages = true
+                        } label: {
+                            Image(systemName: "message")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 48)
+                                .foregroundColor(.green)
+                        }
+                        .padding(.horizontal, 4)
+                        Text("iMessage")
+                            .font(Font.custom("Poppins-Bold", size: 12))
+                            .foregroundColor(Color.white)
+                    }
+                    VStack(spacing: 0) {
+                        Button {
+                            shareToTwitter()
+                        } label: {
+                            Image(systemName: "message")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 48)
+                                .foregroundColor(.green)
+                        }
+                        .padding(.horizontal, 4)
+                        Text("Twitter")
+                            .font(Font.custom("Poppins-Bold", size: 12))
+                            .foregroundColor(Color.white)
+                    }
+                    VStack {
+                        ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
+                            Image(systemName: "ellipsis.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 48)
+                                .foregroundColor(.white)
+                        }
+                        .padding(.horizontal, 4)
+                        Text("Others")
+                            .font(Font.custom("Poppins-Bold", size: 12))
+                            .foregroundColor(Color.white)
                     }
                     Spacer()
-                    
                     if let image = images.first(where: { $0.id == selected }) {
                         VStack {
                             Text(formatter.string(from: image.date!))
@@ -85,7 +139,14 @@ struct PhotoDetailView: View {
                     }
                 }
                 .padding()
-
+                .sheet(isPresented: $isShowingiMessages) {
+                    MessageComposeView(recipients: ["recipients go here"], body: "Message goes here") { messageSent in
+                        print("MessageComposeView with message sent? \(messageSent)")
+                    }
+                }
+                .sheet(isPresented: $isShowingShare) {
+                    ActivityViewController(activityItems: [selectedImage!])
+                }
             }
         }
     }
@@ -120,7 +181,7 @@ struct PhotoDetailView: View {
                 guard let imageData = image.pngData() else { return }
                 let pasteboardItems: [String: Any] = [
                     "com.instagram.sharedSticker.backgroundImage": imageData,
-//                    "com.instagram.sharedSticker.stickerImage": imageData,
+                    //                    "com.instagram.sharedSticker.stickerImage": imageData,
                     "com.instagram.sharedSticker.backgroundTopColor": "#F8B729",
                     "com.instagram.sharedSticker.backgroundBottomColor": "#242424"
                 ]
@@ -138,6 +199,28 @@ struct PhotoDetailView: View {
             } else {
                 print("Sorry the application is not installed")
             }
+        }
+    }
+    
+    func shareToWhatsapp() {
+        guard let image = selectedImage,
+                let imageData = image.pngData(),
+                let whatsappURL = URL(string: "whatsapp://send")
+        else { return }
+        
+        if UIApplication.shared.canOpenURL(whatsappURL) {
+            UIApplication.shared.open(whatsappURL)
+        }
+    }
+    
+    func shareToTwitter() {
+        guard let image = selectedImage,
+              let imageData = image.pngData(),
+              let url = URL(string: "twitter://post?image=[\(imageData)]")
+        else { return }
+        
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
         }
     }
     
@@ -162,7 +245,7 @@ extension UIImage {
             
             let text = text.drawImagesAndText(imageSize: rect.size)
             let resizedText = text.resizeToWidth(scaledToWidth: resizedWatermark.size.width * 0.75)
-
+            
             UIGraphicsBeginImageContextWithOptions(self.size, true, 0)
             let context = UIGraphicsGetCurrentContext()!
             
@@ -189,10 +272,10 @@ extension UIImage {
     func resizeToWidth(scaledToWidth: CGFloat) -> UIImage {
         let oldWidth = self.size.width
         let scaleFactor = scaledToWidth / oldWidth
-
+        
         let newHeight = self.size.height * scaleFactor
         let newWidth = oldWidth * scaleFactor
-
+        
         UIGraphicsBeginImageContext(CGSize(width:newWidth, height:newHeight))
         self.draw(in: CGRect(x:0, y:0, width:newWidth, height:newHeight))
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -207,12 +290,12 @@ extension String {
         // 1
         let size = CGSize(width: imageSize.width * 0.25, height: 200)
         let renderer = UIGraphicsImageRenderer(size: size)
-
+        
         let img = renderer.image { ctx in
             // 2
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .center
-
+            
             let shadow = NSShadow()
             shadow.shadowColor = UIColor.black
             shadow.shadowBlurRadius = 5
@@ -224,15 +307,15 @@ extension String {
                 .foregroundColor: UIColor.white,
                 .shadow: shadow
             ]
-
+            
             // 4
             let attributedString = NSAttributedString(string: self, attributes: attrs)
-
+            
             // 5
             attributedString.draw(with: CGRect(x: 0, y: 0, width: imageSize.width * 0.25, height: 200), options: .usesLineFragmentOrigin, context: nil)
-
+            
         }
-
+        
         return img
         // 6
     }

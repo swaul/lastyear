@@ -17,13 +17,8 @@ import Vision
 
 public class PhotosViewModel: ObservableObject {
     
-    @Published var allPhotos = [PhotoData]() {
-        didSet {
-            countDone = allPhotos.count
-            getBestImage()
-            checkIfDone()
-        }
-    }
+    @Published var formattedDateOneYearAgo: String = ""
+    @Published var bestImage: PhotoData?
     @Published var countFound = 0
     @Published var countDone = 0
     @Published var requestsFailed = 0
@@ -34,10 +29,16 @@ public class PhotosViewModel: ObservableObject {
             formattedDateOneYearAgo = Formatters.dateFormatter.string(from: dateOneYearAgo)
         }
     }
-    @Published var formattedDateOneYearAgo: String = ""
-    @Published var bestImage: PhotoData?
+    @Published var allPhotos = [PhotoData]() {
+        didSet {
+            countDone = allPhotos.count
+            getBestImage()
+            checkIfDone()
+        }
+    }
+    
     var many: Bool = false
-
+    
     @ObservedObject var authService = AuthService.shared
     
     var cancellabels = Set<AnyCancellable>()
@@ -48,7 +49,7 @@ public class PhotosViewModel: ObservableObject {
     
     init() {
         Helper.removeAll()
-
+        
         setupBinding()
         dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         getAllPhotos()
@@ -69,12 +70,12 @@ public class PhotosViewModel: ObservableObject {
             }
         }.store(in: &cancellabels)
     }
-        
+    
     func getAllPhotos() {
         withAnimation {
             loadingState = .loading
         }
-
+        
         guard let lastYear = dateOneYearAgo else {
             loadingState = .failed
             return
@@ -93,7 +94,7 @@ public class PhotosViewModel: ObservableObject {
         requestOptions.isSynchronous = false
         requestOptions.deliveryMode = .highQualityFormat
         requestOptions.isNetworkAccessAllowed = true
-
+        
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
@@ -102,34 +103,52 @@ public class PhotosViewModel: ObservableObject {
         
         countFound = results.countOfAssets(with: .image)
         
+        guard countFound != allPhotos.count else { return }
+        allPhotos.removeAll()
+        
         many = countFound > 20
         
         if results.count > 0 {
             for i in 0..<results.count {
                 let asset = results.object(at: i)
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
-                    if let image = image, !asset.isHidden {
-                        let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
-
+                    if !Helper.defaultsContainId(id: asset.localIdentifier) {
+                        if let image = image, !asset.isHidden {
+                            let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+                            
+                            if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
+                                if asset.mediaSubtypes == .photoScreenshot {
+                                    photo.photoType = .screenshot
+                                    self.allPhotos.append(photo)
+                                } else {
+                                    if asset.mediaSubtypes == .photoLive {
+                                        photo.photoType = .live
+                                    }
+                                    self.allPhotos.append(photo)
+                                    self.appendImage(image: image, id: photo.id)
+                                }
+                            } else {
+                                self.countFound -= 1
+                            }
+                        } else {
+                            self.requestsFailed += 1
+                            print("error asset to image ", asset.mediaSubtypes)
+                        }
+                    } else {
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
+                            let image = Helper.getImageFromUserDefaults(key: self.makeID(id: asset.localIdentifier))
+                            let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
                             if asset.mediaSubtypes == .photoScreenshot {
                                 photo.photoType = .screenshot
                                 self.allPhotos.append(photo)
-//                                self.animalClassifier(uiImage: photo.uiImage)
                             } else {
                                 if asset.mediaSubtypes == .photoLive {
                                     photo.photoType = .live
                                 }
                                 self.allPhotos.append(photo)
-//                                self.animalClassifier(uiImage: photo.uiImage)
                                 self.appendImage(image: image, id: photo.id)
                             }
-                        } else {
-                            self.countFound -= 1
                         }
-                    } else {
-                        self.requestsFailed += 1
-                        print("error asset to image ", asset.mediaSubtypes)
                     }
                 }
             }
@@ -139,56 +158,6 @@ public class PhotosViewModel: ObservableObject {
         }
     }
     
-//    public func animalClassifier(uiImage: UIImage) {
-//        guard let cgImage = uiImage.cgImage else { return }
-//
-//        animalRecognitionWorkQueue.async {
-//            let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-//            do {
-//                try requestHandler.perform([self.animalRecognitionRequest])
-//            } catch {
-//                print(error)
-//            }
-//        }
-//    }
-//
-//    private func setupAnimalCheck() {
-//        animalRecognitionRequest = VNRecognizeAnimalsRequest { [weak self] request, error in
-//            guard error == nil else { return }
-//
-//                if let results = request.results as? [VNRecognizedObjectObservation] {
-//                    var detectionString = ""
-//                    var animalCount = 0
-//                    for result in results
-//                    {
-//                        let animals = result.labels
-//
-//                        for animal in animals {
-//
-//                            animalCount = animalCount + 1
-//                            var animalLabel = ""
-//
-//                            if animal.identifier == "Cat" {
-//                                animalLabel = "🐱"
-//                            }
-//                            else if animal.identifier == "Dog" {
-//                                animalLabel = "🐶"
-//                            }
-//
-//                            let string = "#\(animalCount) \(animal.identifier) \(animalLabel) confidence is \(animal.confidence)\n"
-//                            detectionString = detectionString + string
-//
-//                            print("[animal]", detectionString)
-//                        }
-//                    }
-//
-//                    if detectionString.isEmpty{
-//                        detectionString = "Neither cat nor dog"
-//                    }
-//                }
-//            }
-//    }
-
     func appendImage(image: UIImage, id: String) {
         
         // Save image in userdefaults

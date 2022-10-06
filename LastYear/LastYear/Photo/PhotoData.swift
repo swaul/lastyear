@@ -89,6 +89,12 @@ public class PhotoData: Identifiable, Comparable, Hashable {
     }
 }
 
+extension PhotoData {
+    static var dummy: PhotoData {
+        PhotoData(id: "123", image: UIImage(named: "fallback")!, formattedDate: "20.09.2021", isFavorite: false, sourceType: .typeUserLibrary)
+    }
+}
+
 public enum AnimalType {
     case cat
     case dog

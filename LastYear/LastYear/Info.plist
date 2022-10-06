@@ -5,14 +5,22 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>instagram-stories</string>
+		<string>whatsapp</string>
+		<string>twitter</string>
 	</array>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Yo weils nice is yo</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-Bold.ttf</string>
 		<string>Poppins-Medium.ttf</string>
 		<string>Poppins-Light.ttf</string>
+		<string>Poppins-SemiBold.ttf</string>
 	</array>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>backgroundColor</string>
+		<key>UIImageName</key>
+		<string>rocket</string>
+	</dict>
 </dict>
 </plist>

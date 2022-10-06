@@ -17,7 +17,7 @@ struct WelcomeView: View {
                 .ignoresSafeArea()
             VStack {
                 Spacer()
-                LogoView()
+                LogoView(size: 35)
                 Spacer()
                 Image("rocket")
                     .resizable()

@@ -46,6 +46,7 @@ struct ChoseAuthView: View {
                 }
                 .padding()
                 
+                LogoView(size: 15)
                 HStack(alignment: .center, spacing: 2) {
                     Text("I already have an account.")
                         .font(Font.custom("Poppins-Regular", size: 12))
