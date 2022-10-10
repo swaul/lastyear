@@ -107,12 +107,13 @@ public class PhotosViewModel: ObservableObject {
         allPhotos.removeAll()
         
         many = countFound > 20
+//        let cache = Helper.getPhotoData(for: Formatters.dateFormatter.string(from: lastYear))
         
         if results.count > 0 {
             for i in 0..<results.count {
                 let asset = results.object(at: i)
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
-                    if !Helper.defaultsContainId(id: asset.localIdentifier) {
+//                    if cache == nil {
                         if let image = image, !asset.isHidden {
                             let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
                             
@@ -134,22 +135,26 @@ public class PhotosViewModel: ObservableObject {
                             self.requestsFailed += 1
                             print("error asset to image ", asset.mediaSubtypes)
                         }
-                    } else {
-                        if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
-                            let image = Helper.getImageFromUserDefaults(key: self.makeID(id: asset.localIdentifier))
-                            let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
-                            if asset.mediaSubtypes == .photoScreenshot {
-                                photo.photoType = .screenshot
-                                self.allPhotos.append(photo)
-                            } else {
-                                if asset.mediaSubtypes == .photoLive {
-                                    photo.photoType = .live
-                                }
-                                self.allPhotos.append(photo)
-                                self.appendImage(image: image, id: photo.id)
-                            }
-                        }
-                    }
+//                    } else {
+//                        if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
+//                            let photoData = try! JSONDecoder().decode([PhotoData.PhotoDataSaveAble].self, from: cache!)
+//
+//                            let photos = photoData.compactMap { PhotoData(saveAble: $0) }
+//
+//                            for photo in photos {
+//                                if asset.mediaSubtypes == .photoScreenshot {
+//                                    photo.photoType = .screenshot
+//                                    self.allPhotos.append(photo)
+//                                } else {
+//                                    if asset.mediaSubtypes == .photoLive {
+//                                        photo.photoType = .live
+//                                    }
+//                                    self.allPhotos.append(photo)
+//                                    self.appendImage(image: photo.image, id: photo.id)
+//                                }
+//                            }
+//                        }
+//                    }
                 }
             }
         } else {
@@ -220,6 +225,15 @@ public class PhotosViewModel: ObservableObject {
             withAnimation {
                 many = false
             }
+//            if let lastYear = dateOneYearAgo,
+//               let userDefaults = UserDefaults(suiteName: appGroupName) {
+//                let lastYearId = Formatters.dateFormatter.string(from: lastYear)
+//                let data = allPhotos.compactMap { $0.toData() }
+//
+//                let json = try! JSONEncoder().encode(data)
+//
+//                userDefaults.set(json, forKey: lastYearId)
+//            }
         }
     }
     

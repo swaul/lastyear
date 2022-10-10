@@ -12,13 +12,15 @@ struct MessageComposeView: UIViewControllerRepresentable {
     typealias Completion = (_ messageSent: Bool) -> Void
 
     static var canSendText: Bool { MFMessageComposeViewController.canSendText() }
-        
+    static var canSendAttachments: Bool { MFMessageComposeViewController.canSendAttachments() }
+    
     let recipients: [String]?
     let body: String?
+//    let attachment: UIImage?
     let completion: Completion?
     
     func makeUIViewController(context: Context) -> UIViewController {
-        guard Self.canSendText else {
+        guard Self.canSendText, Self.canSendAttachments else {
             let errorView = MessagesUnavailableView()
             return UIHostingController(rootView: errorView)
         }

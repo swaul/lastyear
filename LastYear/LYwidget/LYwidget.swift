@@ -32,14 +32,16 @@ struct Provider: TimelineProvider {
         let imageIds = Helper.getImageIdsFromUserDefault()
         print(imageIds)
 
+        guard !imageIds.isEmpty else { return }
         // testing for 5 seconds
-        let timeRangeInSecond = 5
+        let daySeconds = 60 * 60 * 24
+        let timeRangeInSecond = daySeconds / imageIds.count
         
         for index in 0 ..< imageIds.count {
             
             let entryDate = Calendar.current.date(byAdding: .second, value: index * timeRangeInSecond, to: currentDate)!
             
-            var components = imageIds[index].split(separator: "@", omittingEmptySubsequences: true)
+            let components = imageIds[index].split(separator: "@", omittingEmptySubsequences: true)
             var dateString: String?
             if components.count > 1 {
                 dateString = String(components.last!)

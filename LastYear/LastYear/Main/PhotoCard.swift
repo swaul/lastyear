@@ -20,7 +20,7 @@ struct PhotoCard: View {
         
     var body: some View {
         VStack {
-            image.image
+            Image(uiImage: image.image)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)

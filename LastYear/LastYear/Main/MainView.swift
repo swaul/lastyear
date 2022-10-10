@@ -47,7 +47,7 @@ struct MainView: View {
                                     PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
                                 }
                             } label: {
-                                Image(uiImage: photoViewModel.bestImage?.uiImage ?? UIImage(named: "fallback")!)
+                                Image(uiImage: photoViewModel.bestImage?.waterMarkedImage ?? UIImage(named: "fallback")!)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .cornerRadius(20)

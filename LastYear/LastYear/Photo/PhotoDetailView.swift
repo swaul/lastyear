@@ -32,7 +32,7 @@ struct PhotoDetailView: View {
     }
     
     var selectedImage: UIImage? {
-        return images.first(where: { $0.id == selected })?.uiImage
+        return images.first(where: { $0.id == selected })?.waterMarkedImage
     }
     
     var body: some View {
@@ -46,7 +46,7 @@ struct PhotoDetailView: View {
                 GeometryReader { reader in
                     TabView(selection: $selected) {
                         ForEach(images, id: \.id) { image in
-                            Image(uiImage: image.uiImage)
+                            Image(uiImage: image.waterMarkedImage)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(20)
@@ -79,7 +79,7 @@ struct PhotoDetailView: View {
                             Image("instagram")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(height: 48)
+                                .frame(height: 32)
                                 .foregroundColor(.white)
                         }
                         .padding(.horizontal, 4)
@@ -94,7 +94,7 @@ struct PhotoDetailView: View {
                             Image(systemName: "message")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(height: 48)
+                                .frame(height: 32)
                                 .foregroundColor(.green)
                         }
                         .padding(.horizontal, 4)
@@ -102,27 +102,27 @@ struct PhotoDetailView: View {
                             .font(Font.custom("Poppins-Bold", size: 12))
                             .foregroundColor(Color.white)
                     }
-                    VStack(spacing: 0) {
-                        Button {
-                            shareToTwitter()
-                        } label: {
-                            Image(systemName: "message")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 48)
-                                .foregroundColor(.green)
-                        }
-                        .padding(.horizontal, 4)
-                        Text("Twitter")
-                            .font(Font.custom("Poppins-Bold", size: 12))
-                            .foregroundColor(Color.white)
-                    }
+//                    VStack(spacing: 0) {
+//                        Button {
+//                            shareToTwitter()
+//                        } label: {
+//                            Image(systemName: "message")
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fit)
+//                                .frame(height: 48)
+//                                .foregroundColor(.green)
+//                        }
+//                        .padding(.horizontal, 4)
+//                        Text("Twitter")
+//                            .font(Font.custom("Poppins-Bold", size: 12))
+//                            .foregroundColor(Color.white)
+//                    }
                     VStack {
                         ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
                             Image(systemName: "ellipsis.circle")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(height: 48)
+                                .frame(height: 32)
                                 .foregroundColor(.white)
                         }
                         .padding(.horizontal, 4)
@@ -216,7 +216,7 @@ struct PhotoDetailView: View {
     func shareToTwitter() {
         guard let image = selectedImage,
               let imageData = image.pngData(),
-              let url = URL(string: "twitter://post?image=[\(imageData)]")
+              let url = URL(string: "twitter://post?tweet_image=\(imageData)")
         else { return }
         
         if UIApplication.shared.canOpenURL(url) {

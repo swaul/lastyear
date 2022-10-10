@@ -1,20 +1,20 @@
 import Foundation
 import SwiftUI
 
-let appGroupName = "group.at.kuehnel.LastYear-test"
+let appGroupName = "group.com.lichtenberg.lastyear"
 let userDefaultsPhotosKey = "photos"
 
 struct Helper {
     
-    static func defaultsContainId(id: String) -> Bool {
+    static func getPhotoData(for date: String) -> Data? {
+        
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
-            if let data = userDefaults.data(forKey: userDefaultsPhotosKey) {
-                let ids = try! JSONDecoder().decode([String].self, from: data)
-                return ids.contains(id)
+            if let data = userDefaults.data(forKey: date) {
+                return data
             }
         }
         
-        return false
+        return nil
     }
     
     static func getImageIdsFromUserDefault() -> [String] {
