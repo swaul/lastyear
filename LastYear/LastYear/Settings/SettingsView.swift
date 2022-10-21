@@ -26,13 +26,15 @@ struct SettingsView: View {
                         Text("Licences")
                             .font(Font.custom("Poppins-Regular", size: 24))
                     }
+                    .padding()
                     NavigationLink {
                         PrivacyView()
                     } label: {
                         Text("Privacy")
                             .font(Font.custom("Poppins-Regular", size: 24))
                     }
-                    
+                    .padding()
+
                     Spacer()
                     Button {
                         logoutDialogShowing = true
