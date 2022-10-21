@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NotificationPermissionView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-        
+    
     @ObservedObject var permissionHandler = PermissionHandler.shared
     
     @State var notiShowing: Bool = false
@@ -26,13 +26,19 @@ struct NotificationPermissionView: View {
                         .padding()
                     VStack {
                         Spacer()
-                        Image(systemName: "arrow.up")
-                            .resizable()
-                            .foregroundColor(.white)
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 100)
-                            .offset(y: notiShowing ? -20 : 0)
-                            .animation(Animation.easeInOut.repeatForever(autoreverses: true).speed(0.75), value: notiShowing)
+                        VStack {
+                            Image(systemName: "arrow.up")
+                                .resizable()
+                                .foregroundColor(.white)
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 100)
+                                .offset(y: notiShowing ? -20 : 0)
+                                .animation(Animation.easeInOut.repeatForever(autoreverses: true).speed(0.75), value: notiShowing)
+                            Text("Looks like this!")
+                                .font(Font.custom("Poppins-Bold", size: 20))
+                                .foregroundColor(Color.white)
+                                .padding(.top)
+                        }
                         Spacer()
                         VStack(spacing: -4) {
                             Text("Let us")
@@ -80,9 +86,11 @@ struct NotificationPermissionView: View {
                 .cornerRadius(10)
             VStack(alignment: .leading) {
                 Text("You have 14 pictures to look back on from \(Formatters.dateFormatter.string(from: Date.now))")
-                    .font(Font.custom("Poppins-SemiBold", size: 16))
+                    .font(Font.custom("Poppins-SemiBold", size: 14))
+                    .foregroundColor(.black)
                 Text("Take a look and share it with your friends!")
-                    .font(Font.custom("Poppins-Regular", size: 16))
+                    .font(Font.custom("Poppins-Regular", size: 14))
+                    .foregroundColor(.black)
             }
         }
         .padding(8)

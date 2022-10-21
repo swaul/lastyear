@@ -19,8 +19,6 @@
 		9EAADB3828E3968400F93097 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EAADB3728E3968400F93097 /* SwiftUI.framework */; };
 		9EAADB3B28E3968400F93097 /* LYwidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB3A28E3968400F93097 /* LYwidget.swift */; };
 		9EAADB3E28E3968600F93097 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9EAADB3D28E3968600F93097 /* Assets.xcassets */; };
-		9EAADB4028E3968600F93097 /* LYwidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */; };
-		9EAADB4128E3968600F93097 /* LYwidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */; };
 		9EAADB4428E3968600F93097 /* LYwidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9EAADB3328E3968400F93097 /* LYwidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		9EAADB4C28E3976900F93097 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB4B28E3976900F93097 /* Helper.swift */; };
 		9EAADB4D28E397C500F93097 /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB4B28E3976900F93097 /* Helper.swift */; };
@@ -107,7 +105,6 @@
 		9EAADB3528E3968400F93097 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		9EAADB3728E3968400F93097 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		9EAADB3A28E3968400F93097 /* LYwidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LYwidget.swift; sourceTree = "<group>"; };
-		9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = LYwidget.intentdefinition; sourceTree = "<group>"; };
 		9EAADB3D28E3968600F93097 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9EAADB3F28E3968600F93097 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9EAADB4B28E3976900F93097 /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
@@ -238,7 +235,6 @@
 			isa = PBXGroup;
 			children = (
 				9EAADB3A28E3968400F93097 /* LYwidget.swift */,
-				9EAADB3C28E3968400F93097 /* LYwidget.intentdefinition */,
 				9EAADB3D28E3968600F93097 /* Assets.xcassets */,
 				9EAADB3F28E3968600F93097 /* Info.plist */,
 			);
@@ -499,7 +495,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EAADB3B28E3968400F93097 /* LYwidget.swift in Sources */,
-				9EAADB4028E3968600F93097 /* LYwidget.intentdefinition in Sources */,
 				9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */,
 				9EAADB4D28E397C500F93097 /* Helper.swift in Sources */,
 			);
@@ -519,7 +514,6 @@
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
-				9EAADB4128E3968600F93097 /* LYwidget.intentdefinition in Sources */,
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
