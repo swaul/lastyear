@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LocalAuthentication
 
 struct LoginView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -91,6 +92,9 @@ struct LoginView: View {
             .disabled(loginButtonDisabled)
             Spacer()
         }
+        .onAppear {
+            getPasswordFromKeychain()
+        }
         .padding()
         .navigationTitle("Email")
     }
@@ -105,6 +109,52 @@ struct LoginView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
+    }
+    
+    func getPasswordFromKeychain() {
+        do {
+            let credentials = try CredentialsHandler.getPassword()
+            tryBiometricAuthentication(password: credentials.password, email: credentials.email)
+        } catch let error {
+            print("[LOG] - Failed to get Credentials from Keychain")
+        }
+    }
+    
+    func tryBiometricAuthentication(password: String, email: String) {
+      // 1
+      let context = LAContext()
+      var error: NSError?
+
+      // 2
+      if context.canEvaluatePolicy(
+        .deviceOwnerAuthenticationWithBiometrics,
+        error: &error) {
+        // 3
+        let reason = "Authenticate to unlock your note."
+        context.evaluatePolicy(
+          .deviceOwnerAuthenticationWithBiometrics,
+          localizedReason: reason) { authenticated, error in
+          // 4
+          DispatchQueue.main.async {
+            if authenticated {
+              // 5
+                self.email = email
+                self.password = password
+                self.login()
+            } else {
+              // 6
+              if let errorString = error?.localizedDescription {
+                print("Error in biometric policy evaluation: \(errorString)")
+              }
+            }
+          }
+        }
+      } else {
+        // 7
+        if let errorString = error?.localizedDescription {
+          print("Error in biometric policy evaluation: \(errorString)")
+        }
+      }
     }
 }
 

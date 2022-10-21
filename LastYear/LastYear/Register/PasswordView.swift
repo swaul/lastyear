@@ -149,6 +149,12 @@ struct PasswordView: View {
                 print("[LOG] - Registring failed with error", error)
             case .success(let user):
                 print("[LOG] - Register successful for", user)
+                let credentials = Credentials(email: email, password: password)
+                do {
+                    try CredentialsHandler.setPassword(credentials: credentials)
+                } catch let error {
+                    print("[LOG] - Couldnt be saved to keychain", error.localizedDescription)
+                }
                 Analytics.setAnalyticsCollectionEnabled(appTrackingAccepted)
                 presentationMode.wrappedValue.dismiss()
             }

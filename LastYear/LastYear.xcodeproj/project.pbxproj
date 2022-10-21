@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
+		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
 		9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */; };
 		9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */; };
@@ -94,6 +95,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
 		9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPhotosView.swift; sourceTree = "<group>"; };
@@ -334,6 +336,7 @@
 			isa = PBXGroup;
 			children = (
 				9EBDE91B28DDFD4200264AF3 /* LoginView.swift */,
+				9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -511,6 +514,7 @@
 				9EBDE8E428DDDCE900264AF3 /* PhotoCard.swift in Sources */,
 				9EBDE91528DDF44D00264AF3 /* ChoseAuthView.swift in Sources */,
 				9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */,
+				9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */,
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
@@ -733,6 +737,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LastYear/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Login to user account";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "To retreive images from gallery from last year";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -769,6 +774,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LastYear/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "Login to user account";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "To retreive images from gallery from last year";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
