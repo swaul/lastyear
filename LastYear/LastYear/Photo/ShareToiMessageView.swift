@@ -16,11 +16,16 @@ struct MessageComposeView: UIViewControllerRepresentable {
     
     let recipients: [String]?
     let body: String?
-//    let attachment: UIImage?
+    let attachment: UIImage?
     let completion: Completion?
     
     func makeUIViewController(context: Context) -> UIViewController {
-        guard Self.canSendText, Self.canSendAttachments else {
+        guard
+            Self.canSendText,
+                Self.canSendAttachments,
+                let image = attachment,
+                let imageData = image.pngData()
+        else {
             let errorView = MessagesUnavailableView()
             return UIHostingController(rootView: errorView)
         }
@@ -29,7 +34,8 @@ struct MessageComposeView: UIViewControllerRepresentable {
         controller.messageComposeDelegate = context.coordinator
         controller.recipients = recipients
         controller.body = body
-        
+        controller.addAttachmentData(imageData, typeIdentifier: "image/png", filename: "lastyear")
+
         return controller
     }
     

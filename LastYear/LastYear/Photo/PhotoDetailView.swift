@@ -55,14 +55,18 @@ struct PhotoDetailView: View {
                                         .stroke(.white, lineWidth: 3)
                                 )
                                 .padding()
-                                .tag(images)
+                                .tag(image.id)
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
                     .onTapGesture { point in
-                        let half = reader.size.width / 2
-                        if point.x < half {
+                        let firstThird = reader.size.width / 3
+                        let lastThird = reader.size.width - firstThird
+                        
+                        if point.x < firstThird {
                             toLeft()
+                        } else if point.x > firstThird && point.x < lastThird {
+                            searchImage()
                         } else {
                             toRight()
                         }
@@ -140,7 +144,7 @@ struct PhotoDetailView: View {
                 }
                 .padding()
                 .sheet(isPresented: $isShowingiMessages) {
-                    MessageComposeView(recipients: ["recipients go here"], body: "Message goes here") { messageSent in
+                    MessageComposeView(recipients: [], body: "Look at my memory from LastYear", attachment: selectedImage) { messageSent in
                         print("MessageComposeView with message sent? \(messageSent)")
                     }
                 }
@@ -173,6 +177,14 @@ struct PhotoDetailView: View {
             return
         }
         selected = images[images.index(after: index)].id
+    }
+    
+    func searchImage() {
+    
+        guard let selected = selected.split(separator: "@").first, let url = URL(string: "photos-redirect://image=\(selected)"),
+              UIApplication.shared.canOpenURL(url) else { return }
+        
+        UIApplication.shared.open(url)
     }
     
     func shareToStory() {
@@ -243,7 +255,7 @@ extension UIImage {
             let resizedWatermark = watermark.resizeToWidth(scaledToWidth: rect.width * 0.5)
             print("full image width: \(rect.width). watermark width: \(resizedWatermark.size.width)")
             
-            let text = text.drawImagesAndText(imageSize: rect.size)
+            let text = text.drawImagesAndText(imageSize: rect.size, watermarkHeight: resizedWatermark.size.height)
             let resizedText = text.resizeToWidth(scaledToWidth: resizedWatermark.size.width * 0.75)
             
             UIGraphicsBeginImageContextWithOptions(self.size, true, 0)
@@ -252,9 +264,9 @@ extension UIImage {
             context.setFillColor(UIColor.white.cgColor)
             context.fill(rect)
             
-            let watermarkY = (rect.height - resizedWatermark.size.height - 80)
+            let watermarkY = (rect.height - resizedWatermark.size.height - 40)
             let watermarkX = (rect.width / 2 - resizedWatermark.size.width / 2)
-            let dateY = (watermarkY - resizedText.size.height / 2)
+            let dateY = (watermarkY - resizedText.size.height / 2 - 40)
             let dateX = (rect.width / 2 - resizedText.size.width / 2)
             
             self.draw(in: rect, blendMode: .normal, alpha: 1)
@@ -286,7 +298,7 @@ extension UIImage {
 
 extension String {
     
-    func drawImagesAndText(imageSize: CGSize) -> UIImage {
+    func drawImagesAndText(imageSize: CGSize, watermarkHeight: CGFloat) -> UIImage {
         // 1
         let size = CGSize(width: imageSize.width * 0.25, height: 200)
         let renderer = UIGraphicsImageRenderer(size: size)
@@ -302,7 +314,7 @@ extension String {
             
             // 3
             let attrs: [NSAttributedString.Key: Any] = [
-                .font: UIFont(name: "Poppins-Bold", size: 80)!,
+                .font: UIFont(name: "Poppins-Bold", size: watermarkHeight * 0.8)!,
                 .paragraphStyle: paragraphStyle,
                 .foregroundColor: UIColor.white,
                 .shadow: shadow

@@ -4,6 +4,7 @@
 <dict>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>workflow</string>
 		<string>instagram-stories</string>
 		<string>whatsapp</string>
 		<string>twitter</string>

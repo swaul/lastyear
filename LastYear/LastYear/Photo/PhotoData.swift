@@ -57,31 +57,9 @@ public class PhotoData: Identifiable, Comparable, Hashable {
         getCity(location: location)
     }
     
-    init?(saveAble: PhotoDataSaveAble) {
-        self.id = saveAble.id
-        self.date = Formatters.dateFormatter.date(from: saveAble.formattedDate)
-        self.formattedDate = saveAble.formattedDate
-//        self.photoType = saveAble.photoType
-        self.isFavorite = saveAble.isFavorite
-        self.faces = saveAble.faces
-        if let image = UIImage(data: saveAble.uiImageData) {
-            self.waterMarkedImage = image
-        } else {
-            self.waterMarkedImage = UIImage(named: "fallback")!
-        }
-        if let image = UIImage(data: saveAble.cleanImage) {
-            self.image = image
-        } else {
-            self.image = UIImage(named: "fallback")!
-        }
-        self.postalCode = saveAble.postalCode
-        self.sourceType = PHAssetSourceType(rawValue: saveAble.sourceType)
-    }
-    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
-
     
     public static func == (lhs: PhotoData, rhs: PhotoData) -> Bool {
         lhs.id == rhs.id
@@ -108,27 +86,6 @@ public class PhotoData: Identifiable, Comparable, Hashable {
             }
         }
     }
-}
-
-extension PhotoData {
-    
-    struct PhotoDataSaveAble: Codable {
-        public var id: String
-        public var uiImageData: Data
-        public var cleanImage: Data
-        public var formattedDate: String
-        public var faces: Int
-        public var isFavorite: Bool
-        public var sourceType: PHAssetSourceType.RawValue
-        public var postalCode: String = ""
-    }
-    
-    func toData() -> PhotoDataSaveAble? {
-        guard let imageData = self.waterMarkedImage.pngData(), let cleanImageData = self.image.pngData() else { return nil }
-        let saveable = PhotoDataSaveAble(id: self.id, uiImageData: imageData, cleanImage: cleanImageData, formattedDate: self.formattedDate, faces: self.faces, isFavorite: self.isFavorite, sourceType: self.sourceType.rawValue)
-        return saveable
-    }
-    
 }
 
 extension PhotoData {

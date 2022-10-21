@@ -10,28 +10,27 @@ import OSLog
 import SwiftUI
 
 struct Provider: TimelineProvider {
-
+    
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), imageID: nil, dateString: "")
+        SimpleEntry(date: Date(), dateLastYear: Date(), imageID: nil, dateString: "", numberOfIds: 0)
     }
-
+    
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
         let imageIds = Helper.getImageIdsFromUserDefault()
         
-        let entry = SimpleEntry(date: Date(), imageID: imageIds.first!, dateString: "")
+        let entry = SimpleEntry(date: Date(), dateLastYear: Date(), imageID: imageIds.first!, dateString: "", numberOfIds: 0)
         completion(entry)
     }
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         var entries: [SimpleEntry] = []
-        
+        os_log("GET TIMELINE STARTED", log: OSLog.default, type: .info)
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         
         let currentDate = Date()
         
         let imageIds = Helper.getImageIdsFromUserDefault()
-        print(imageIds)
-
+        os_log("IMAGE COUNT %{public}@", log: OSLog.default, type: .debug, imageIds.count)
         guard !imageIds.isEmpty else { return }
         // testing for 5 seconds
         let daySeconds = 60 * 60 * 24
@@ -43,10 +42,12 @@ struct Provider: TimelineProvider {
             
             let components = imageIds[index].split(separator: "@", omittingEmptySubsequences: true)
             var dateString: String?
+            var dateLastYear: Date? = nil
             if components.count > 1 {
                 dateString = String(components.last!)
+                dateLastYear = Formatters.dateFormatter.date(from: dateString!)
             }
-            let entry = SimpleEntry(date: entryDate, imageID: imageIds[index], dateString: dateString)
+            let entry = SimpleEntry(date: entryDate, dateLastYear: dateLastYear, imageID: imageIds[index], dateString: dateString, numberOfIds: imageIds.count)
             
             entries.append(entry)
         }
@@ -58,54 +59,97 @@ struct Provider: TimelineProvider {
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
+    let dateLastYear: Date?
     let imageID: String?
     let dateString: String?
+    let numberOfIds: Int
 }
 
 struct LYwidgetEntryView : View {
     @Environment(\.widgetFamily) var widgetFamily
-
-    var imageID: String?
-    var dateString: String?
+    
+    var entry: SimpleEntry
+    
+    var text: String {
+        var text = String(entry.numberOfIds)
+        text += entry.numberOfIds == 1 ? " memory" : " memories"
+        
+        if let dateLastYear = entry.dateLastYear {
+            text += " from \(Formatters.shortYearDateFormatter.string(from: dateLastYear))"
+        }
+        
+        return text
+    }
     
     var body: some View {
-        if let imageID = imageID {
+        switch widgetFamily {
+        case .accessoryCircular:
             ZStack {
-                Image(uiImage: Helper.getImageFromUserDefaults(key: imageID))
+                Image(systemName: "arrow.counterclockwise")
                     .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                    .scaledToFit()
                     .clipped()
-                VStack(spacing: 0) {
-                    Spacer()
-                    if let dateString = dateString {
-                        Text(dateString)
-                            .font(Font.custom("Poppins-Bold", size: 20))
-                            .foregroundColor(.white)
-                    }
-                    HStack(spacing: 0) {
-                        Text("About")
-                            .font(Font.custom("Poppins-Bold", size: 16))
-                            .foregroundColor(.white)
-                        Text("Last")
-                            .font(Font.custom("Poppins-Bold", size: 16))
-                            .foregroundColor(Color("primary"))
-                        Text("Year.")
-                            .font(Font.custom("Poppins-Bold", size: 16))
-                            .foregroundColor(.white)
-                    }
-                    .padding(2)
+                    .padding(1)
+                    .fontWeight(.light)
+                Text(String(entry.numberOfIds))
+                    .padding(.top)
+                    .fontWeight(.black)
+            }
+                .onAppear {
+                    os_log("TYPE accessoryCircular", log: OSLog.default, type: .info)
                 }
-            }
-        } else {
+        case .accessoryRectangular, .accessoryInline:
             ZStack {
-                Color.white
-                Image("fallback")
-                    .resizable()
-                    .scaledToFill()
+                Color.blue.opacity(0.2)
                     .cornerRadius(20)
+                Text(text)
+                    .multilineTextAlignment(.center)
             }
-
+            .onAppear {
+                os_log("TYPE accessoryRectangular OR accessoryInline", log: OSLog.default, type: .info)
+            }
+        default:
+            if let imageID = entry.imageID {
+                ZStack {
+                    Image(uiImage: Helper.getImageFromUserDefaults(key: imageID))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipped()
+                    VStack(spacing: 0) {
+                        Spacer()
+                        if let dateString = entry.dateString {
+                            Text(dateString)
+                                .font(Font.custom("Poppins-Bold", size: 20))
+                                .foregroundColor(.white)
+                        }
+                        HStack(spacing: 0) {
+                            Text("About")
+                                .font(Font.custom("Poppins-Bold", size: 16))
+                                .foregroundColor(.white)
+                            Text("Last")
+                                .font(Font.custom("Poppins-Bold", size: 16))
+                                .foregroundColor(Color("primary"))
+                            Text("Year.")
+                                .font(Font.custom("Poppins-Bold", size: 16))
+                                .foregroundColor(.white)
+                        }
+                        .padding(2)
+                    }
+                }
+                .onAppear {
+                    os_log("TYPE homescreen", log: OSLog.default, type: .info)
+                }
+            } else {
+                ZStack {
+                    Color.white
+                    Image("fallback")
+                        .resizable()
+                        .scaledToFill()
+                        .cornerRadius(20)
+                }
+                
+            }
         }
     }
 }
@@ -117,11 +161,12 @@ struct LYwidget: Widget {
     
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            LYwidgetEntryView(imageID: entry.imageID, dateString: entry.dateString)
+            LYwidgetEntryView(entry: entry)
                 .onAppear {
-                    os_log("IMAGE %{public}@", log: OSLog.default, type: .error, entry.imageID ?? "no image")
+                    os_log("IMAGE %{public}@", log: OSLog.default, type: .debug, entry.imageID ?? "no image")
                 }
         }
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline])
         .configurationDisplayName("Last Year")
         .description("The time machine widget.")
     }
@@ -129,8 +174,8 @@ struct LYwidget: Widget {
 
 struct LYwidget_Previews: PreviewProvider {
     static var previews: some View {
-        LYwidgetEntryView(imageID: nil, dateString: "")
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
+        LYwidgetEntryView(entry: SimpleEntry(date: Date.now, dateLastYear: Date.now, imageID: "", dateString: "", numberOfIds: 12))
+            .previewContext(WidgetPreviewContext(family: .accessoryInline))
     }
 }
 
@@ -138,8 +183,8 @@ extension Color {
     
     public static var random: Color {
         return Color(red: .random(in: 0...1),
-                             green: .random(in: 0...1),
-                             blue: .random(in: 0...1))
+                     green: .random(in: 0...1),
+                     blue: .random(in: 0...1))
     }
     
 }

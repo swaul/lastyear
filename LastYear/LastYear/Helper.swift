@@ -6,22 +6,15 @@ let userDefaultsPhotosKey = "photos"
 
 struct Helper {
     
-    static func getPhotoData(for date: String) -> Data? {
-        
-        if let userDefaults = UserDefaults(suiteName: appGroupName) {
-            if let data = userDefaults.data(forKey: date) {
-                return data
-            }
-        }
-        
-        return nil
-    }
-    
     static func getImageIdsFromUserDefault() -> [String] {
         
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
             if let data = userDefaults.data(forKey: userDefaultsPhotosKey) {
-                return try! JSONDecoder().decode([String].self, from: data)
+                let ids = try! JSONDecoder().decode([String].self, from: data)
+                
+                print("[saved images]", ids.count)
+                
+                return ids
             }
         }
         

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
 		9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */; };
 		9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */; };
@@ -499,6 +500,7 @@
 			files = (
 				9EAADB3B28E3968400F93097 /* LYwidget.swift in Sources */,
 				9EAADB4028E3968600F93097 /* LYwidget.intentdefinition in Sources */,
+				9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */,
 				9EAADB4D28E397C500F93097 /* Helper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

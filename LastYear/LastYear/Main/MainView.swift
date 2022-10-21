@@ -135,14 +135,14 @@ struct MainView: View {
                     .foregroundColor(.white)
             }
             if photoViewModel.countFound > 0 {
-                ProgressView(value: Double(photoViewModel.countDone), total: Double(photoViewModel.countFound))
+                ProgressView(value: Double(photoViewModel.test), total: Double(photoViewModel.countFound))
                     .progressViewStyle(LinearProgressViewStyle(tint: Color("primary")))
                     .padding(4)
                     .background(Color("backgroundColor"))
                     .cornerRadius(10)
                     .padding(.bottom)
                 HStack(spacing: 0) {
-                    Text(String(photoViewModel.countDone))
+                    Text(String(photoViewModel.test))
                         .font(Font.custom("Poppins-Bold", size: 24))
                         .foregroundColor(.white)
                     Text("/")

@@ -69,9 +69,4 @@ struct LastYearApp: App {
             }
         }
     }
-    
-    func schedule() {
- 
-    }
-    
 }

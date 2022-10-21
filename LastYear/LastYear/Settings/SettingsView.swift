@@ -19,16 +19,18 @@ struct SettingsView: View {
             ZStack {
                 Color("backgroundColor")
                     .ignoresSafeArea()
-                VStack {
+                VStack(alignment: .leading) {
                     Button {
                         openSettings()
                     } label: {
                         Text("Licences")
+                            .font(Font.custom("Poppins-Regular", size: 24))
                     }
                     NavigationLink {
                         PrivacyView()
                     } label: {
                         Text("Privacy")
+                            .font(Font.custom("Poppins-Regular", size: 24))
                     }
                     
                     Spacer()

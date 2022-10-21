@@ -20,4 +20,10 @@ public class Formatters {
         formatter.dateFormat = "HH:mm dd.MM.yyyy"
         return formatter
     }()
+    
+    public static let shortYearDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yy"
+        return formatter
+    }()
 }

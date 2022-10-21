@@ -20,6 +20,11 @@ public class PhotosViewModel: ObservableObject {
     @Published var formattedDateOneYearAgo: String = ""
     @Published var bestImage: PhotoData?
     @Published var countFound = 0
+    @Published var test = 0 {
+        didSet {
+            print(allPhotos.count)
+        }
+    }
     @Published var countDone = 0
     @Published var requestsFailed = 0
     @Published var loadingState: LoadingState = .idle
@@ -31,21 +36,19 @@ public class PhotosViewModel: ObservableObject {
     }
     @Published var allPhotos = [PhotoData]() {
         didSet {
-            countDone = allPhotos.count
+            withAnimation {
+                countDone = allPhotos.count
+            }
             getBestImage()
-            checkIfDone()
+//            checkIfDone()
         }
     }
-    
+    var group = DispatchGroup()
     var many: Bool = false
     
     @ObservedObject var authService = AuthService.shared
     
     var cancellabels = Set<AnyCancellable>()
-    
-    var animalRecognitionRequest = VNRecognizeAnimalsRequest(completionHandler: nil)
-    
-    private let animalRecognitionWorkQueue = DispatchQueue(label: "PetClassifierRequest", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     
     init() {
         Helper.removeAll()
@@ -84,6 +87,7 @@ public class PhotosViewModel: ObservableObject {
         requestsFailed = 0
         countFound = 0
         countDone = 0
+        test = 0
         
         let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)!.endOfDay
         let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)!.startOfDay
@@ -107,54 +111,47 @@ public class PhotosViewModel: ObservableObject {
         allPhotos.removeAll()
         
         many = countFound > 20
-//        let cache = Helper.getPhotoData(for: Formatters.dateFormatter.string(from: lastYear))
         
         if results.count > 0 {
             for i in 0..<results.count {
+                group.enter()
                 let asset = results.object(at: i)
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
-//                    if cache == nil {
-                        if let image = image, !asset.isHidden {
-                            let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
-                            
-                            if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
-                                if asset.mediaSubtypes == .photoScreenshot {
-                                    photo.photoType = .screenshot
-                                    self.allPhotos.append(photo)
-                                } else {
-                                    if asset.mediaSubtypes == .photoLive {
-                                        photo.photoType = .live
-                                    }
-                                    self.allPhotos.append(photo)
-                                    self.appendImage(image: image, id: photo.id)
-                                }
+                    if let image = image, !asset.isHidden {
+                        let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+                        
+                        if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
+                            if asset.mediaSubtypes == .photoScreenshot {
+                                photo.photoType = .screenshot
+                                self.allPhotos.append(photo)
+                                self.test += 1
+                                self.group.leave()
                             } else {
-                                self.countFound -= 1
+                                if asset.mediaSubtypes == .photoLive {
+                                    photo.photoType = .live
+                                }
+                                self.allPhotos.append(photo)
+                                self.appendImage(image: image, id: photo.id)
+                                self.test += 1
+                                self.group.leave()
                             }
                         } else {
-                            self.requestsFailed += 1
-                            print("error asset to image ", asset.mediaSubtypes)
+                            self.test += 1
+                            self.group.leave()
+                            self.countFound -= 1
                         }
-//                    } else {
-//                        if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
-//                            let photoData = try! JSONDecoder().decode([PhotoData.PhotoDataSaveAble].self, from: cache!)
-//
-//                            let photos = photoData.compactMap { PhotoData(saveAble: $0) }
-//
-//                            for photo in photos {
-//                                if asset.mediaSubtypes == .photoScreenshot {
-//                                    photo.photoType = .screenshot
-//                                    self.allPhotos.append(photo)
-//                                } else {
-//                                    if asset.mediaSubtypes == .photoLive {
-//                                        photo.photoType = .live
-//                                    }
-//                                    self.allPhotos.append(photo)
-//                                    self.appendImage(image: photo.image, id: photo.id)
-//                                }
-//                            }
-//                        }
-//                    }
+                    } else {
+                        self.group.leave()
+                        self.requestsFailed += 1
+                        print("error asset to image ", asset.mediaSubtypes)
+                    }
+                }
+            }
+            group.notify(queue: .main) {
+                withAnimation {
+                    self.loadingState = .done
+                    WidgetCenter.shared.reloadAllTimelines()
+                    print(Helper.getImageIdsFromUserDefault().count)
                 }
             }
         } else {
@@ -178,7 +175,7 @@ public class PhotosViewModel: ObservableObject {
                 saveIntoUserDefaults()
                 
                 // Notify the widget to reload all items
-                WidgetCenter.shared.reloadAllTimelines()
+//                WidgetCenter.shared.reloadAllTimelines()
             }
         }
     }
@@ -198,7 +195,7 @@ public class PhotosViewModel: ObservableObject {
             userDefaults.set(data, forKey: userDefaultsPhotosKey)
         }
         
-        WidgetCenter.shared.reloadAllTimelines()
+//        WidgetCenter.shared.reloadAllTimelines()
     }
     
     func getBestImage() {
@@ -211,31 +208,22 @@ public class PhotosViewModel: ObservableObject {
             bestImage = allPhotos.first!
         }
     }
-    
-    func checkIfDone() {
-        if countDone >= 1 && many {
-            withAnimation {
-                loadingState = .done
-            }
-        }
-        if countDone == countFound {
-            withAnimation {
-                loadingState = .done
-            }
-            withAnimation {
-                many = false
-            }
-//            if let lastYear = dateOneYearAgo,
-//               let userDefaults = UserDefaults(suiteName: appGroupName) {
-//                let lastYearId = Formatters.dateFormatter.string(from: lastYear)
-//                let data = allPhotos.compactMap { $0.toData() }
 //
-//                let json = try! JSONEncoder().encode(data)
-//
-//                userDefaults.set(json, forKey: lastYearId)
+//    func checkIfDone() {
+//        if countDone >= 1 && many {
+//            withAnimation {
+//                loadingState = .done
 //            }
-        }
-    }
+//        }
+//        if countDone == countFound {
+//            withAnimation {
+//                loadingState = .done
+//            }
+//            withAnimation {
+//                many = false
+//            }
+//        }
+//    }
     
     func isSameDay(date1: Date, date2: Date) -> Bool {
         let one = Calendar.current.dateComponents([.day], from: date1)

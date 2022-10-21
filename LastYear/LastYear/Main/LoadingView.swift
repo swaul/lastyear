@@ -69,6 +69,7 @@ struct LoadingView: View {
                         }
                     }
                 VStack {
+//                    Spacer()
                     Spacer()
                     Text("Loading")
                         .font(Font.custom("Poppins-Bold", size: 35))
