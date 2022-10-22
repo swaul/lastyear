@@ -24,22 +24,20 @@ struct CredentialsHandler {
     static func setPassword(credentials: Credentials) throws {
         let account = credentials.email
         let password = credentials.password
-        var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: account,
-                                    kSecAttrServer as String: "www.lastyear.com",
+                                    kSecAttrService as String: "lastyear",
                                     kSecValueData as String: password]
-        
-        query[kSecAttrSynchronizable as String] = kCFBooleanTrue
-        
+                
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
     }
     
     static func getPassword() throws -> Credentials {
-        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecMatchLimit as String: kSecMatchLimitOne,
                                     kSecReturnAttributes as String: true,
-                                    kSecAttrServer as String: "www.lastyear.com",
+                                    kSecAttrService as String: "lastyear",
                                     kSecReturnData as String: true]
         
         var item: CFTypeRef?

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import ImageViewer
 
 struct PhotoDetailView: View {
     
@@ -18,6 +19,7 @@ struct PhotoDetailView: View {
     
     var images: [PhotoData]
     
+    @State var fullscreenImage: Bool = false
     @State var selected: String
     @State var isShowingiMessages = false
     @State var isShowingShare = false
@@ -66,7 +68,7 @@ struct PhotoDetailView: View {
                         if point.x < firstThird {
                             toLeft()
                         } else if point.x > firstThird && point.x < lastThird {
-                            searchImage()
+                            fullscreenImage = true
                         } else {
                             toRight()
                         }
@@ -153,6 +155,7 @@ struct PhotoDetailView: View {
                 }
             }
         }
+        .overlay(ImageViewer(image: .constant(Image(uiImage: selectedImage!)), viewerShown: $fullscreenImage, closeButtonTopRight: true))
     }
     
     func toLeft() {

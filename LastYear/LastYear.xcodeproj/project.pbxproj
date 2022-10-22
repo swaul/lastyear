@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 9E27280B2903FEFA000C2E64 /* ImageViewer */; };
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
@@ -172,6 +173,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EBDE92328DDFFEB00264AF3 /* FirebaseCrashlytics in Frameworks */,
+				9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */,
 				9EBDE92528DDFFEB00264AF3 /* FirebaseFirestore in Frameworks */,
 				9EBDE91F28DDFFEB00264AF3 /* FirebaseAnalytics in Frameworks */,
 				9EBDE92128DDFFEB00264AF3 /* FirebaseAuth in Frameworks */,
@@ -407,6 +409,7 @@
 				9EBDE92028DDFFEB00264AF3 /* FirebaseAuth */,
 				9EBDE92228DDFFEB00264AF3 /* FirebaseCrashlytics */,
 				9EBDE92428DDFFEB00264AF3 /* FirebaseFirestore */,
+				9E27280B2903FEFA000C2E64 /* ImageViewer */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -441,6 +444,7 @@
 			mainGroup = 9EBDE8C928DDD58A00264AF3;
 			packageReferences = (
 				9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
 			);
 			productRefGroup = 9EBDE8D328DDD58A00264AF3 /* Products */;
 			projectDirPath = "";
@@ -828,6 +832,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Jake-Short/swiftui-image-viewer.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -839,6 +851,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9E27280B2903FEFA000C2E64 /* ImageViewer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */;
+			productName = ImageViewer;
+		};
 		9EBDE91E28DDFFEB00264AF3 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
