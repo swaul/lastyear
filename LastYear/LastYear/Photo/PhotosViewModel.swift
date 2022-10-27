@@ -165,7 +165,7 @@ public class PhotosViewModel: ObservableObject {
         // Save image in userdefaults
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
             
-            let resized = resizeImage(image: image, targetSize: CGSize(width: 1404, height: 3038))
+            let resized = resizeImage(image: image, targetSize: CGSize(width: 1004, height: 2172))
             
             if let jpegRepresentation = resized.jpegData(compressionQuality: 0) {
                 

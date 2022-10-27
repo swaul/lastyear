@@ -12,13 +12,13 @@ import SwiftUI
 struct Provider: TimelineProvider {
     
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), dateLastYear: Date(), imageID: nil, dateString: "", numberOfIds: 0)
+        SimpleEntry(date: Date(), dateLastYear: Date(), imageID: nil, dateString: "", numberOfIds: 0, imageIds: [])
     }
     
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
         let imageIds = Helper.getImageIdsFromUserDefault()
         
-        let entry = SimpleEntry(date: Date(), dateLastYear: Date(), imageID: imageIds.first!, dateString: "", numberOfIds: 0)
+        let entry = SimpleEntry(date: Date(), dateLastYear: Date(), imageID: imageIds.first!, dateString: "", numberOfIds: 0, imageIds: [])
         completion(entry)
     }
     
@@ -47,7 +47,7 @@ struct Provider: TimelineProvider {
                 dateString = String(components.last!)
                 dateLastYear = Formatters.dateFormatter.date(from: dateString!)
             }
-            let entry = SimpleEntry(date: entryDate, dateLastYear: dateLastYear, imageID: imageIds[index], dateString: dateString, numberOfIds: imageIds.count)
+            let entry = SimpleEntry(date: entryDate, dateLastYear: dateLastYear, imageID: imageIds[index], dateString: dateString, numberOfIds: imageIds.count, imageIds: imageIds)
             
             entries.append(entry)
         }
@@ -63,6 +63,7 @@ struct SimpleEntry: TimelineEntry {
     let imageID: String?
     let dateString: String?
     let numberOfIds: Int
+    let imageIds: [String]
 }
 
 struct LYwidgetEntryView : View {
@@ -95,9 +96,9 @@ struct LYwidgetEntryView : View {
                     .padding(.top)
                     .fontWeight(.black)
             }
-                .onAppear {
-                    os_log("TYPE accessoryCircular", log: OSLog.default, type: .info)
-                }
+            .onAppear {
+                os_log("TYPE accessoryCircular", log: OSLog.default, type: .info)
+            }
         case .accessoryRectangular, .accessoryInline:
             ZStack {
                 Color.blue.opacity(0.2)
@@ -107,6 +108,75 @@ struct LYwidgetEntryView : View {
             }
             .onAppear {
                 os_log("TYPE accessoryRectangular OR accessoryInline", log: OSLog.default, type: .info)
+            }
+        case .systemLarge:
+            ZStack {
+                Color("backgroundColor")
+                Grid {
+                    GridRow {
+                        Image(uiImage: Helper.getImageFromUserDefaults(key: entry.imageIds[0]))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                            .cornerRadius(20)
+                        Image(uiImage: Helper.getImageFromUserDefaults(key: entry.imageIds[1]))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                            .cornerRadius(20)
+                    }
+                    GridRow {
+                        Image(uiImage: Helper.getImageFromUserDefaults(key: entry.imageIds[2]))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                            .cornerRadius(20)
+                        Image(uiImage: Helper.getImageFromUserDefaults(key: entry.imageIds[3]))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                            .cornerRadius(20)
+                    }
+                }
+                .padding(6)
+            }
+        case .systemMedium:
+            if let imageID = entry.imageID {
+                ZStack {
+                    Color("backgroundColor")
+                    HStack {
+                        Image(uiImage: Helper.getImageFromUserDefaults(key: imageID))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                            .cornerRadius(20)
+                            .padding(6)
+                        VStack {
+                            if let dateString = entry.dateString {
+                                Text(dateString)
+                                    .font(Font.custom("Poppins-Bold", size: 20))
+                                    .foregroundColor(.white)
+                            }
+                            VStack(spacing: 0) {
+                                Text("About")
+                                    .font(Font.custom("Poppins-Bold", size: 16))
+                                    .foregroundColor(.white)
+                                Text("Last")
+                                    .font(Font.custom("Poppins-Bold", size: 16))
+                                    .foregroundColor(Color("primary"))
+                                Text("Year.")
+                                    .font(Font.custom("Poppins-Bold", size: 16))
+                                    .foregroundColor(.white)
+                            }
+                            .padding(2)
+                        }
+                    }
+                }
             }
         default:
             if let imageID = entry.imageID {
@@ -174,7 +244,7 @@ struct LYwidget: Widget {
 
 struct LYwidget_Previews: PreviewProvider {
     static var previews: some View {
-        LYwidgetEntryView(entry: SimpleEntry(date: Date.now, dateLastYear: Date.now, imageID: "", dateString: "", numberOfIds: 12))
+        LYwidgetEntryView(entry: SimpleEntry(date: Date.now, dateLastYear: Date.now, imageID: "", dateString: "", numberOfIds: 12, imageIds: []))
             .previewContext(WidgetPreviewContext(family: .accessoryInline))
     }
 }

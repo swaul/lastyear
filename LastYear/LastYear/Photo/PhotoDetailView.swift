@@ -19,6 +19,10 @@ struct PhotoDetailView: View {
     
     var images: [PhotoData]
     
+//    let filterTypes: [FilterType] = [.Chrome, .Fade, .Instant, .Mono, .Noir, .Process, .Tonal, .Transfer, .none]
+//
+//    @State var filterIndex: Int = 0
+//    @State var currentFilter: FilterType = .none
     @State var fullscreenImage: Bool = false
     @State var selected: String
     @State var isShowingiMessages = false
@@ -108,21 +112,21 @@ struct PhotoDetailView: View {
                             .font(Font.custom("Poppins-Bold", size: 12))
                             .foregroundColor(Color.white)
                     }
-//                    VStack(spacing: 0) {
-//                        Button {
-//                            shareToTwitter()
-//                        } label: {
-//                            Image(systemName: "message")
-//                                .resizable()
-//                                .aspectRatio(contentMode: .fit)
-//                                .frame(height: 48)
-//                                .foregroundColor(.green)
-//                        }
-//                        .padding(.horizontal, 4)
-//                        Text("Twitter")
-//                            .font(Font.custom("Poppins-Bold", size: 12))
-//                            .foregroundColor(Color.white)
-//                    }
+                    //                    VStack(spacing: 0) {
+                    //                        Button {
+                    //                            shareToTwitter()
+                    //                        } label: {
+                    //                            Image(systemName: "message")
+                    //                                .resizable()
+                    //                                .aspectRatio(contentMode: .fit)
+                    //                                .frame(height: 48)
+                    //                                .foregroundColor(.green)
+                    //                        }
+                    //                        .padding(.horizontal, 4)
+                    //                        Text("Twitter")
+                    //                            .font(Font.custom("Poppins-Bold", size: 12))
+                    //                            .foregroundColor(Color.white)
+                    //                    }
                     VStack {
                         ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
                             Image(systemName: "ellipsis.circle")
@@ -183,7 +187,7 @@ struct PhotoDetailView: View {
     }
     
     func searchImage() {
-    
+        
         guard let selected = selected.split(separator: "@").first, let url = URL(string: "photos-redirect://image=\(selected)"),
               UIApplication.shared.canOpenURL(url) else { return }
         
@@ -219,8 +223,8 @@ struct PhotoDetailView: View {
     
     func shareToWhatsapp() {
         guard let image = selectedImage,
-                let imageData = image.pngData(),
-                let whatsappURL = URL(string: "whatsapp://send")
+              let imageData = image.pngData(),
+              let whatsappURL = URL(string: "whatsapp://send")
         else { return }
         
         if UIApplication.shared.canOpenURL(whatsappURL) {
@@ -228,16 +232,9 @@ struct PhotoDetailView: View {
         }
     }
     
-    func shareToTwitter() {
-        guard let image = selectedImage,
-              let imageData = image.pngData(),
-              let url = URL(string: "twitter://post?tweet_image=\(imageData)")
-        else { return }
-        
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
-    }
+//    func filteredImage(image: UIImage) -> UIImage {
+//        return image.addFilter(filter: currentFilter)
+//    }
     
     func simpleError() {
         let generator = UINotificationFeedbackGenerator()
