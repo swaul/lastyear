@@ -11,6 +11,8 @@
 		9E272811290B357D000C2E64 /* FriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272810290B357D000C2E64 /* FriendsView.swift */; };
 		9E272813290B3627000C2E64 /* AddFriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272812290B3627000C2E64 /* AddFriendView.swift */; };
 		9E272815290B4671000C2E64 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 9E272814290B4671000C2E64 /* FirebaseMessaging */; };
+		9E272817290C50AC000C2E64 /* FriendLastYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272816290C50AC000C2E64 /* FriendLastYear.swift */; };
+		9E272819290C5371000C2E64 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9E272818290C5371000C2E64 /* FirebaseStorage */; };
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
@@ -101,6 +103,7 @@
 /* Begin PBXFileReference section */
 		9E272810290B357D000C2E64 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
 		9E272812290B3627000C2E64 /* AddFriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendView.swift; sourceTree = "<group>"; };
+		9E272816290C50AC000C2E64 /* FriendLastYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendLastYear.swift; sourceTree = "<group>"; };
 		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
@@ -181,6 +184,7 @@
 				9EBDE92328DDFFEB00264AF3 /* FirebaseCrashlytics in Frameworks */,
 				9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */,
 				9EBDE92528DDFFEB00264AF3 /* FirebaseFirestore in Frameworks */,
+				9E272819290C5371000C2E64 /* FirebaseStorage in Frameworks */,
 				9EBDE91F28DDFFEB00264AF3 /* FirebaseAnalytics in Frameworks */,
 				9EBDE92128DDFFEB00264AF3 /* FirebaseAuth in Frameworks */,
 			);
@@ -194,6 +198,7 @@
 			children = (
 				9E272812290B3627000C2E64 /* AddFriendView.swift */,
 				9E272810290B357D000C2E64 /* FriendsView.swift */,
+				9E272816290C50AC000C2E64 /* FriendLastYear.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -427,6 +432,7 @@
 				9EBDE92428DDFFEB00264AF3 /* FirebaseFirestore */,
 				9E27280B2903FEFA000C2E64 /* ImageViewer */,
 				9E272814290B4671000C2E64 /* FirebaseMessaging */,
+				9E272818290C5371000C2E64 /* FirebaseStorage */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -555,6 +561,7 @@
 				9EBDE92928DE021200264AF3 /* FirebaseHandler.swift in Sources */,
 				9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */,
 				9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */,
+				9E272817290C50AC000C2E64 /* FriendLastYear.swift in Sources */,
 				9EAADB4C28E3976900F93097 /* Helper.swift in Sources */,
 				9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */,
 				9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */,
@@ -879,6 +886,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseMessaging;
+		};
+		9E272818290C5371000C2E64 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 		9EBDE91E28DDFFEB00264AF3 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

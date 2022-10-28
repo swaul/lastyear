@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct AddFriendView: View {
-    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+
     @State var friend: String = ""
     @State var errorShowing: Bool = false
     @State var dialogShowing: Bool = false
@@ -63,6 +64,7 @@ struct AddFriendView: View {
             switch result {
             case .success(_):
                 print("Sent!")
+                self.presentationMode.wrappedValue.dismiss()
             case .failure(let error):
                 self.color = .red
                 self.error = error.localizedDescription

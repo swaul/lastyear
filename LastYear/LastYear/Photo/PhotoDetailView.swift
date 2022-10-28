@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import FirebaseStorage
 import ImageViewer
 
 struct PhotoDetailView: View {
@@ -19,10 +20,10 @@ struct PhotoDetailView: View {
     
     var images: [PhotoData]
     
-//    let filterTypes: [FilterType] = [.Chrome, .Fade, .Instant, .Mono, .Noir, .Process, .Tonal, .Transfer, .none]
-//
-//    @State var filterIndex: Int = 0
-//    @State var currentFilter: FilterType = .none
+    //    let filterTypes: [FilterType] = [.Chrome, .Fade, .Instant, .Mono, .Noir, .Process, .Tonal, .Transfer, .none]
+    //
+    //    @State var filterIndex: Int = 0
+    //    @State var currentFilter: FilterType = .none
     @State var fullscreenImage: Bool = false
     @State var selected: String
     @State var isShowingiMessages = false
@@ -82,6 +83,21 @@ struct PhotoDetailView: View {
                 }
                 Spacer()
                 HStack {
+                    VStack(spacing: 0) {
+                        Button {
+                            shareLastYear()
+                        } label: {
+                            Image("fallback")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 32)
+                                .foregroundColor(.green)
+                        }
+                        .padding(.horizontal, 4)
+                        Text("Last Year")
+                            .font(Font.custom("Poppins-Bold", size: 12))
+                            .foregroundColor(Color.white)
+                    }
                     VStack(spacing: 0) {
                         Button {
                             shareToStory()
@@ -194,6 +210,48 @@ struct PhotoDetailView: View {
         UIApplication.shared.open(url)
     }
     
+    func shareLastYear() {
+        guard let user = AuthService.shared.loggedInUser else { return }
+        let storageRef = Storage.storage().reference()
+        
+        guard let image = selectedImage, let data = image.jpegData(compressionQuality: 0.5) else { return }
+        
+        // Create a reference to the file you want to upload
+        let imagesRef = storageRef.child("images/\(selected)")
+        
+        let uploadTask = imagesRef.putData(data, metadata: nil) { metadata, error in
+            if let error = error {
+                print(error.localizedDescription)
+            } else {
+                print(metadata?.path)
+            }
+        }
+        
+        uploadTask.observe(.progress) { snapshot in
+            let currentValue = (100.0 * Float(snapshot.progress!.completedUnitCount) / Float(snapshot.progress!.totalUnitCount))
+            print(currentValue)
+//            self.percentComplete = currentValue
+        }
+        
+        uploadTask.observe(.success) { snapshot in
+            // Upload completed successfully
+            print("image uploaded to", snapshot.reference)
+            FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: selected) { result in
+                switch result {
+                case .failure(let error):
+                    print(error.localizedDescription)
+                case .success(()):
+                    print("Uploaded: ", selected)
+                }
+            }
+            uploadTask.removeAllObservers()
+        }
+        
+        uploadTask.observe(.failure) { snapshot in
+            print(snapshot.error)
+        }
+    }
+    
     func shareToStory() {
         if let storiesUrl = URL(string: "instagram-stories://share"), let image = selectedImage {
             if UIApplication.shared.canOpenURL(storiesUrl) {
@@ -232,9 +290,9 @@ struct PhotoDetailView: View {
         }
     }
     
-//    func filteredImage(image: UIImage) -> UIImage {
-//        return image.addFilter(filter: currentFilter)
-//    }
+    //    func filteredImage(image: UIImage) -> UIImage {
+    //        return image.addFilter(filter: currentFilter)
+    //    }
     
     func simpleError() {
         let generator = UINotificationFeedbackGenerator()

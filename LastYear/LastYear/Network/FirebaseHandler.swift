@@ -28,7 +28,7 @@ public class FirebaseHandler {
                 Analytics.setUserID(user.uid)
                 Analytics.setConsent([.analyticsStorage: appTracking ? .granted : .denied])
                 
-                self?.saveUser(user: LYUser(user: user, userName: userName, appTracking: appTracking, friends: [], friendRequests: []), completion: { result in
+                self?.saveUser(user: LYUser(user: user, userName: userName, appTracking: appTracking, friends: [], friendRequests: [], sharedLastYear: nil), completion: { result in
                     switch result {
                     case .failure(let error):
                         completion?(.failure(error))
@@ -180,6 +180,32 @@ public class FirebaseHandler {
         }
     }
     
+    public func subscribeToFriends(from user: String, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
+        firestoreUsers.document(user)
+            .addSnapshotListener { snapshot, error in
+                guard let document = snapshot else {
+                  print("Error fetching document: \(error!)")
+                  return
+                }
+                guard let user = LYUser(data: document.data() ?? [:]) else {
+                  print("Document data was empty.")
+                  return
+                }
+                completion?(.success(user))
+            }
+    }
+    
+    public func saveUploadedImage(user: String, imageId: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestoreUsers.document(user).updateData([
+            "sharedLastYear": imageId
+        ]) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                completion?(.success(()))
+            }
+        }
+    }
     public func changeUserTracking(to granted: Bool) {
         guard let user = Auth.auth().currentUser else { return }
         Analytics.setUserID(user.uid)

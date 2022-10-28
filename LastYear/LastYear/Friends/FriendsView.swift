@@ -15,6 +15,9 @@ struct FriendsView: View {
     
     @State var friendRequestUsers: [LYUser] = []
     @State var friends: [LYUser] = []
+    
+    @State var images: [Image] = []
+    
     var body: some View {
         VStack {
             HStack {
@@ -58,6 +61,7 @@ struct FriendsView: View {
                                         .font(Font.custom("Poppins-Regular", size: 16))
                                         .foregroundColor(.green)
                                 }
+                                .buttonStyle(.plain)
                                 .padding(.horizontal)
                                 Button {
                                     denyRequest(user: user.id)
@@ -66,8 +70,10 @@ struct FriendsView: View {
                                         .font(Font.custom("Poppins-Regular", size: 16))
                                         .foregroundColor(.red)
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
+                        .listStyle(.plain)
                         .onAppear {
                             getFriendRequests()
                         }
@@ -114,11 +120,35 @@ struct FriendsView: View {
                 .presentationDetents([.fraction(0.3), .large])
             }
             Spacer()
-            Text("Hello, World!")
-                .onAppear {
-                    getFriendRequests()
-                    getFriends()
+            TabView {
+                ForEach(friends, id: \.id) { friend in
+                    if let lastYear = friend.sharedLastYear {
+                        FriendLastYear(user: friend.userName, sharedLastYear: lastYear)
+                    }
                 }
+            }
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .onAppear {
+                subscribeToFriends()
+                getFriendRequests()
+                getFriends()
+            }
+        }
+    }
+    
+    func loadImages() {
+        
+    }
+    
+    func subscribeToFriends() {
+        guard let id = AuthService.shared.loggedInUser?.id else { return }
+        FirebaseHandler.shared.subscribeToFriends(from: id) { result in
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(let user):
+                AuthService.shared.logIn(user: user)
+            }
         }
     }
     
@@ -133,6 +163,8 @@ struct FriendsView: View {
                 print(error.localizedDescription)
             case .success(_):
                 print("denied!")
+                AuthService.shared.loggedInUser?.friendRequests.removeAll(where: { $0 == user })
+                getFriendRequests()
             }
         }
     }
@@ -145,8 +177,10 @@ struct FriendsView: View {
                 print(error.localizedDescription)
             case .success(_):
                 print("added!")
-                getFriends()
                 AuthService.shared.loggedInUser?.friendRequests.removeAll(where: { $0 == user })
+                friendRequestUsers.removeAll()
+                getFriendRequests()
+                getFriends()
             }
         }
     }
