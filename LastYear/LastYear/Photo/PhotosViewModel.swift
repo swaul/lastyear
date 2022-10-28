@@ -159,11 +159,11 @@ public class PhotosViewModel: ObservableObject {
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
     }
-    
+
     func appendImage(image: UIImage, id: String) {
         
         // Save image in userdefaults
-        if let userDefaults = UserDefaults(suiteName: appGroupName) {
+        if let userDefaults = UserDefaults(suiteName: "photos") {
             
             let resized = resizeImage(image: image, targetSize: CGSize(width: 1004, height: 2172))
             

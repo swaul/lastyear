@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 9E27280B2903FEFA000C2E64 /* ImageViewer */; };
+		9E272811290B357D000C2E64 /* FriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272810290B357D000C2E64 /* FriendsView.swift */; };
+		9E272813290B3627000C2E64 /* AddFriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272812290B3627000C2E64 /* AddFriendView.swift */; };
+		9E272815290B4671000C2E64 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 9E272814290B4671000C2E64 /* FirebaseMessaging */; };
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
@@ -96,6 +99,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9E272810290B357D000C2E64 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
+		9E272812290B3627000C2E64 /* AddFriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendView.swift; sourceTree = "<group>"; };
 		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
@@ -172,6 +177,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E272815290B4671000C2E64 /* FirebaseMessaging in Frameworks */,
 				9EBDE92328DDFFEB00264AF3 /* FirebaseCrashlytics in Frameworks */,
 				9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */,
 				9EBDE92528DDFFEB00264AF3 /* FirebaseFirestore in Frameworks */,
@@ -183,6 +189,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9E27280F290B3564000C2E64 /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				9E272812290B3627000C2E64 /* AddFriendView.swift */,
+				9E272810290B357D000C2E64 /* FriendsView.swift */,
+			);
+			path = Friends;
+			sourceTree = "<group>";
+		};
 		9EAADB2328E2681400F93097 /* Photo */ = {
 			isa = PBXGroup;
 			children = (
@@ -277,6 +292,7 @@
 				9EBDE91328DDF44100264AF3 /* Login */,
 				9EBDE91A28DDFCC300264AF3 /* Register */,
 				9EDD18A328EE23DA004DC8A6 /* Share */,
+				9E27280F290B3564000C2E64 /* Friends */,
 				9EAADB2328E2681400F93097 /* Photo */,
 				9EBEE6F228E5E45E00F9FCCC /* Settings */,
 				9EAADB2528E2685900F93097 /* Main */,
@@ -410,6 +426,7 @@
 				9EBDE92228DDFFEB00264AF3 /* FirebaseCrashlytics */,
 				9EBDE92428DDFFEB00264AF3 /* FirebaseFirestore */,
 				9E27280B2903FEFA000C2E64 /* ImageViewer */,
+				9E272814290B4671000C2E64 /* FirebaseMessaging */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -522,12 +539,14 @@
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
+				9E272811290B357D000C2E64 /* FriendsView.swift in Sources */,
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* MainView.swift in Sources */,
 				9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */,
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
+				9E272813290B3627000C2E64 /* AddFriendView.swift in Sources */,
 				9EBDE8E628DDDD4B00264AF3 /* PhotoData.swift in Sources */,
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
 				9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */,
@@ -855,6 +874,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */;
 			productName = ImageViewer;
+		};
+		9E272814290B4671000C2E64 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 		9EBDE91E28DDFFEB00264AF3 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

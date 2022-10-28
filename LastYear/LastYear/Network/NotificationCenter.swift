@@ -9,9 +9,9 @@ import Foundation
 import UserNotifications
 import Photos
 
-class NotificationCenter: NSObject, ObservableObject {
+class LocalNotificationCenter: NSObject, ObservableObject {
     
-    static let shared = NotificationCenter()
+    static let shared = LocalNotificationCenter()
     
     @Published var center = UNUserNotificationCenter.current()
     
@@ -98,9 +98,9 @@ class NotificationCenter: NSObject, ObservableObject {
     }
 }
 
-extension NotificationCenter: UNUserNotificationCenterDelegate {
+extension LocalNotificationCenter: UNUserNotificationCenterDelegate {
     
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    public func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.badge, .banner, .sound])
     }
     

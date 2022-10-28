@@ -28,52 +28,17 @@ struct MainView: View {
                     .ignoresSafeArea()
                 switch photoViewModel.loadingState {
                 case .done:
-                    VStack {
-                        if visible {
-                            topView
-                                .transition(.move(edge: .top))
-                        }
-                        if photoViewModel.many {
-                            loadingView
-                                .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
-                                .padding()
-                            Spacer()
-                        } else {
-                            Spacer()
-                        }
-                        if visible {
-                            VStack {
-                                NavigationLink {
-                                    if let image = photoViewModel.bestImage {
-                                        PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
-                                    }
-                                } label: {
-                                    Image(uiImage: photoViewModel.bestImage!.waterMarkedImage)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .cornerRadius(20)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 20)
-                                                .stroke(photoViewModel.allPhotos.isEmpty ? Color("primary") : .white, lineWidth: 3)
-                                        )
-                                        .padding()
-                                        .transition(.scale)
-                                }
+                    TabView {
+                        imageView
+                            .tabItem {
+                                Text("Image")
                             }
-                        }
-                        Spacer()
-                        if visible {
-                            bottomView
-                                .transition(.move(edge: .bottom))
-                                .animation(.easeInOut, value: visible)
-                                .padding(12)
-                        }
-                    }
-                    .padding(16)
-                    .onAppear {
-                        withAnimation {
-                            visible = true
-                        }
+                        
+                        FriendsView()
+                            .tabItem {
+                                Text("Friends")
+                            }
+                            .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
                     }
                 case .loading:
                     VStack {
@@ -105,7 +70,7 @@ struct MainView: View {
                         }
                     }
                     .onAppear {
-                        NotificationCenter.shared.scheduleTomorrows()
+                        LocalNotificationCenter.shared.scheduleTomorrows()
                     }
                 case .noPictures:
                     VStack {
@@ -121,6 +86,56 @@ struct MainView: View {
                         Spacer()
                     }
                 }
+            }
+        }
+    }
+    
+    var imageView: some View {
+        VStack {
+            if visible {
+                topView
+                    .transition(.move(edge: .top))
+            }
+            if photoViewModel.many {
+                loadingView
+                    .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
+                    .padding()
+                Spacer()
+            } else {
+                Spacer()
+            }
+            if visible {
+                VStack {
+                    NavigationLink {
+                        if let image = photoViewModel.bestImage {
+                            PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
+                        }
+                    } label: {
+                        Image(uiImage: photoViewModel.bestImage?.waterMarkedImage ?? UIImage(named: "fallback")!)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .cornerRadius(20)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(photoViewModel.allPhotos.isEmpty ? Color("primary") : .white, lineWidth: 3)
+                            )
+                            .padding()
+                            .transition(.scale)
+                    }
+                }
+            }
+            Spacer()
+            if visible {
+                bottomView
+                    .transition(.move(edge: .bottom))
+                    .animation(.easeInOut, value: visible)
+                    .padding(12)
+            }
+        }
+        .padding(16)
+        .onAppear {
+            withAnimation {
+                visible = true
             }
         }
     }

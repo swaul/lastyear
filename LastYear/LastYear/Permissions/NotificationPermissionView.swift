@@ -105,7 +105,7 @@ struct NotificationPermissionView: View {
                 DispatchQueue.main.async {
                     PermissionHandler.shared.notDetermined = false
                 }
-                NotificationCenter.shared.scheduleFirst()
+                LocalNotificationCenter.shared.scheduleFirst()
                 presentationMode.wrappedValue.dismiss()
             } else {
                 presentationMode.wrappedValue.dismiss()

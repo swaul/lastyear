@@ -28,7 +28,7 @@ public class FirebaseHandler {
                 Analytics.setUserID(user.uid)
                 Analytics.setConsent([.analyticsStorage: appTracking ? .granted : .denied])
                 
-                self?.saveUser(user: LYUser(user: user, userName: userName, appTracking: appTracking), completion: { result in
+                self?.saveUser(user: LYUser(user: user, userName: userName, appTracking: appTracking, friends: [], friendRequests: []), completion: { result in
                     switch result {
                     case .failure(let error):
                         completion?(.failure(error))
@@ -77,7 +77,7 @@ public class FirebaseHandler {
     }
     
     public func saveUser(user: LYUser, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
-        firestoreUsers.addDocument(data: user.toData()) { error in
+        firestoreUsers.document(user.id).setData(user.toData()) { error in
             if let error = error {
                 print("[LOG] - saving user failed with error", error)
                 completion?(.failure(FirebaseError.error(error: error)))
@@ -99,6 +99,83 @@ public class FirebaseHandler {
                     return
                 }
                 completion?(.success(user!))
+            }
+        }
+    }
+    
+    public func getUsers(by ids: [String], completion: ((Result<[LYUser], FirebaseError>) -> Void)?) {
+        firestoreUsers.whereField("id", in: ids).getDocuments { response, error in
+            if let error = error {
+                print("[LOG] - saving user failed with error", error)
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                let users = response?.documents.compactMap { LYUser(data: $0.data()) }
+                guard let users = users else {
+                    completion?(.failure(.genericError()))
+                    return
+                }
+                completion?(.success(users))
+            }
+        }
+    }
+    
+    public func checkForName(id: String, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
+        firestoreUsers.whereField("userName", in: [id]).getDocuments { response, error in
+            if let error = error {
+                print("[LOG] - saving user failed with error", error)
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                let users = response?.documents.map { LYUser(data: $0.data()) }
+                guard let users = users, let user = users.first else {
+                    completion?(.failure(.genericError()))
+                    return
+                }
+                completion?(.success(user!))
+            }
+        }
+    }
+    
+    public func sendFriendRequest(to user: String, from sender: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestoreUsers.document(user).updateData([
+            "friendRequests": FieldValue.arrayUnion([sender])
+        ]) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                completion?(.success(()))
+            }
+        }
+    }
+    
+    public func acceptRequest(from user: String, by receiver: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestoreUsers.document(receiver).updateData([
+            "friends": FieldValue.arrayUnion([user]),
+            "friendRequests": FieldValue.arrayRemove([user])
+        ]) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                self.firestoreUsers.document(user).updateData([
+                    "friends": FieldValue.arrayUnion([receiver])
+                ]) { error in
+                    if let error {
+                        completion?(.failure(FirebaseError.error(error: error)))
+                    } else {
+                        completion?(.success(()))
+                    }
+                }
+            }
+        }
+    }
+    
+    public func denyRequest(from user: String, by receiver: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestoreUsers.document(receiver).updateData([
+            "friendRequests": FieldValue.arrayRemove([user])
+        ]) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                completion?(.success(()))
             }
         }
     }
