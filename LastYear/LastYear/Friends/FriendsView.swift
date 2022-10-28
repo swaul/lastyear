@@ -15,7 +15,6 @@ struct FriendsView: View {
     
     @State var friendRequestUsers: [LYUser] = []
     @State var friends: [LYUser] = []
-    
     var body: some View {
         VStack {
             HStack {
@@ -43,6 +42,9 @@ struct FriendsView: View {
                         Text("No friend requests")
                             .font(Font.custom("Poppins-Regular", size: 16))
                             .foregroundColor(.white)
+                            .onAppear {
+                                getFriendRequests()
+                            }
                         Spacer()
                     } else {
                         List(friendRequestUsers, id: \.id) { user in
@@ -65,6 +67,9 @@ struct FriendsView: View {
                                         .foregroundColor(.red)
                                 }
                             }
+                        }
+                        .onAppear {
+                            getFriendRequests()
                         }
                     }
                 }
@@ -91,12 +96,18 @@ struct FriendsView: View {
                                     .underline()
                             }
                         }
+                        .onAppear {
+                            getFriends()
+                        }
                         Spacer()
                     } else {
                         List(friends, id: \.id) { user in
                             HStack {
                                 Text(user.userName)
                             }
+                        }
+                        .onAppear {
+                            getFriends()
                         }
                     }
                 }
@@ -159,7 +170,9 @@ struct FriendsView: View {
             case .failure(let error):
                 print(error.localizedDescription)
             case .success(let users):
-                self.friendRequestUsers = users
+                withAnimation {
+                    self.friendRequestUsers = users
+                }
             }
         }
     }
@@ -171,7 +184,9 @@ struct FriendsView: View {
             case .failure(let error):
                 print(error.localizedDescription)
             case .success(let users):
-                self.friends = users
+                withAnimation {
+                    self.friends = users
+                }
                 AuthService.shared.loggedInUser?.friends = friends.map { $0.id }
             }
         }
