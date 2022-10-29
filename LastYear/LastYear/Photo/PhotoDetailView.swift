@@ -28,6 +28,9 @@ struct PhotoDetailView: View {
     @State var selected: String
     @State var isShowingiMessages = false
     @State var isShowingShare = false
+    @State var shareToLastYearShowing = false
+    @State var currentUpload = 0.0
+    @State var uploadDone = false
     @State var indexIsLimit: Bool = false {
         didSet {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -85,7 +88,7 @@ struct PhotoDetailView: View {
                 HStack {
                     VStack(spacing: 0) {
                         Button {
-                            shareLastYear()
+                            shareToLastYearShowing = true
                         } label: {
                             Image("fallback")
                                 .resizable()
@@ -173,6 +176,43 @@ struct PhotoDetailView: View {
                 .sheet(isPresented: $isShowingShare) {
                     ActivityViewController(activityItems: [selectedImage!])
                 }
+                .sheet(isPresented: $shareToLastYearShowing) {
+                    VStack {
+                        HStack {
+                            Text("Share to your story")
+                                .font(.largeTitle)
+                                .padding()
+                            Spacer()
+                        }
+                        Spacer()
+                        if currentUpload == 0 {
+                            Button {
+                                shareLastYear()
+                            } label: {
+                                Text("Share!")
+                                    .padding()
+                                    .background(Color.white)
+                                    .foregroundColor(Color("backgroundColor"))
+                                    .cornerRadius(10)
+                            }
+                            .padding()
+                        } else if uploadDone {
+                            Text("Upload done")
+                                .font(.title)
+                                .foregroundColor(.green)
+                        } else {
+                            VStack {
+                                Text("\(Int(currentUpload.rounded())) %")
+                                ProgressView(value: currentUpload, total: 100.0)
+                                    .padding(.horizontal)
+                                Text("Uploading")
+                                    .padding()
+                            }
+                        }
+                        Spacer()
+                    }
+                    .presentationDetents([.fraction(0.5)])
+                }
             }
         }
         .overlay(ImageViewer(image: .constant(Image(uiImage: selectedImage!)), viewerShown: $fullscreenImage, closeButtonTopRight: true))
@@ -233,7 +273,7 @@ struct PhotoDetailView: View {
         guard let image = selectedImage, let data = image.jpegData(compressionQuality: findCompression(image: image)) else { return }
         
         // Create a reference to the file you want to upload
-        let imagesRef = storageRef.child("images/\(selected)")
+        let imagesRef = storageRef.child("images/\(user.id)")
         
         let uploadTask = imagesRef.putData(data, metadata: nil) { metadata, error in
             if let error = error {
@@ -244,9 +284,9 @@ struct PhotoDetailView: View {
         }
         
         uploadTask.observe(.progress) { snapshot in
-            let currentValue = (100.0 * Float(snapshot.progress!.completedUnitCount) / Float(snapshot.progress!.totalUnitCount))
+            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
             print(currentValue)
-//            self.percentComplete = currentValue
+            self.currentUpload = currentValue
         }
         
         uploadTask.observe(.success) { snapshot in
@@ -258,6 +298,12 @@ struct PhotoDetailView: View {
                     print(error.localizedDescription)
                 case .success(()):
                     print("Uploaded: ", selected)
+                    withAnimation {
+                        self.uploadDone = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            self.shareToLastYearShowing = false
+                        }
+                    }
                 }
             }
             uploadTask.removeAllObservers()

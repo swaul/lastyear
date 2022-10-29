@@ -163,7 +163,7 @@ public class PhotosViewModel: ObservableObject {
     func appendImage(image: UIImage, id: String) {
         
         // Save image in userdefaults
-        if let userDefaults = UserDefaults(suiteName: "photos") {
+        if let userDefaults = UserDefaults(suiteName: appGroupName) {
             
             let resized = resizeImage(image: image, targetSize: CGSize(width: 1404, height: 3038))
 

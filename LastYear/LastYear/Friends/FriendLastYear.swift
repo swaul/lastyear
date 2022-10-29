@@ -7,13 +7,14 @@
 
 import SwiftUI
 import FirebaseStorage
+import ImageViewer
 
 struct FriendLastYear: View {
     
     @State var user: String = ""
     @State var image: Image = Image("fallback")
-    @State var sharedLastYear: String = ""
-    
+    @State var id: String = ""
+
     var body: some View {
         VStack {
             image
@@ -25,10 +26,9 @@ struct FriendLastYear: View {
                         .stroke(Color("primary"), lineWidth: 3)
                 )
                 .padding()
-            HStack {
-                Text(user)
-                Spacer()
-            }
+            Text(user)
+                .font(Font.custom("Poppins-Bold", size: 20))
+                .foregroundColor(Color.white)
         }
         .onAppear {
             getImage()
@@ -36,7 +36,7 @@ struct FriendLastYear: View {
     }
     
     func getImage() {
-        Storage.storage().reference().child("images/\(sharedLastYear)").getData(maxSize: 10 * 1024 * 1024) { data, error in
+        Storage.storage().reference().child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
             if let error = error {
                 print(error.localizedDescription)
             } else {

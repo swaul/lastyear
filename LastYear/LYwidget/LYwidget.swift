@@ -24,13 +24,13 @@ struct Provider: TimelineProvider {
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         var entries: [SimpleEntry] = []
-        os_log("GET TIMELINE STARTED", log: OSLog.default, type: .info)
+        os_log("GET TIMELINE STARTED", log: OSLog.default, type: .error)
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         
         let currentDate = Date()
         
         let imageIds = Helper.getImageIdsFromUserDefault()
-        os_log("IMAGE COUNT %{public}@", log: OSLog.default, type: .debug, imageIds.count)
+        os_log("IMAGE COUNT %{public}@", log: OSLog.default, type: .error, imageIds.count)
         guard !imageIds.isEmpty else { return }
         // testing for 5 seconds
         let daySeconds = 60 * 60 * 24
@@ -97,7 +97,7 @@ struct LYwidgetEntryView : View {
                     .fontWeight(.black)
             }
             .onAppear {
-                os_log("TYPE accessoryCircular", log: OSLog.default, type: .info)
+                os_log("TYPE accessoryCircular", log: OSLog.default, type: .error)
             }
         case .accessoryRectangular, .accessoryInline:
             ZStack {
@@ -107,7 +107,7 @@ struct LYwidgetEntryView : View {
                     .multilineTextAlignment(.center)
             }
             .onAppear {
-                os_log("TYPE accessoryRectangular OR accessoryInline", log: OSLog.default, type: .info)
+                os_log("TYPE accessoryRectangular OR accessoryInline", log: OSLog.default, type: .error)
             }
         case .systemLarge:
             ZStack {
@@ -156,6 +156,9 @@ struct LYwidgetEntryView : View {
                             .clipped()
                             .cornerRadius(20)
                             .padding(6)
+                            .onAppear {
+                                os_log("1 LOOKING FOR IMAGE %{public}@", log: OSLog.default, type: .error, imageID)
+                            }
                         VStack {
                             if let dateString = entry.dateString {
                                 Text(dateString)
@@ -208,7 +211,7 @@ struct LYwidgetEntryView : View {
                     }
                 }
                 .onAppear {
-                    os_log("TYPE homescreen", log: OSLog.default, type: .info)
+                    os_log("TYPE homescreen", log: OSLog.default, type: .error)
                 }
             } else {
                 ZStack {
@@ -233,7 +236,7 @@ struct LYwidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             LYwidgetEntryView(entry: entry)
                 .onAppear {
-                    os_log("IMAGE %{public}@", log: OSLog.default, type: .debug, entry.imageID ?? "no image")
+                    os_log("IMAGE %{public}@", log: OSLog.default, type: .error, entry.imageID ?? "no image")
                 }
         }
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline])

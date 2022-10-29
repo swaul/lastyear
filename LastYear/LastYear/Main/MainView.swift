@@ -28,17 +28,21 @@ struct MainView: View {
                     .ignoresSafeArea()
                 switch photoViewModel.loadingState {
                 case .done:
-                    TabView {
-                        imageView
-                            .tabItem {
-                                Text("Image")
-                            }
-                        
-                        FriendsView()
-                            .tabItem {
-                                Text("Friends")
-                            }
-                            .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
+                    ZStack {
+                        Color("backgroundColor")
+                            .ignoresSafeArea()
+                        TabView {
+                            imageView
+                                .tabItem {
+                                    Label("Memories", systemImage: "photo")
+                                }
+                            
+                            FriendsView()
+                                .tabItem {
+                                    Label("Friends", systemImage: "person.3")
+                                }
+                                .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
+                        }
                     }
                 case .loading:
                     VStack {
@@ -91,51 +95,55 @@ struct MainView: View {
     }
     
     var imageView: some View {
-        VStack {
-            if visible {
-                topView
-                    .transition(.move(edge: .top))
-            }
-            if photoViewModel.many {
-                loadingView
-                    .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
-                    .padding()
-                Spacer()
-            } else {
-                Spacer()
-            }
-            if visible {
-                VStack {
-                    NavigationLink {
-                        if let image = photoViewModel.bestImage {
-                            PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
+        ZStack {
+            Color("backgroundColor")
+                .ignoresSafeArea()
+            VStack {
+                if visible {
+                    topView
+                        .transition(.move(edge: .top))
+                }
+                if photoViewModel.many {
+                    loadingView
+                        .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
+                        .padding()
+                    Spacer()
+                } else {
+                    Spacer()
+                }
+                if visible {
+                    VStack {
+                        NavigationLink {
+                            if let image = photoViewModel.bestImage {
+                                PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
+                            }
+                        } label: {
+                            Image(uiImage: photoViewModel.bestImage?.waterMarkedImage ?? UIImage(named: "fallback")!)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(20)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(photoViewModel.allPhotos.isEmpty ? Color("primary") : .white, lineWidth: 3)
+                                )
+                                .padding()
+                                .transition(.scale)
                         }
-                    } label: {
-                        Image(uiImage: photoViewModel.bestImage?.waterMarkedImage ?? UIImage(named: "fallback")!)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .cornerRadius(20)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(photoViewModel.allPhotos.isEmpty ? Color("primary") : .white, lineWidth: 3)
-                            )
-                            .padding()
-                            .transition(.scale)
                     }
                 }
+                Spacer()
+                if visible {
+                    bottomView
+                        .transition(.move(edge: .bottom))
+                        .animation(.easeInOut, value: visible)
+                        .padding(12)
+                }
             }
-            Spacer()
-            if visible {
-                bottomView
-                    .transition(.move(edge: .bottom))
-                    .animation(.easeInOut, value: visible)
-                    .padding(12)
-            }
-        }
-        .padding(16)
-        .onAppear {
-            withAnimation {
-                visible = true
+            .padding(16)
+            .onAppear {
+                withAnimation {
+                    visible = true
+                }
             }
         }
     }
@@ -174,20 +182,19 @@ struct MainView: View {
     }
     
     var topView: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Button {
-                    settingsShowing = true
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .foregroundColor(.white)
-                }
-                .sheet(isPresented: $settingsShowing) {
-                    SettingsView()
-                }
-            }
+        HStack {
+            Spacer()
             LogoView(size: 35)
+            Spacer()
+            Button {
+                settingsShowing = true
+            } label: {
+                Image(systemName: "ellipsis")
+                    .foregroundColor(.white)
+            }
+            .sheet(isPresented: $settingsShowing) {
+                SettingsView()
+            }
         }
     }
     
