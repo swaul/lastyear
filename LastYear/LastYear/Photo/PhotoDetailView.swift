@@ -210,11 +210,27 @@ struct PhotoDetailView: View {
         UIApplication.shared.open(url)
     }
     
+    func findCompression(image: UIImage) -> Double {
+        let numbers = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
+
+        for number in numbers {
+            if let data = image.jpegData(compressionQuality: number), data.count <= 10485760 {
+                return number
+            } else {
+                continue
+            }
+        }
+        
+        return 0.1
+    }
+    
     func shareLastYear() {
         guard let user = AuthService.shared.loggedInUser else { return }
         let storageRef = Storage.storage().reference()
         
-        guard let image = selectedImage, let data = image.jpegData(compressionQuality: 0.5) else { return }
+        
+        
+        guard let image = selectedImage, let data = image.jpegData(compressionQuality: findCompression(image: image)) else { return }
         
         // Create a reference to the file you want to upload
         let imagesRef = storageRef.child("images/\(selected)")

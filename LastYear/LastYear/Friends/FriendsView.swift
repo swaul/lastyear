@@ -120,18 +120,22 @@ struct FriendsView: View {
                 .presentationDetents([.fraction(0.3), .large])
             }
             Spacer()
-            TabView {
-                ForEach(friends, id: \.id) { friend in
-                    if let lastYear = friend.sharedLastYear {
-                        FriendLastYear(user: friend.userName, sharedLastYear: lastYear)
+                .onAppear {
+                    subscribeToFriends()
+                    getFriendRequests()
+                    getFriends()
+                }
+            if friends.isEmpty {
+                Text("Feed Loading...")
+            } else {
+                TabView {
+                    ForEach(friends, id: \.id) { friend in
+                        if let lastYear = friend.sharedLastYear {
+                            FriendLastYear(user: friend.userName, sharedLastYear: lastYear)
+                        }
                     }
                 }
-            }
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-            .onAppear {
-                subscribeToFriends()
-                getFriendRequests()
-                getFriends()
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
         }
     }
