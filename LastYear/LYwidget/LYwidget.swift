@@ -24,14 +24,16 @@ struct Provider: TimelineProvider {
     
     func getTimeline(in context: Context, completion: @escaping (Timeline<SimpleEntry>) -> Void) {
         var entries: [SimpleEntry] = []
-        os_log("GET TIMELINE STARTED", log: OSLog.default, type: .error)
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         
         let currentDate = Date()
         
         let imageIds = Helper.getImageIdsFromUserDefault()
-        os_log("IMAGE COUNT %{public}@", log: OSLog.default, type: .error, imageIds.count)
-        guard !imageIds.isEmpty else { return }
+        guard !imageIds.isEmpty else {
+            entries.append(SimpleEntry(date: Date(), dateLastYear: Date(), imageID: "empty", dateString: "today", numberOfIds: 1, imageIds: ["empty"]))
+            let timeline = Timeline(entries: entries, policy: .atEnd)
+            completion(timeline)
+            return
+        }
         // testing for 5 seconds
         let daySeconds = 60 * 60 * 24
         let timeRangeInSecond = daySeconds / imageIds.count
@@ -52,7 +54,7 @@ struct Provider: TimelineProvider {
             entries.append(entry)
         }
         
-        let timeline = Timeline(entries: entries, policy: .never)
+        let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
     }
 }
@@ -96,18 +98,12 @@ struct LYwidgetEntryView : View {
                     .padding(.top)
                     .fontWeight(.black)
             }
-            .onAppear {
-                os_log("TYPE accessoryCircular", log: OSLog.default, type: .error)
-            }
         case .accessoryRectangular, .accessoryInline:
             ZStack {
                 Color.blue.opacity(0.2)
                     .cornerRadius(20)
                 Text(text)
                     .multilineTextAlignment(.center)
-            }
-            .onAppear {
-                os_log("TYPE accessoryRectangular OR accessoryInline", log: OSLog.default, type: .error)
             }
         case .systemLarge:
             ZStack {
@@ -157,7 +153,7 @@ struct LYwidgetEntryView : View {
                             .cornerRadius(20)
                             .padding(6)
                             .onAppear {
-                                os_log("1 LOOKING FOR IMAGE %{public}@", log: OSLog.default, type: .error, imageID)
+                                os_log("1 LOOKING FOR IMAGE %{public}@", log: OSLog.default, type: .debug, imageID)
                             }
                         VStack {
                             if let dateString = entry.dateString {
@@ -180,6 +176,8 @@ struct LYwidgetEntryView : View {
                         }
                     }
                 }
+            } else {
+                Text("No Image")
             }
         default:
             if let imageID = entry.imageID {
@@ -210,18 +208,8 @@ struct LYwidgetEntryView : View {
                         .padding(2)
                     }
                 }
-                .onAppear {
-                    os_log("TYPE homescreen", log: OSLog.default, type: .error)
-                }
             } else {
-                ZStack {
-                    Color.white
-                    Image("fallback")
-                        .resizable()
-                        .scaledToFill()
-                        .cornerRadius(20)
-                }
-                
+                Text("No Image")
             }
         }
     }
@@ -235,9 +223,6 @@ struct LYwidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             LYwidgetEntryView(entry: entry)
-                .onAppear {
-                    os_log("IMAGE %{public}@", log: OSLog.default, type: .error, entry.imageID ?? "no image")
-                }
         }
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline])
         .configurationDisplayName("Last Year")
