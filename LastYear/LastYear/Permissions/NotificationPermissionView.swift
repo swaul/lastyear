@@ -69,7 +69,7 @@ struct NotificationPermissionView: View {
                 notificationView
                     .offset(x: 0, y: notiShowing ? 0 : -400)
                     .animation(.spring(response: 0.5, dampingFraction: 0.8, blendDuration: 0.4), value: notiShowing)
-                    .onTapGesture { _ in
+                    .onTapGesture {
                         requestNotiAccess()
                     }
                 Spacer()

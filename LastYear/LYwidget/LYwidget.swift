@@ -93,10 +93,8 @@ struct LYwidgetEntryView : View {
                     .scaledToFit()
                     .clipped()
                     .padding(1)
-                    .fontWeight(.light)
                 Text(String(entry.numberOfIds))
                     .padding(.top)
-                    .fontWeight(.black)
             }
         case .accessoryRectangular, .accessoryInline:
             ZStack {
@@ -108,8 +106,8 @@ struct LYwidgetEntryView : View {
         case .systemLarge:
             ZStack {
                 Color("backgroundColor")
-                Grid {
-                    GridRow {
+                VStack {
+                    HStack {
                         Image(uiImage: Helper.getImageFromUserDefaults(key: entry.imageIds[0]))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -123,7 +121,7 @@ struct LYwidgetEntryView : View {
                             .clipped()
                             .cornerRadius(20)
                     }
-                    GridRow {
+                    HStack {
                         Image(uiImage: Helper.getImageFromUserDefaults(key: entry.imageIds[2]))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
@@ -220,11 +218,19 @@ struct LYwidget: Widget {
     
     let kind: String = "LYwidget"
     
+    var supportedTypes: [WidgetFamily] {
+        if #available(iOS 16, *) {
+            return [.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline]
+        } else {
+            return [.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge]
+        }
+    }
+    
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             LYwidgetEntryView(entry: entry)
         }
-        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge, .accessoryCircular, .accessoryRectangular, .accessoryInline])
+        .supportedFamilies(supportedTypes)
         .configurationDisplayName("Last Year")
         .description("The time machine widget.")
     }
@@ -233,7 +239,7 @@ struct LYwidget: Widget {
 struct LYwidget_Previews: PreviewProvider {
     static var previews: some View {
         LYwidgetEntryView(entry: SimpleEntry(date: Date.now, dateLastYear: Date.now, imageID: "", dateString: "", numberOfIds: 12, imageIds: []))
-            .previewContext(WidgetPreviewContext(family: .accessoryInline))
+            .previewContext(WidgetPreviewContext(family: .systemLarge))
     }
 }
 

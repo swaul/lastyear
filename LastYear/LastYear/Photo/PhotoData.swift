@@ -20,7 +20,6 @@ public enum PhotoType: Codable {
 public class PhotoData: Identifiable, Comparable, Hashable {
     
     public var id: String
-    public var image: UIImage
     public var waterMarkedImage: UIImage
     public var date: Date?
     public var formattedDate: String
@@ -35,7 +34,6 @@ public class PhotoData: Identifiable, Comparable, Hashable {
     
     init(id: String, image: UIImage, date: Date? = nil, formattedDate: String, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
         self.id = id
-        self.image = image
         self.date = date
         self.location = location
         self.isFavorite = isFavorite
@@ -45,10 +43,10 @@ public class PhotoData: Identifiable, Comparable, Hashable {
         let ciImage = CIImage(image: image)!
         let options = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
         let faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: options)!
-        
+
         let faces = faceDetector.features(in: ciImage)
         self.faces = faces.count
-        
+
         if !faces.isEmpty {
             print("I found \(faces.count) in this image!")
         }

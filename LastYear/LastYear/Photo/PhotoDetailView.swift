@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import FirebaseStorage
 import ImageViewer
+import BackgroundTasks
 
 struct PhotoDetailView: View {
     
@@ -53,7 +54,39 @@ struct PhotoDetailView: View {
                 LogoView(size: 35)
                     .padding()
                 Spacer()
-                GeometryReader { reader in
+                if #available(iOS 16, *) {
+                    GeometryReader { reader in
+                        TabView(selection: $selected) {
+                            ForEach(images, id: \.id) { image in
+                                Image(uiImage: image.waterMarkedImage)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .cornerRadius(20)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 20)
+                                            .stroke(.white, lineWidth: 3)
+                                    )
+                                    .padding()
+                                    .tag(image.id)
+                            }
+                        }
+                        .tabViewStyle(.page(indexDisplayMode: .never))
+                        .onTapGesture { point in
+                            let firstThird = reader.size.width / 3
+                            let lastThird = reader.size.width - firstThird
+                            
+                            if point.x < firstThird {
+                                toLeft()
+                            } else if point.x > firstThird && point.x < lastThird {
+                                fullscreenImage = true
+                            } else {
+                                toRight()
+                            }
+                        }
+                        .offset(x: indexIsLimit ? -8 : 0)
+                        .animation(Animation.default.repeatCount(3, autoreverses: true).speed(6), value: indexIsLimit)
+                    }
+                } else {
                     TabView(selection: $selected) {
                         ForEach(images, id: \.id) { image in
                             Image(uiImage: image.waterMarkedImage)
@@ -69,20 +102,6 @@ struct PhotoDetailView: View {
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
-                    .onTapGesture { point in
-                        let firstThird = reader.size.width / 3
-                        let lastThird = reader.size.width - firstThird
-                        
-                        if point.x < firstThird {
-                            toLeft()
-                        } else if point.x > firstThird && point.x < lastThird {
-                            fullscreenImage = true
-                        } else {
-                            toRight()
-                        }
-                    }
-                    .offset(x: indexIsLimit ? -8 : 0)
-                    .animation(Animation.default.repeatCount(3, autoreverses: true).speed(6), value: indexIsLimit)
                 }
                 Spacer()
                 HStack {
@@ -131,33 +150,20 @@ struct PhotoDetailView: View {
                             .font(Font.custom("Poppins-Bold", size: 12))
                             .foregroundColor(Color.white)
                     }
-                    //                    VStack(spacing: 0) {
-                    //                        Button {
-                    //                            shareToTwitter()
-                    //                        } label: {
-                    //                            Image(systemName: "message")
-                    //                                .resizable()
-                    //                                .aspectRatio(contentMode: .fit)
-                    //                                .frame(height: 48)
-                    //                                .foregroundColor(.green)
-                    //                        }
-                    //                        .padding(.horizontal, 4)
-                    //                        Text("Twitter")
-                    //                            .font(Font.custom("Poppins-Bold", size: 12))
-                    //                            .foregroundColor(Color.white)
-                    //                    }
-                    VStack {
-                        ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
-                            Image(systemName: "ellipsis.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 32)
-                                .foregroundColor(.white)
+                    if #available(iOS 16, *) {
+                        VStack {
+                            ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
+                                Image(systemName: "ellipsis.circle")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 32)
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.horizontal, 4)
+                            Text("Others")
+                                .font(Font.custom("Poppins-Bold", size: 12))
+                                .foregroundColor(Color.white)
                         }
-                        .padding(.horizontal, 4)
-                        Text("Others")
-                            .font(Font.custom("Poppins-Bold", size: 12))
-                            .foregroundColor(Color.white)
                     }
                     Spacer()
                     if let image = images.first(where: { $0.id == selected }) {
@@ -177,41 +183,78 @@ struct PhotoDetailView: View {
                     ActivityViewController(activityItems: [selectedImage!])
                 }
                 .sheet(isPresented: $shareToLastYearShowing) {
-                    VStack {
-                        HStack {
-                            Text("Share to your story")
-                                .font(.largeTitle)
+                    if #available(iOS 16, *) {
+                        VStack {
+                            HStack {
+                                Text("Share to your story")
+                                    .font(.largeTitle)
+                                    .padding()
+                                Spacer()
+                            }
+                            Spacer()
+                            if currentUpload == 0 {
+                                Button {
+                                    shareLastYear()
+                                } label: {
+                                    Text("Share!")
+                                        .padding()
+                                        .background(Color.white)
+                                        .foregroundColor(Color("backgroundColor"))
+                                        .cornerRadius(10)
+                                }
                                 .padding()
+                            } else if uploadDone {
+                                Text("Upload done")
+                                    .font(.title)
+                                    .foregroundColor(.green)
+                            } else {
+                                VStack {
+                                    Text("\(Int(currentUpload.rounded())) %")
+                                    ProgressView(value: currentUpload, total: 100.0)
+                                        .padding(.horizontal)
+                                    Text("Uploading")
+                                        .padding()
+                                }
+                            }
                             Spacer()
                         }
-                        Spacer()
-                        if currentUpload == 0 {
-                            Button {
-                                shareLastYear()
-                            } label: {
-                                Text("Share!")
+                        .presentationDetents([.fraction(0.2)])
+                    } else {
+                        VStack {
+                            HStack {
+                                Text("Share to your story")
+                                    .font(.largeTitle)
                                     .padding()
-                                    .background(Color.white)
-                                    .foregroundColor(Color("backgroundColor"))
-                                    .cornerRadius(10)
+                                Spacer()
                             }
-                            .padding()
-                        } else if uploadDone {
-                            Text("Upload done")
-                                .font(.title)
-                                .foregroundColor(.green)
-                        } else {
-                            VStack {
-                                Text("\(Int(currentUpload.rounded())) %")
-                                ProgressView(value: currentUpload, total: 100.0)
-                                    .padding(.horizontal)
-                                Text("Uploading")
-                                    .padding()
+                            Spacer()
+                            if currentUpload == 0 {
+                                Button {
+                                    shareLastYear()
+                                } label: {
+                                    Text("Share!")
+                                        .padding()
+                                        .background(Color.white)
+                                        .foregroundColor(Color("backgroundColor"))
+                                        .cornerRadius(10)
+                                }
+                                .padding()
+                            } else if uploadDone {
+                                Text("Upload done")
+                                    .font(.title)
+                                    .foregroundColor(.green)
+                            } else {
+                                VStack {
+                                    Text("\(Int(currentUpload.rounded())) %")
+                                    ProgressView(value: currentUpload, total: 100.0)
+                                        .padding(.horizontal)
+                                    Text("Uploading")
+                                        .padding()
+                                }
                             }
+                            Spacer()
                         }
-                        Spacer()
                     }
-                    .presentationDetents([.fraction(0.5)])
                 }
             }
         }
@@ -252,7 +295,7 @@ struct PhotoDetailView: View {
     
     func findCompression(image: UIImage) -> Double {
         let numbers = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
-
+        
         for number in numbers {
             if let data = image.jpegData(compressionQuality: number), data.count <= 10485760 {
                 return number
@@ -268,12 +311,12 @@ struct PhotoDetailView: View {
         guard let user = AuthService.shared.loggedInUser else { return }
         let storageRef = Storage.storage().reference()
         
-        
-        
         guard let image = selectedImage, let data = image.jpegData(compressionQuality: findCompression(image: image)) else { return }
         
+        let date = Formatters.dateTimeFormatter.string(from: Date.now)
+        
         // Create a reference to the file you want to upload
-        let imagesRef = storageRef.child("images/\(user.id)")
+        let imagesRef = storageRef.child("images/\(date)")
         
         let uploadTask = imagesRef.putData(data, metadata: nil) { metadata, error in
             if let error = error {
@@ -292,12 +335,14 @@ struct PhotoDetailView: View {
         uploadTask.observe(.success) { snapshot in
             // Upload completed successfully
             print("image uploaded to", snapshot.reference)
-            FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: selected) { result in
+            let now = Date.now
+            let timeNow = Formatters.dateTimeFormatter.string(from: now)
+            FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
                 switch result {
                 case .failure(let error):
                     print(error.localizedDescription)
                 case .success(()):
-                    print("Uploaded: ", selected)
+                    print("Uploaded:", selected)
                     withAnimation {
                         self.uploadDone = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -379,7 +424,7 @@ extension UIImage {
             let resizedText = text.resizeToWidth(scaledToWidth: resizedWatermark.size.width * 0.75)
             
             UIGraphicsBeginImageContextWithOptions(self.size, true, 0)
-            let context = UIGraphicsGetCurrentContext()!
+            guard let context = UIGraphicsGetCurrentContext() else { return self }
             
             context.setFillColor(UIColor.white.cgColor)
             context.fill(rect)

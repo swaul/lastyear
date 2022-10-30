@@ -21,75 +21,85 @@ struct MainView: View {
     @State var timeRemaining = 5
     @State var visible = false
     
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color("backgroundColor")
-                    .ignoresSafeArea()
-                switch photoViewModel.loadingState {
-                case .done:
-                    ZStack {
-                        Color("backgroundColor")
-                            .ignoresSafeArea()
-                        TabView {
-                            imageView
-                                .tabItem {
-                                    Label("Memories", systemImage: "photo")
-                                }
-                            
-                            FriendsView()
-                                .tabItem {
-                                    Label("Friends", systemImage: "person.3")
-                                }
-                                .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
-                        }
-                    }
-                case .loading:
-                    VStack {
-                        loadingView
-                            .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
-                        if buttonShowing {
-                            Button {
-                                withAnimation {
-                                    photoViewModel.loadingState = .done
-                                }
-                            } label: {
-                                Text("Load in background")
-                                    .font(Font.custom("Poppins-Bold", size: 24))
-                                    .foregroundColor(.black)
-                                    .padding()
-                                    .background(Color.white)
-                                    .cornerRadius(10)
+    var content: some View {
+        ZStack {
+            Color("backgroundColor")
+                .ignoresSafeArea()
+            switch photoViewModel.loadingState {
+            case .done:
+                ZStack {
+                    Color("backgroundColor")
+                        .ignoresSafeArea()
+                    TabView {
+                        imageView
+                            .tabItem {
+                                Label("Memories", systemImage: "photo")
                             }
-                        }
-                    }
-                    .padding()
-                    .onReceive(timer) { input in
-                        if timeRemaining > 0 {
-                            timeRemaining -= 1
-                        } else {
-                            withAnimation {
-                                buttonShowing = true
+                        
+                        FriendsView()
+                            .tabItem {
+                                Label("Friends", systemImage: "person.3")
                             }
-                        }
-                    }
-                    .onAppear {
-                        LocalNotificationCenter.shared.scheduleTomorrows()
-                    }
-                case .noPictures:
-                    VStack {
-                        Text("Keine Bilder gefunden für " + photoViewModel.formattedDateOneYearAgo)
-                            .font(Font.custom("Poppins-Bold", size: 24))
-                            .foregroundColor(.white)
-                    }
-                default:
-                    VStack {
-                        Spacer()
-                        Text("idle")
-                            .matchedGeometryEffect(id: "text", in: loadingAnimation)
-                        Spacer()
+                            .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
                     }
                 }
+            case .loading:
+                VStack {
+                    loadingView
+                        .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
+                    if buttonShowing {
+                        Button {
+                            withAnimation {
+                                photoViewModel.loadingState = .done
+                            }
+                        } label: {
+                            Text("Load in background")
+                                .font(Font.custom("Poppins-Bold", size: 24))
+                                .foregroundColor(.black)
+                                .padding()
+                                .background(Color.white)
+                                .cornerRadius(10)
+                        }
+                    }
+                }
+                .padding()
+                .onReceive(timer) { input in
+                    if timeRemaining > 0 {
+                        timeRemaining -= 1
+                    } else {
+                        withAnimation {
+                            buttonShowing = true
+                        }
+                    }
+                }
+                .onAppear {
+                    LocalNotificationCenter.shared.scheduleTomorrows()
+                }
+            case .noPictures:
+                VStack {
+                    Text("Keine Bilder gefunden für " + photoViewModel.formattedDateOneYearAgo)
+                        .font(Font.custom("Poppins-Bold", size: 24))
+                        .foregroundColor(.white)
+                }
+            default:
+                VStack {
+                    Spacer()
+                    Text("idle")
+                        .matchedGeometryEffect(id: "text", in: loadingAnimation)
+                    Spacer()
+                }
+            }
+        }
+    }
+    
+    var body: some View {
+        if #available(iOS 16, *) {
+            NavigationStack {
+                content
+            }
+        } else {
+            NavigationView {
+                content
             }
         }
     }

@@ -206,6 +206,19 @@ public class FirebaseHandler {
             }
         }
     }
+    
+    public func removeMemory(user: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestoreUsers.document(user).updateData([
+            "sharedLastYear": ""
+        ]) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                completion?(.success(()))
+            }
+        }
+    }
+    
     public func changeUserTracking(to granted: Bool) {
         guard let user = Auth.auth().currentUser else { return }
         Analytics.setUserID(user.uid)

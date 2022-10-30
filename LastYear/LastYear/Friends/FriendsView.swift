@@ -39,92 +39,180 @@ struct FriendsView: View {
                 }
                 .padding(16)
                 .sheet(isPresented: $addFriendShowing) {
-                    AddFriendView()
-                        .presentationDetents([.fraction(0.3)])
+                    if #available(iOS 16, *) {
+                        AddFriendView()
+                            .presentationDetents([.fraction(0.3)])
+                    } else {
+                        AddFriendView()
+                    }
                 }
                 .sheet(isPresented: $friendRequestsShwoing) {
-                    VStack {
-                        Text("Friend requests")
-                            .font(.largeTitle)
-                            .padding()
-                        Spacer()
-                        if friendRequestUsers.isEmpty {
-                            Text("No friend requests")
-                                .font(Font.custom("Poppins-Regular", size: 16))
-                                .foregroundColor(.white)
+                    if #available(iOS 16, *) {
+                        VStack {
+                            Text("Friend requests")
+                                .font(.largeTitle)
+                                .padding()
+                            Spacer()
+                            if friendRequestUsers.isEmpty {
+                                Text("No friend requests")
+                                    .font(Font.custom("Poppins-Regular", size: 16))
+                                    .foregroundColor(.white)
+                                    .onAppear {
+                                        getFriendRequests()
+                                    }
+                                Spacer()
+                            } else {
+                                List(friendRequestUsers, id: \.id) { user in
+                                    HStack {
+                                        Text(user.userName)
+                                        Spacer()
+                                        Button {
+                                            acceptRequest(by: user.id)
+                                        } label: {
+                                            Text("Add")
+                                                .font(Font.custom("Poppins-Regular", size: 16))
+                                                .foregroundColor(.green)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(.horizontal)
+                                        Button {
+                                            denyRequest(user: user.id)
+                                        } label: {
+                                            Text("Deny")
+                                                .font(Font.custom("Poppins-Regular", size: 16))
+                                                .foregroundColor(.red)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
+                                }
+                                .listStyle(.plain)
                                 .onAppear {
                                     getFriendRequests()
                                 }
-                            Spacer()
-                        } else {
-                            List(friendRequestUsers, id: \.id) { user in
-                                HStack {
-                                    Text(user.userName)
-                                    Spacer()
-                                    Button {
-                                        acceptRequest(by: user.id)
-                                    } label: {
-                                        Text("Add")
-                                            .font(Font.custom("Poppins-Regular", size: 16))
-                                            .foregroundColor(.green)
-                                    }
-                                    .buttonStyle(.plain)
-                                    .padding(.horizontal)
-                                    Button {
-                                        denyRequest(user: user.id)
-                                    } label: {
-                                        Text("Deny")
-                                            .font(Font.custom("Poppins-Regular", size: 16))
-                                            .foregroundColor(.red)
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            .listStyle(.plain)
-                            .onAppear {
-                                getFriendRequests()
                             }
                         }
-                    }
-                    .presentationDetents([.fraction(0.3), .large])
-                }
-                .sheet(isPresented: $showFriendList) {
-                    VStack {
-                        Text("Your Friends")
-                            .font(.largeTitle)
-                            .padding()
-                        Spacer()
-                        if friends.isEmpty {
-                            HStack(spacing: 0) {
-                                Text("No friends yet, ")
+                        .presentationDetents([.fraction(0.3), .large])
+                    } else {
+                        VStack {
+                            Text("Friend requests")
+                                .font(.largeTitle)
+                                .padding()
+                            Spacer()
+                            if friendRequestUsers.isEmpty {
+                                Text("No friend requests")
                                     .font(Font.custom("Poppins-Regular", size: 16))
                                     .foregroundColor(.white)
-                                Button {
-                                    showFriendList = false
-                                    addFriend()
-                                } label: {
-                                    Text("add some!")
-                                        .font(Font.custom("Poppins-Bold", size: 16))
-                                        .foregroundColor(.white)
-                                        .underline()
+                                    .onAppear {
+                                        getFriendRequests()
+                                    }
+                                Spacer()
+                            } else {
+                                List(friendRequestUsers, id: \.id) { user in
+                                    HStack {
+                                        Text(user.userName)
+                                        Spacer()
+                                        Button {
+                                            acceptRequest(by: user.id)
+                                        } label: {
+                                            Text("Add")
+                                                .font(Font.custom("Poppins-Regular", size: 16))
+                                                .foregroundColor(.green)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .padding(.horizontal)
+                                        Button {
+                                            denyRequest(user: user.id)
+                                        } label: {
+                                            Text("Deny")
+                                                .font(Font.custom("Poppins-Regular", size: 16))
+                                                .foregroundColor(.red)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
-                            }
-                            .onAppear {
-                                getFriends()
-                            }
-                            Spacer()
-                        } else {
-                            List(friends, id: \.id) { user in
-                                HStack {
-                                    Text(user.userName)
+                                .listStyle(.plain)
+                                .onAppear {
+                                    getFriendRequests()
                                 }
-                            }
-                            .onAppear {
-                                getFriends()
                             }
                         }
                     }
-                    .presentationDetents([.fraction(0.3), .large])
+                }
+                .sheet(isPresented: $showFriendList) {
+                    if #available(iOS 16, *) {
+                        VStack {
+                            Text("Your Friends")
+                                .font(.largeTitle)
+                                .padding()
+                            Spacer()
+                            if friends.isEmpty {
+                                HStack(spacing: 0) {
+                                    Text("No friends yet, ")
+                                        .font(Font.custom("Poppins-Regular", size: 16))
+                                        .foregroundColor(.white)
+                                    Button {
+                                        showFriendList = false
+                                        addFriend()
+                                    } label: {
+                                        Text("add some!")
+                                            .font(Font.custom("Poppins-Bold", size: 16))
+                                            .foregroundColor(.white)
+                                            .underline()
+                                    }
+                                }
+                                .onAppear {
+                                    getFriends()
+                                }
+                                Spacer()
+                            } else {
+                                List(friends, id: \.id) { user in
+                                    HStack {
+                                        Text(user.userName)
+                                    }
+                                }
+                                .onAppear {
+                                    getFriends()
+                                }
+                            }
+                        }
+                        .presentationDetents([.fraction(0.3), .large])
+                    } else {
+                        VStack {
+                            Text("Your Friends")
+                                .font(.largeTitle)
+                                .padding()
+                            Spacer()
+                            if friends.isEmpty {
+                                HStack(spacing: 0) {
+                                    Text("No friends yet, ")
+                                        .font(Font.custom("Poppins-Regular", size: 16))
+                                        .foregroundColor(.white)
+                                    Button {
+                                        showFriendList = false
+                                        addFriend()
+                                    } label: {
+                                        Text("add some!")
+                                            .font(Font.custom("Poppins-Bold", size: 16))
+                                            .foregroundColor(.white)
+                                            .underline()
+                                    }
+                                }
+                                .onAppear {
+                                    getFriends()
+                                }
+                                Spacer()
+                            } else {
+                                List(friends, id: \.id) { user in
+                                    HStack {
+                                        Text(user.userName)
+                                    }
+                                }
+                                .onAppear {
+                                    getFriends()
+                                }
+                            }
+                        }
+                    }
                 }
                 Spacer()
                     .onAppear {
@@ -143,8 +231,14 @@ struct FriendsView: View {
                             .padding(.vertical)
                         TabView {
                             ForEach(friends, id: \.id) { friend in
-                                if !friend.sharedLastYear.isEmptyOrNil {
-                                    FriendLastYear(user: friend.userName, id: friend.id)
+                                if let time = friend.sharedLastYear,
+                                   !time.isEmpty,
+                                   let date = Formatters.dateTimeFormatter.date(from: time) {
+                                    let interval = date.timeIntervalSince(Date.now)
+                                    let twentyFourHours: TimeInterval = 60 * 60 * 24
+                                    if interval < twentyFourHours {
+                                        FriendLastYear(user: friend.userName, id: friend.id)
+                                    }
                                 }
                             }
                         }

@@ -40,7 +40,7 @@ public class PhotosViewModel: ObservableObject {
                 countDone = allPhotos.count
             }
             getBestImage()
-//            checkIfDone()
+            checkIfDone()
         }
     }
     var group = DispatchGroup()
@@ -114,46 +114,48 @@ public class PhotosViewModel: ObservableObject {
         
         if results.count > 0 {
             for i in 0..<results.count {
-                group.enter()
+//                group.enter()
                 let asset = results.object(at: i)
-                manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { (image, _) in
-                    if let image = image, !asset.isHidden {
-                        let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: image, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+                manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { [weak self] (image, _) in
+                    guard let self = self else { return }
+                    let data = image?.jpegData(compressionQuality: 0.1)
+                    if let data = data, !asset.isHidden {
+                        let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: UIImage(data: data)!, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
                         
                         if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
                             if asset.mediaSubtypes == .photoScreenshot {
                                 photo.photoType = .screenshot
                                 self.allPhotos.append(photo)
                                 self.test += 1
-                                self.group.leave()
+//                                self.group.leave()
                             } else {
                                 if asset.mediaSubtypes == .photoLive {
                                     photo.photoType = .live
                                 }
                                 self.allPhotos.append(photo)
-                                self.appendImage(image: image, id: photo.id)
+                                self.appendImage(image: UIImage(data: data)!, id: photo.id)
                                 self.test += 1
-                                self.group.leave()
+//                                self.group.leave()
                             }
                         } else {
                             self.test += 1
-                            self.group.leave()
+//                            self.group.leave()
                             self.countFound -= 1
                         }
                     } else {
-                        self.group.leave()
+//                        self.group.leave()
                         self.requestsFailed += 1
                         print("error asset to image ", asset.mediaSubtypes)
                     }
                 }
             }
-            group.notify(queue: .main) {
-                withAnimation {
-                    self.loadingState = .done
-                    WidgetCenter.shared.reloadAllTimelines()
-                    print(Helper.getImageIdsFromUserDefault().count)
-                }
-            }
+//            group.notify(queue: .main) {
+//                withAnimation {
+//                    self.loadingState = .done
+//                    WidgetCenter.shared.reloadAllTimelines()
+//                    print(Helper.getImageIdsFromUserDefault().count)
+//                }
+//            }
         } else {
             loadingState = .noPictures
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
@@ -164,16 +166,16 @@ public class PhotosViewModel: ObservableObject {
         
         // Save image in userdefaults
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
-            
+
             let resized = resizeImage(image: image, targetSize: CGSize(width: 1404, height: 3038))
 
             if let jpegRepresentation = resized.jpegData(compressionQuality: 0) {
-                
+
                 userDefaults.set(jpegRepresentation, forKey: id)
-                
+
                 // Append the list and save
                 saveIntoUserDefaults()
-                
+
                 // Notify the widget to reload all items
 //                WidgetCenter.shared.reloadAllTimelines()
             }
@@ -208,22 +210,24 @@ public class PhotosViewModel: ObservableObject {
             bestImage = allPhotos.first!
         }
     }
-//
-//    func checkIfDone() {
-//        if countDone >= 1 && many {
-//            withAnimation {
-//                loadingState = .done
-//            }
-//        }
-//        if countDone == countFound {
-//            withAnimation {
-//                loadingState = .done
-//            }
-//            withAnimation {
-//                many = false
-//            }
-//        }
-//    }
+
+    func checkIfDone() {
+        if countDone >= 1 && many {
+            withAnimation {
+                WidgetCenter.shared.reloadAllTimelines()
+                loadingState = .done
+            }
+        }
+        if countDone == countFound {
+            withAnimation {
+                WidgetCenter.shared.reloadAllTimelines()
+                loadingState = .done
+            }
+            withAnimation {
+                many = false
+            }
+        }
+    }
     
     func isSameDay(date1: Date, date2: Date) -> Bool {
         let one = Calendar.current.dateComponents([.day], from: date1)
