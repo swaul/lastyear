@@ -16,6 +16,7 @@ struct FriendLastYear: View {
     @State var id: String = ""
     @State var currentDownload = 0.0
     @State var downloadDone = false
+    @State var timePosted: String = ""
 
     var body: some View {
         VStack {
@@ -38,9 +39,14 @@ struct FriendLastYear: View {
                     }
                 }
             }
-            Text(user)
-                .font(Font.custom("Poppins-Bold", size: 20))
-                .foregroundColor(Color.white)
+            HStack {
+                Text(user)
+                    .font(Font.custom("Poppins-Bold", size: 20))
+                    .foregroundColor(Color.white)
+                Text(timePosted)
+                    .font(Font.custom("Poppins-Regular", size: 20))
+                    .foregroundColor(Color.white)
+            }
         }
         .onAppear {
             getImage()

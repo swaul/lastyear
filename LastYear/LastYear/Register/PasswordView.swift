@@ -25,7 +25,9 @@ struct PasswordView: View {
     }
     
     var buttonEnabled: Bool {
-        isValidPassword && termsAndConditionsAccepted
+        print("valid pw", isValidPassword)
+        print("termsAndConditions Accepted", termsAndConditionsAccepted)
+        return isValidPassword && termsAndConditionsAccepted
     }
     
     var body: some View {
@@ -125,7 +127,7 @@ struct PasswordView: View {
                     .padding(8)
                     .frame(maxWidth: .infinity)
                     .foregroundColor(Color.white)
-                    .background(isValidPassword ? Color("primary") : Color.gray)
+                    .background(buttonEnabled ? Color("primary") : Color.gray)
                     .cornerRadius(10)
             }
             .padding()

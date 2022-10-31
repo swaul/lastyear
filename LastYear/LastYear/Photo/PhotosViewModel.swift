@@ -40,7 +40,7 @@ public class PhotosViewModel: ObservableObject {
                 countDone = allPhotos.count
             }
             getBestImage()
-            checkIfDone()
+//            checkIfDone()
         }
     }
     var group = DispatchGroup()
@@ -110,11 +110,11 @@ public class PhotosViewModel: ObservableObject {
         guard countFound != allPhotos.count else { return }
         allPhotos.removeAll()
         
-        many = countFound > 20
+//        many = countFound > 20
         
         if results.count > 0 {
             for i in 0..<results.count {
-//                group.enter()
+                group.enter()
                 let asset = results.object(at: i)
                 manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { [weak self] (image, _) in
                     guard let self = self else { return }
@@ -127,7 +127,7 @@ public class PhotosViewModel: ObservableObject {
                                 photo.photoType = .screenshot
                                 self.allPhotos.append(photo)
                                 self.test += 1
-//                                self.group.leave()
+                                self.group.leave()
                             } else {
                                 if asset.mediaSubtypes == .photoLive {
                                     photo.photoType = .live
@@ -135,27 +135,27 @@ public class PhotosViewModel: ObservableObject {
                                 self.allPhotos.append(photo)
                                 self.appendImage(image: UIImage(data: data)!, id: photo.id)
                                 self.test += 1
-//                                self.group.leave()
+                                self.group.leave()
                             }
                         } else {
                             self.test += 1
-//                            self.group.leave()
+                            self.group.leave()
                             self.countFound -= 1
                         }
                     } else {
-//                        self.group.leave()
+                        self.group.leave()
                         self.requestsFailed += 1
                         print("error asset to image ", asset.mediaSubtypes)
                     }
                 }
             }
-//            group.notify(queue: .main) {
-//                withAnimation {
-//                    self.loadingState = .done
-//                    WidgetCenter.shared.reloadAllTimelines()
-//                    print(Helper.getImageIdsFromUserDefault().count)
-//                }
-//            }
+            group.notify(queue: .main) {
+                withAnimation {
+                    self.loadingState = .done
+                    WidgetCenter.shared.reloadAllTimelines()
+                    print(Helper.getImageIdsFromUserDefault().count)
+                }
+            }
         } else {
             loadingState = .noPictures
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
@@ -211,23 +211,23 @@ public class PhotosViewModel: ObservableObject {
         }
     }
 
-    func checkIfDone() {
-        if countDone >= 1 && many {
-            withAnimation {
-                WidgetCenter.shared.reloadAllTimelines()
-                loadingState = .done
-            }
-        }
-        if countDone == countFound {
-            withAnimation {
-                WidgetCenter.shared.reloadAllTimelines()
-                loadingState = .done
-            }
-            withAnimation {
-                many = false
-            }
-        }
-    }
+//    func checkIfDone() {
+//        if countDone >= 1 && many {
+//            withAnimation {
+//                WidgetCenter.shared.reloadAllTimelines()
+//                loadingState = .done
+//            }
+//        }
+//        if countDone == countFound {
+//            withAnimation {
+//                WidgetCenter.shared.reloadAllTimelines()
+//                loadingState = .done
+//            }
+//            withAnimation {
+//                many = false
+//            }
+//        }
+//    }
     
     func isSameDay(date1: Date, date2: Date) -> Bool {
         let one = Calendar.current.dateComponents([.day], from: date1)
@@ -263,7 +263,8 @@ public class PhotosViewModel: ObservableObject {
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
-        return newImage!
+        guard let newImage else { return image }
+        return newImage
     }
 }
 

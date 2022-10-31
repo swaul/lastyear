@@ -234,10 +234,11 @@ struct FriendsView: View {
                                 if let time = friend.sharedLastYear,
                                    !time.isEmpty,
                                    let date = Formatters.dateTimeFormatter.date(from: time) {
-                                    let interval = date.timeIntervalSince(Date.now)
+                                    let interval = Date.now.timeIntervalSince(date)
                                     let twentyFourHours: TimeInterval = 60 * 60 * 24
+                                    let intervalInHours = Int((interval / 60 / 60).rounded())
                                     if interval < twentyFourHours {
-                                        FriendLastYear(user: friend.userName, id: friend.id)
+                                        FriendLastYear(user: friend.userName, id: friend.id, timePosted: "\(intervalInHours)h ago")
                                     }
                                 }
                             }

@@ -10,9 +10,18 @@ import SwiftUI
 struct EmailView: View {
     
     @State var email: String = ""
+    
+    @State var error: Bool = false
+    @State private var selection: String? = nil
+    
+    @FocusState var textfieldfocus
+    
     var username: String
     
     var isValidEmail: Bool {
+        if error {
+            return false
+        }
         if email.count > 100 {
             return false
         }
@@ -23,7 +32,7 @@ struct EmailView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Benutzernamen erstellen")
+            Text("Set Email")
                 .font(Font.custom("Poppins-Bold", size: 16))
                 .foregroundColor(.white)
             TextField(text: $email) {
@@ -32,9 +41,25 @@ struct EmailView: View {
             .textFieldStyle(.roundedBorder)
             .keyboardType(.emailAddress)
             .textContentType(.emailAddress)
+            .foregroundColor(error ? .red : .white)
+            .focused($textfieldfocus)
+            .onChange(of: email, perform: { newValue in
+                error = false
+            })
+            .onAppear {
+                textfieldfocus = true
+            }
+            if error {
+                Text("Email is already in use")
+                    .font(Font.custom("Poppins-Regular", size: 12))
+                    .foregroundColor(.red)
+            }
             Spacer()
-            NavigationLink {
-                PasswordView(email: email, userName: username)
+            NavigationLink(destination: PasswordView(email: email, userName: username), tag: "password", selection: $selection) {
+                EmptyView()
+            }
+            Button {
+                checkMail()
             } label: {
                 Text("Continue")
                     .font(Font.custom("Poppins-Bold", size: 18))
@@ -49,6 +74,24 @@ struct EmailView: View {
         }
         .padding()
         .navigationTitle("Email")
+    }
+    
+    func checkMail() {
+        email = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        FirebaseHandler.shared.checkField(id: "email", name: email.trimmingCharacters(in: .whitespacesAndNewlines)) { result in
+            switch result {
+            case .failure(let error):
+                print(error)
+            case .success(let users):
+                if users.isEmpty {
+                    selection = "password"
+                    print("did not find", email)
+                } else {
+                    error = true
+                    print("found", users)
+                }
+            }
+        }
     }
 }
 

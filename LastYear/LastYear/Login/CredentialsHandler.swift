@@ -24,9 +24,9 @@ struct CredentialsHandler {
     static func setPassword(credentials: Credentials) throws {
         let account = credentials.email
         let password = credentials.password
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
+        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
                                     kSecAttrAccount as String: account,
-                                    kSecAttrService as String: "lastyear",
+                                    kSecAttrLabel as String: "lastyear",
                                     kSecValueData as String: password]
                 
         let status = SecItemAdd(query as CFDictionary, nil)
@@ -34,10 +34,10 @@ struct CredentialsHandler {
     }
     
     static func getPassword() throws -> Credentials {
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
-                                    kSecMatchLimit as String: kSecMatchLimitOne,
+        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+                                    kSecMatchLimit as String: kSecMatchLimitAll,
                                     kSecReturnAttributes as String: true,
-                                    kSecAttrService as String: "lastyear",
+                                    kSecAttrLabel as String: "lastyear",
                                     kSecReturnData as String: true]
         
         var item: CFTypeRef?

@@ -219,6 +219,21 @@ public class FirebaseHandler {
         }
     }
     
+    public func checkField(id: String, name: String, completion: ((Result<[LYUser], FirebaseError>) -> Void)?) {
+        firestoreUsers.whereField(id, in: [name]).getDocuments { snapshot, error in
+            if let error {
+                completion?(.failure(.error(error: error)))
+            } else {
+                let users = snapshot?.documents.compactMap { LYUser(data: $0.data()) }
+                guard let users = users else {
+                    completion?(.failure(.genericError()))
+                    return
+                }
+                completion?(.success(users))
+            }
+        }
+    }
+    
     public func changeUserTracking(to granted: Bool) {
         guard let user = Auth.auth().currentUser else { return }
         Analytics.setUserID(user.uid)

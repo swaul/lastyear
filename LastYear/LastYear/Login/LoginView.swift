@@ -96,7 +96,7 @@ struct LoginView: View {
             getPasswordFromKeychain()
         }
         .padding()
-        .navigationTitle("Email")
+        .navigationTitle("Login")
     }
     
     func login() {
@@ -106,6 +106,12 @@ struct LoginView: View {
                 print("[LOG] - Login failed with error", error)
             case .success(let user):
                 print("[LOG] - User logged in with", user.email)
+                let credentials = Credentials(email: email, password: password)
+                do {
+                    try CredentialsHandler.setPassword(credentials: credentials)
+                } catch let error {
+                    print("[LOG] - Couldnt be saved to keychain", error.localizedDescription)
+                }
                 presentationMode.wrappedValue.dismiss()
             }
         }
