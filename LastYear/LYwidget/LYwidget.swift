@@ -35,8 +35,7 @@ struct Provider: TimelineProvider {
             return
         }
         // testing for 5 seconds
-        let daySeconds = 60 * 60 * 24
-        let timeRangeInSecond = daySeconds / imageIds.count
+        let timeRangeInSecond = imageIds.count * 60 * 60
         
         for index in 0 ..< imageIds.count {
             

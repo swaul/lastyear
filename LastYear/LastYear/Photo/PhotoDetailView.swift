@@ -316,7 +316,7 @@ struct PhotoDetailView: View {
         let date = Formatters.dateTimeFormatter.string(from: Date.now)
         
         // Create a reference to the file you want to upload
-        let imagesRef = storageRef.child("images/\(date)")
+        let imagesRef = storageRef.child("images/\(user.id)")
         
         let uploadTask = imagesRef.putData(data, metadata: nil) { metadata, error in
             if let error = error {
@@ -336,7 +336,7 @@ struct PhotoDetailView: View {
             // Upload completed successfully
             print("image uploaded to", snapshot.reference)
             let now = Date.now
-            let timeNow = Formatters.dateTimeFormatter.string(from: now)
+
             FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
                 switch result {
                 case .failure(let error):
@@ -385,22 +385,7 @@ struct PhotoDetailView: View {
             }
         }
     }
-    
-    func shareToWhatsapp() {
-        guard let image = selectedImage,
-              let imageData = image.pngData(),
-              let whatsappURL = URL(string: "whatsapp://send")
-        else { return }
-        
-        if UIApplication.shared.canOpenURL(whatsappURL) {
-            UIApplication.shared.open(whatsappURL)
-        }
-    }
-    
-    //    func filteredImage(image: UIImage) -> UIImage {
-    //        return image.addFilter(filter: currentFilter)
-    //    }
-    
+
     func simpleError() {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.error)

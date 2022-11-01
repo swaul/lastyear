@@ -238,7 +238,7 @@ struct FriendsView: View {
                                     let twentyFourHours: TimeInterval = 60 * 60 * 24
                                     let intervalInHours = Int((interval / 60 / 60).rounded())
                                     if interval < twentyFourHours {
-                                        FriendLastYear(user: friend.userName, id: friend.id, timePosted: "\(intervalInHours)h ago")
+                                        FriendLastYear(user: friend.userName, id: friend.id, timePosted: interval)
                                     }
                                 }
                             }

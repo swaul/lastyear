@@ -16,7 +16,7 @@ struct FriendLastYear: View {
     @State var id: String = ""
     @State var currentDownload = 0.0
     @State var downloadDone = false
-    @State var timePosted: String = ""
+    @State var timePosted: Double = 0.0
 
     var body: some View {
         VStack {
@@ -43,13 +43,22 @@ struct FriendLastYear: View {
                 Text(user)
                     .font(Font.custom("Poppins-Bold", size: 20))
                     .foregroundColor(Color.white)
-                Text(timePosted)
+                Text(getTimePosted())
                     .font(Font.custom("Poppins-Regular", size: 20))
                     .foregroundColor(Color.white)
             }
         }
         .onAppear {
             getImage()
+        }
+    }
+    
+    func getTimePosted() -> String {
+        if (timePosted / 60) < 60 {
+            let time = Int((timePosted / 60).rounded())
+            return "\(time)m ago"
+        } else {
+            return "\(Int((timePosted / 60 / 60).rounded()))h ago"
         }
     }
     
