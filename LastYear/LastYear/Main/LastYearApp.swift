@@ -85,6 +85,7 @@ struct LastYearApp: App {
             if loading {
                 LoadingView()
                     .onAppear {
+                        UITabBar.appearance().isTranslucent = false
                         checkLogin()
                     }
                     .preferredColorScheme(.dark)

@@ -104,22 +104,17 @@ struct PhotoDetailView: View {
                     .tabViewStyle(.page(indexDisplayMode: .never))
                 }
                 Spacer()
-                HStack {
-                    VStack(spacing: 0) {
-                        Button {
-                            shareToLastYearShowing = true
-                        } label: {
-                            Image("fallback")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 32)
-                                .foregroundColor(.green)
+                    Button {
+                        shareToLastYearShowing = true
+                    } label: {
+                        HStack {
+                            Text("Share on")
+                            Image("logoSmall")
                         }
-                        .padding(.horizontal, 4)
-                        Text("Last Year")
-                            .font(Font.custom("Poppins-Bold", size: 12))
-                            .foregroundColor(Color.white)
+                        .contentShape(Rectangle())
                     }
+                    .padding(.horizontal, 4)
+                HStack {
                     VStack(spacing: 0) {
                         Button {
                             shareToStory()
@@ -183,26 +178,58 @@ struct PhotoDetailView: View {
                     ActivityViewController(activityItems: [selectedImage!])
                 }
                 .sheet(isPresented: $shareToLastYearShowing) {
-                    if #available(iOS 16, *) {
                         VStack {
-                            HStack {
-                                Text("Share to your story")
-                                    .font(.largeTitle)
-                                    .padding()
-                                Spacer()
-                            }
-                            Spacer()
                             if currentUpload == 0 {
                                 Button {
                                     shareLastYear()
                                 } label: {
-                                    Text("Share!")
-                                        .padding()
-                                        .background(Color.white)
-                                        .foregroundColor(Color("backgroundColor"))
-                                        .cornerRadius(10)
+                                    HStack {
+                                        Image(systemName: "person.2")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 25)
+                                        Spacer()
+                                        VStack(alignment: .leading) {
+                                            Text("Friends")
+                                                .font(Font.custom("Poppins-Bold", size: 24))
+                                                .foregroundColor(Color.white)
+                                            Text("Share with all your friends")
+                                                .font(Font.custom("Poppins-Regular", size: 18))
+                                                .foregroundColor(Color.white)
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .padding()
+                                    .background(Color("gray"))
+                                    .cornerRadius(10)
                                 }
                                 .padding()
+                                Button {
+                                    shareLastYear(toPublic: true)
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "magnifyingglass")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(height: 25)
+                                        Spacer()
+                                        VStack(alignment: .leading) {
+                                            Text("Discovery")
+                                                .font(Font.custom("Poppins-Bold", size: 24))
+                                                .foregroundColor(Color.white)
+                                            Text("Share with all LastYear users")
+                                                .font(Font.custom("Poppins-Regular", size: 18))
+                                                .foregroundColor(Color.white)
+                                        }
+                                    }
+                                    .contentShape(Rectangle())
+                                    .padding()
+                                    .background(Color("gray"))
+                                    .cornerRadius(10)
+                                }
+                                .padding()
+                                Text("Share!")
+                                    .font(Font.custom("Poppins-Bold", size: 28))
                             } else if uploadDone {
                                 Text("Upload done")
                                     .font(.title)
@@ -216,45 +243,8 @@ struct PhotoDetailView: View {
                                         .padding()
                                 }
                             }
-                            Spacer()
                         }
-                        .presentationDetents([.fraction(0.2)])
-                    } else {
-                        VStack {
-                            HStack {
-                                Text("Share to your story")
-                                    .font(.largeTitle)
-                                    .padding()
-                                Spacer()
-                            }
-                            Spacer()
-                            if currentUpload == 0 {
-                                Button {
-                                    shareLastYear()
-                                } label: {
-                                    Text("Share!")
-                                        .padding()
-                                        .background(Color.white)
-                                        .foregroundColor(Color("backgroundColor"))
-                                        .cornerRadius(10)
-                                }
-                                .padding()
-                            } else if uploadDone {
-                                Text("Upload done")
-                                    .font(.title)
-                                    .foregroundColor(.green)
-                            } else {
-                                VStack {
-                                    Text("\(Int(currentUpload.rounded())) %")
-                                    ProgressView(value: currentUpload, total: 100.0)
-                                        .padding(.horizontal)
-                                    Text("Uploading")
-                                        .padding()
-                                }
-                            }
-                            Spacer()
-                        }
-                    }
+                        .presentationDetents([.fraction(0.4)])
                 }
             }
         }
@@ -307,7 +297,7 @@ struct PhotoDetailView: View {
         return 0.1
     }
     
-    func shareLastYear() {
+    func shareLastYear(toPublic: Bool = false) {
         guard let user = AuthService.shared.loggedInUser else { return }
         let storageRef = Storage.storage().reference()
         
@@ -336,22 +326,48 @@ struct PhotoDetailView: View {
             // Upload completed successfully
             print("image uploaded to", snapshot.reference)
             let now = Date.now
-
-            FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
-                switch result {
-                case .failure(let error):
-                    print(error.localizedDescription)
-                case .success(()):
-                    print("Uploaded:", selected)
-                    withAnimation {
-                        self.uploadDone = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            self.shareToLastYearShowing = false
+            let discovery = DiscoveryUpload(id: user.id, likes: 0, timePosted: Formatters.dateTimeFormatter.string(from: now), user: user.userName)
+            
+            if toPublic {
+                FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
+                    switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    case .success(()):
+                        print("Uploaded:", selected)
+                        FirebaseHandler.shared.shareToPublic(discovery: discovery) { result in
+                            switch result {
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                            case .success(()):
+                                withAnimation {
+                                    self.uploadDone = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        self.shareToLastYearShowing = false
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                uploadTask.removeAllObservers()
+            } else {
+                FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
+                    switch result {
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    case .success(()):
+                        print("Uploaded:", selected)
+                        withAnimation {
+                            self.uploadDone = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                self.shareToLastYearShowing = false
+                            }
+                        }
+                    }
+                }
+                uploadTask.removeAllObservers()
             }
-            uploadTask.removeAllObservers()
         }
         
         uploadTask.observe(.failure) { snapshot in

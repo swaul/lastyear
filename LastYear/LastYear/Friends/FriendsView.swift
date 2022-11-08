@@ -2,337 +2,256 @@
 //  FriendsView.swift
 //  LastYear
 //
-//  Created by Paul Kühnel on 27.10.22.
+//  Created by Paul Kühnel on 07.11.22.
 //
 
 import SwiftUI
+import AlertToast
 
 struct FriendsView: View {
-    
-    @State var addFriendShowing: Bool = false
-    @State var friendRequestsShwoing: Bool = false
-    @State var showFriendList: Bool = false
-    
-    @State var friendRequestUsers: [LYUser] = []
-    @State var friends: [LYUser] = []
-    
-    @State var images: [Image] = []
+    @EnvironmentObject var friendsViewModel: FriendsViewModel
+    @State var selection = 0
+    @State var searchText = ""
+    @FocusState private var searchFocused: Bool
     
     var body: some View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
             VStack {
-                HStack {
-                    Spacer()
-                    LogoView(size: 35)
-                    Spacer()
-                    Menu {
-                        Button("Add new Friend", action: addFriend)
-                        Button("Friend Requests", action: friendRequests)
-                            .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
-                        Button("Friends", action: showFriends)
-                    } label: {
-                        Image(systemName: "person")
-                            .foregroundColor(.white)
-                    }
+                Text("Friends")                                                .font(Font.custom("Poppins-Bold", size: 26))
+                    .foregroundColor(.white)
+                TextField(text: $searchText) {
+                    Text("Add a friend")
                 }
-                .padding(16)
-                .sheet(isPresented: $addFriendShowing) {
-                    if #available(iOS 16, *) {
-                        AddFriendView()
-                            .presentationDetents([.fraction(0.3)])
-                    } else {
-                        AddFriendView()
+                .textFieldStyle(.roundedBorder)
+                .autocorrectionDisabled()
+                .submitLabel(.done)
+                .focused($searchFocused)
+                .onChange(of: friendsViewModel.userFound, perform: { userFound in
+                    if userFound {
+                        searchText = ""
+                        searchFocused = false
                     }
+                })
+                .toast(isPresenting: $friendsViewModel.userFound, alert: {
+                    AlertToast(displayMode: .hud, type: .regular, title: "Request Sent!", style: .style(backgroundColor: .green))
+                }, completion: {
+                    friendsViewModel.userFound = false
+                })
+                .alert(isPresented: $friendsViewModel.errorShowing) {
+                    Alert(title: Text("Fehler:"),
+                          message: Text(friendsViewModel.error),
+                          dismissButton: .cancel()
+                    )
                 }
-                .sheet(isPresented: $friendRequestsShwoing) {
-                    if #available(iOS 16, *) {
+                VStack {
+                    Picker("What is your favorite color?", selection: $selection) {
+                        Text("Friends").tag(0)
+                        Text("Recommended").tag(1)
+                        Text("Requests").tag(2)
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    switch selection {
+                    case 2:
                         VStack {
                             Text("Friend requests")
                                 .font(.largeTitle)
                                 .padding()
                             Spacer()
-                            if friendRequestUsers.isEmpty {
+                            if friendsViewModel.friendRequestUsers.isEmpty {
                                 Text("No friend requests")
-                                    .font(Font.custom("Poppins-Regular", size: 16))
+                                    .font(Font.custom("Poppins-Regular", size: 20))
                                     .foregroundColor(.white)
                                     .onAppear {
-                                        getFriendRequests()
+                                        friendsViewModel.getFriendRequests()
                                     }
                                 Spacer()
                             } else {
-                                List(friendRequestUsers, id: \.id) { user in
-                                    HStack {
-                                        Text(user.userName)
-                                        Spacer()
-                                        Button {
-                                            acceptRequest(by: user.id)
-                                        } label: {
-                                            Text("Add")
-                                                .font(Font.custom("Poppins-Regular", size: 16))
-                                                .foregroundColor(.green)
+                                ScrollView {
+                                    ForEach(friendsViewModel.friendRequestUsers, id: \.id) { user in
+                                        HStack {
+                                            Text(user.userName)
+                                                .font(Font.custom("Poppins-Bold", size: 20))
+                                                .foregroundColor(.white)
+                                            Spacer()
+                                            Button {
+                                                friendsViewModel.acceptRequest(by: user.id)
+                                            } label: {
+                                                Text("Add")
+                                                    .font(Font.custom("Poppins-Regular", size: 20))
+                                                    .foregroundColor(.white)
+                                                    .padding(4)
+                                                    .background(Color("gray"))
+                                                    .cornerRadius(8)
+                                            }
+                                            .padding(.horizontal)
+                                            Button {
+                                                friendsViewModel.denyRequest(user: user.id)
+                                            } label: {
+                                                Image(systemName: "xmark")
+                                                    .font(Font.custom("Poppins-Regular", size: 20))
+                                                    .foregroundColor(.white)
+                                            }
                                         }
-                                        .buttonStyle(.plain)
-                                        .padding(.horizontal)
-                                        Button {
-                                            denyRequest(user: user.id)
-                                        } label: {
-                                            Text("Deny")
-                                                .font(Font.custom("Poppins-Regular", size: 16))
-                                                .foregroundColor(.red)
-                                        }
-                                        .buttonStyle(.plain)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
                                     }
-                                }
-                                .listStyle(.plain)
-                                .onAppear {
-                                    getFriendRequests()
+                                    //                                .listStyle(.plain)
+                                    //                                .scrollContentBackground(.hidden)
                                 }
                             }
                         }
-                        .presentationDetents([.fraction(0.3), .large])
-                    } else {
+                    case 1:
                         VStack {
-                            Text("Friend requests")
+                            Text("Recommendations")
                                 .font(.largeTitle)
                                 .padding()
                             Spacer()
-                            if friendRequestUsers.isEmpty {
-                                Text("No friend requests")
-                                    .font(Font.custom("Poppins-Regular", size: 16))
-                                    .foregroundColor(.white)
-                                    .onAppear {
-                                        getFriendRequests()
-                                    }
-                                Spacer()
-                            } else {
-                                List(friendRequestUsers, id: \.id) { user in
-                                    HStack {
-                                        Text(user.userName)
-                                        Spacer()
-                                        Button {
-                                            acceptRequest(by: user.id)
-                                        } label: {
-                                            Text("Add")
-                                                .font(Font.custom("Poppins-Regular", size: 16))
-                                                .foregroundColor(.green)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .padding(.horizontal)
-                                        Button {
-                                            denyRequest(user: user.id)
-                                        } label: {
-                                            Text("Deny")
-                                                .font(Font.custom("Poppins-Regular", size: 16))
-                                                .foregroundColor(.red)
-                                        }
-                                        .buttonStyle(.plain)
-                                    }
-                                }
-                                .listStyle(.plain)
-                                .onAppear {
-                                    getFriendRequests()
-                                }
-                            }
-                        }
-                    }
-                }
-                .sheet(isPresented: $showFriendList) {
-                    if #available(iOS 16, *) {
-                        VStack {
-                            Text("Your Friends")
-                                .font(.largeTitle)
-                                .padding()
-                            Spacer()
-                            if friends.isEmpty {
+                            if friendsViewModel.recommendations.isEmpty {
                                 HStack(spacing: 0) {
                                     Text("No friends yet, ")
-                                        .font(Font.custom("Poppins-Regular", size: 16))
+                                        .font(Font.custom("Poppins-Regular", size: 20))
                                         .foregroundColor(.white)
                                     Button {
-                                        showFriendList = false
-                                        addFriend()
+                                        selection = 2
                                     } label: {
                                         Text("add some!")
-                                            .font(Font.custom("Poppins-Bold", size: 16))
+                                            .font(Font.custom("Poppins-Bold", size: 20))
                                             .foregroundColor(.white)
                                             .underline()
                                     }
                                 }
                                 .onAppear {
-                                    getFriends()
+                                    if friendsViewModel.recommendations.isEmpty {
+                                        friendsViewModel.getFriends()
+                                    }
                                 }
                                 Spacer()
                             } else {
-                                List(friends, id: \.id) { user in
-                                    HStack {
-                                        Text(user.userName)
+                                ScrollView {
+                                    ForEach(friendsViewModel.recommendations, id: \.id) { user in
+                                        HStack {
+                                            Text(user.userName)
+                                                .font(Font.custom("Poppins-Bold", size: 20))
+                                                .foregroundColor(.white)
+                                            Spacer()
+                                            Button {
+                                                friendsViewModel.sendFriendRequest(to: user.id)
+                                            } label: {
+                                                Text("Add")
+                                                    .font(Font.custom("Poppins-Regular", size: 20))
+                                                    .foregroundColor(.white)
+                                                    .padding(4)
+                                                    .background(Color("gray"))
+                                                    .cornerRadius(8)
+                                            }
+                                            .padding(.horizontal)
+                                            Button {
+                                                friendsViewModel.recommendations.removeAll(where: { $0.id == user.id })
+                                            } label: {
+                                                Image(systemName: "xmark")
+                                                    .font(Font.custom("Poppins-Regular", size: 20))
+                                                    .foregroundColor(.white)
+                                            }
+                                        }
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
                                     }
-                                }
-                                .onAppear {
-                                    getFriends()
                                 }
                             }
                         }
-                        .presentationDetents([.fraction(0.3), .large])
-                    } else {
+                    default:
                         VStack {
                             Text("Your Friends")
                                 .font(.largeTitle)
                                 .padding()
                             Spacer()
-                            if friends.isEmpty {
+                            if friendsViewModel.friends.isEmpty {
                                 HStack(spacing: 0) {
                                     Text("No friends yet, ")
-                                        .font(Font.custom("Poppins-Regular", size: 16))
+                                        .font(Font.custom("Poppins-Regular", size: 20))
                                         .foregroundColor(.white)
                                     Button {
-                                        showFriendList = false
-                                        addFriend()
+                                        selection = 2
                                     } label: {
                                         Text("add some!")
-                                            .font(Font.custom("Poppins-Bold", size: 16))
+                                            .font(Font.custom("Poppins-Bold", size: 20))
                                             .foregroundColor(.white)
                                             .underline()
                                     }
                                 }
                                 .onAppear {
-                                    getFriends()
+                                    if friendsViewModel.friends.isEmpty {
+                                        friendsViewModel.getFriends()
+                                    }
                                 }
                                 Spacer()
                             } else {
-                                List(friends, id: \.id) { user in
+                                ScrollView {
+                                    ForEach(friendsViewModel.friends, id: \.id) { user in
+                                        HStack {
+                                            Text(user.userName)
+                                                .font(Font.custom("Poppins-Bold", size: 20))
+                                                .foregroundColor(.white)
+                                            Spacer()
+                                        }
+                                        .cornerRadius(10)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .overlay {
+                    if searchFocused {
+                        ZStack {
+                            Color("backgroundColor")
+                                .ignoresSafeArea()
+                                .onTapGesture {
+                                    if searchText.count < 5 {
+                                        searchFocused = false
+                                    }
+                                }
+                            if searchText.count < 5 {
+                                Text("Enter at least 5 letters")
+                                    .font(Font.custom("Poppins-Regular", size: 16))
+                                    .foregroundColor(.white)
+                            } else {
+                                VStack {
                                     HStack {
-                                        Text(user.userName)
+                                        Text(searchText)
+                                            .font(Font.custom("Poppins-Bold", size: 16))
+                                            .foregroundColor(.white)
+                                        Spacer()
+                                        Button {
+                                            friendsViewModel.checkForName(name: searchText)
+                                        } label: {
+                                            Text("Add")
+                                                .font(Font.custom("Poppins-Regular", size: 16))
+                                                .foregroundColor(.white)
+                                                .padding(4)
+                                                .background(Color("gray"))
+                                                .cornerRadius(10)
+                                        }
                                     }
-                                }
-                                .onAppear {
-                                    getFriends()
+                                    .contentShape(Rectangle())
+                                    .padding()
+                                    .background(.red)
+                                    Spacer()
+                                        .onTapGesture {
+                                            searchFocused = false
+                                        }
                                 }
                             }
                         }
                     }
                 }
-                Spacer()
-                    .onAppear {
-                        subscribeToFriends()
-                        getFriendRequests()
-                        getFriends()
-                    }
-                if friends.isEmpty {
-                    Text("No friends")
-                    Spacer()
-                } else {
-                    VStack {
-                        Text("Your friends' memories:")
-                            .font(Font.custom("Poppins-Regular", size: 24))
-                            .foregroundColor(.white)
-                            .padding(.vertical)
-                        TabView {
-                            ForEach(friends, id: \.id) { friend in
-                                if let time = friend.sharedLastYear,
-                                   !time.isEmpty,
-                                   let date = Formatters.dateTimeFormatter.date(from: time) {
-                                    let interval = Date.now.timeIntervalSince(date)
-                                    let twentyFourHours: TimeInterval = 60 * 60 * 24
-                                    let intervalInHours = Int((interval / 60 / 60).rounded())
-                                    if interval < twentyFourHours {
-                                        FriendLastYear(user: friend.userName, id: friend.id, timePosted: interval)
-                                    }
-                                }
-                            }
-                        }
-                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    }
-                }
             }
-        }
-    }
-    
-    func subscribeToFriends() {
-        guard let id = AuthService.shared.loggedInUser?.id else { return }
-        FirebaseHandler.shared.subscribeToFriends(from: id) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(let user):
-                AuthService.shared.logIn(user: user)
-            }
-        }
-    }
-    
-    func denyRequest(user: String) {
-        guard let id = AuthService.shared.loggedInUser?.id else { return }
-        withAnimation {
-            friendRequestUsers.removeAll(where: { $0.id == id })
-        }
-        FirebaseHandler.shared.denyRequest(from: user, by: id) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(_):
-                print("denied!")
-                AuthService.shared.loggedInUser?.friendRequests.removeAll(where: { $0 == user })
-                getFriendRequests()
-            }
-        }
-    }
-    
-    func acceptRequest(by user: String) {
-        guard let id = AuthService.shared.loggedInUser?.id else { return }
-        FirebaseHandler.shared.acceptRequest(from: user, by: id) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(_):
-                print("added!")
-                AuthService.shared.loggedInUser?.friendRequests.removeAll(where: { $0 == user })
-                friendRequestUsers.removeAll()
-                getFriendRequests()
-                getFriends()
-            }
-        }
-    }
-    
-    func addFriend() {
-        addFriendShowing = true
-    }
-    
-    func friendRequests() {
-        friendRequestsShwoing = true
-    }
-    
-    func showFriends() {
-        showFriendList = true
-    }
-    
-    func getFriendRequests() {
-        guard let ids = AuthService.shared.loggedInUser?.friendRequests, !ids.isEmpty else { return }
-        FirebaseHandler.shared.getUsers(by: ids) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(let users):
-                withAnimation {
-                    self.friendRequestUsers = users
-                }
-            }
-        }
-    }
-    
-    func getFriends() {
-        guard let ids = AuthService.shared.loggedInUser?.friends, !ids.isEmpty else { return }
-        FirebaseHandler.shared.getUsers(by: ids) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(let users):
-                withAnimation {
-                    self.friends = users
-                }
-                AuthService.shared.loggedInUser?.friends = friends.map { $0.id }
-            }
+            .padding(8)
         }
     }
 }
@@ -341,12 +260,4 @@ struct FriendsView_Previews: PreviewProvider {
     static var previews: some View {
         FriendsView()
     }
-}
-
-extension Optional where Wrapped == String {
-
-    var isEmptyOrNil: Bool {
-        return self?.isEmpty ?? true
-    }
-
 }

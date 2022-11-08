@@ -15,6 +15,8 @@ public class FirebaseHandler {
     public static var shared = FirebaseHandler()
     
     let firestoreUsers = Firestore.firestore().collection("users")
+    let firestorePublic = Firestore.firestore().collection("public")
+
     
     public func registerUser(email: String, password: String, userName: String, appTracking: Bool, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
@@ -207,6 +209,16 @@ public class FirebaseHandler {
         }
     }
     
+    public func shareToPublic(discovery: DiscoveryUpload, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestorePublic.document(discovery.id).setData(discovery.toData()) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                completion?(.success(()))
+            }
+        }
+    }
+    
     public func removeMemory(user: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
         firestoreUsers.document(user).updateData([
             "sharedLastYear": ""
@@ -241,6 +253,81 @@ public class FirebaseHandler {
         Analytics.setAnalyticsCollectionEnabled(granted)
     }
     
+    var next: Query? = nil
+    
+    public func getDiscoveries(completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
+        var first: Query
+        
+        if let next = next {
+            first = next
+        } else {
+            first = firestorePublic
+                 .limit(to: 10)
+        }
+
+        first.getDocuments() { (snapshot, error) in
+            guard let snapshot = snapshot else {
+                print("Error retreving cities: \(error.debugDescription)")
+                return
+            }
+
+            let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
+
+            guard let lastSnapshot = snapshot.documents.last else {
+                // The collection is empty.
+                return
+            }
+
+            // Construct a new query starting after this document,
+            // retrieving the next 25 cities.
+            self.next = self.firestorePublic
+                .start(afterDocument: lastSnapshot)
+                .limit(to: 10)
+
+            // Use the query for pagination.
+            // ...
+            completion?(.success(discoveries))
+            
+        }
+
+    }
+    
+    public func getNextDiscoveries(completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
+        var first: Query
+        
+        if let next = next {
+            first = next
+        } else {
+            first = firestorePublic
+                 .limit(to: 10)
+        }
+
+        first.getDocuments() { (snapshot, error) in
+            guard let snapshot = snapshot else {
+                print("Error retreving cities: \(error.debugDescription)")
+                return
+            }
+
+            let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
+
+            guard let lastSnapshot = snapshot.documents.last else {
+                // The collection is empty.
+                return
+            }
+
+            // Construct a new query starting after this document,
+            // retrieving the next 25 cities.
+            self.next = self.firestorePublic
+                .start(afterDocument: lastSnapshot)
+                .limit(to: 10)
+
+            // Use the query for pagination.
+            // ...
+            completion?(.success(discoveries))
+            
+        }
+
+    }
 }
 
 public class FirebaseError: Error {

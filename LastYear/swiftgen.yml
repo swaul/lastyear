@@ -1,0 +1,9 @@
+strings:
+  inputs: Strings/Localizable.lproj
+  filter: .+\.strings$
+  outputs:
+    - templateName: structured-swift5
+      output: Strings/Strings.swift
+      params:
+        enumName: Strings
+        publicAccess: true

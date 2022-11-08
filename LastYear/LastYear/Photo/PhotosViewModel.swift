@@ -51,10 +51,13 @@ public class PhotosViewModel: ObservableObject {
     var cancellabels = Set<AnyCancellable>()
     
     init() {
+        dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
+    }
+    
+    func load() {
         Helper.removeAll()
         
         setupBinding()
-        dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         getAllPhotos()
     }
     
