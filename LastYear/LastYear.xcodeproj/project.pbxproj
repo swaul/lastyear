@@ -83,6 +83,11 @@
 		9ECC33662919283C0007C9C9 /* DiscoverViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC33652919283C0007C9C9 /* DiscoverViewModel.swift */; };
 		9ECC336829192CE30007C9C9 /* DiscoveryUpload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC336729192CE30007C9C9 /* DiscoveryUpload.swift */; };
 		9ECC336A291AEFF90007C9C9 /* DiscoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC3369291AEFF90007C9C9 /* DiscoveryView.swift */; };
+		9ECC3371291C06590007C9C9 /* AWSManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC3370291C06590007C9C9 /* AWSManager.swift */; };
+		9ECC3385291EA6200007C9C9 /* AWSCognitoIdentityProvider in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECC3384291EA6200007C9C9 /* AWSCognitoIdentityProvider */; };
+		9ECC3387291EA6200007C9C9 /* AWSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECC3386291EA6200007C9C9 /* AWSCore */; };
+		9ECC3389291EA6200007C9C9 /* AWSS3 in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECC3388291EA6200007C9C9 /* AWSS3 */; };
+		9ECC338B291F52030007C9C9 /* PhotoLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */; };
 		9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */; };
 		9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD18A428EE23F2004DC8A6 /* ShareView.swift */; };
 /* End PBXBuildFile section */
@@ -183,6 +188,8 @@
 		9ECC33652919283C0007C9C9 /* DiscoverViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverViewModel.swift; sourceTree = "<group>"; };
 		9ECC336729192CE30007C9C9 /* DiscoveryUpload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryUpload.swift; sourceTree = "<group>"; };
 		9ECC3369291AEFF90007C9C9 /* DiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryView.swift; sourceTree = "<group>"; };
+		9ECC3370291C06590007C9C9 /* AWSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
+		9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryService.swift; sourceTree = "<group>"; };
 		9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToiMessageView.swift; sourceTree = "<group>"; };
 		9EDD18A428EE23F2004DC8A6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -204,11 +211,14 @@
 				9E272815290B4671000C2E64 /* FirebaseMessaging in Frameworks */,
 				9EBDE92328DDFFEB00264AF3 /* FirebaseCrashlytics in Frameworks */,
 				9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */,
+				9ECC3385291EA6200007C9C9 /* AWSCognitoIdentityProvider in Frameworks */,
 				9EBDE92528DDFFEB00264AF3 /* FirebaseFirestore in Frameworks */,
 				9E272819290C5371000C2E64 /* FirebaseStorage in Frameworks */,
+				9ECC3389291EA6200007C9C9 /* AWSS3 in Frameworks */,
 				9ECC336429190BEB0007C9C9 /* AlertToast in Frameworks */,
 				9EBDE91F28DDFFEB00264AF3 /* FirebaseAnalytics in Frameworks */,
 				9EBDE92128DDFFEB00264AF3 /* FirebaseAuth in Frameworks */,
+				9ECC3387291EA6200007C9C9 /* AWSCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -243,6 +253,7 @@
 				9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */,
 				9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */,
 				9ECC33572918EC7F0007C9C9 /* MemoriesView.swift */,
+				9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */,
 			);
 			path = Photo;
 			sourceTree = "<group>";
@@ -252,6 +263,7 @@
 			children = (
 				9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */,
 				9EBDE92828DE021200264AF3 /* FirebaseHandler.swift */,
+				9ECC3370291C06590007C9C9 /* AWSManager.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -498,6 +510,9 @@
 				9E272814290B4671000C2E64 /* FirebaseMessaging */,
 				9E272818290C5371000C2E64 /* FirebaseStorage */,
 				9ECC336329190BEB0007C9C9 /* AlertToast */,
+				9ECC3384291EA6200007C9C9 /* AWSCognitoIdentityProvider */,
+				9ECC3386291EA6200007C9C9 /* AWSCore */,
+				9ECC3388291EA6200007C9C9 /* AWSS3 */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -535,6 +550,7 @@
 				9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
 				9ECC336229190BEB0007C9C9 /* XCRemoteSwiftPackageReference "AlertToast" */,
+				9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */,
 			);
 			productRefGroup = 9EBDE8D328DDD58A00264AF3 /* Products */;
 			projectDirPath = "";
@@ -620,6 +636,7 @@
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
 				9E272811290B357D000C2E64 /* FeedView.swift in Sources */,
+				9ECC3371291C06590007C9C9 /* AWSManager.swift in Sources */,
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9ECC33532918EB610007C9C9 /* DiscoverView.swift in Sources */,
 				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
@@ -635,6 +652,7 @@
 				9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */,
 				9EBEE6EE28E5C1E000F9FCCC /* LogoView.swift in Sources */,
 				9EBDE92928DE021200264AF3 /* FirebaseHandler.swift in Sources */,
+				9ECC338B291F52030007C9C9 /* PhotoLibraryService.swift in Sources */,
 				9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */,
 				9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */,
 				9E272817290C50AC000C2E64 /* FriendLastYear.swift in Sources */,
@@ -967,6 +985,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/aws-amplify/aws-sdk-ios-spm";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 2.28.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1009,6 +1035,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9ECC336229190BEB0007C9C9 /* XCRemoteSwiftPackageReference "AlertToast" */;
 			productName = AlertToast;
+		};
+		9ECC3384291EA6200007C9C9 /* AWSCognitoIdentityProvider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */;
+			productName = AWSCognitoIdentityProvider;
+		};
+		9ECC3386291EA6200007C9C9 /* AWSCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */;
+			productName = AWSCore;
+		};
+		9ECC3388291EA6200007C9C9 /* AWSS3 */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */;
+			productName = AWSS3;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

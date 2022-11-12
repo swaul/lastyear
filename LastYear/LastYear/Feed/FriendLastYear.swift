@@ -35,7 +35,7 @@ struct FriendLastYear: View {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .cornerRadius(10)
+                        .cornerRadius(8)
                     if !downloadDone {
                         VStack {
                             Spacer()

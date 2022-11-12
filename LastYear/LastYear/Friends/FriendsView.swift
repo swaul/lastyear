@@ -197,7 +197,7 @@ struct FriendsView: View {
                                                 .foregroundColor(.white)
                                             Spacer()
                                         }
-                                        .cornerRadius(10)
+                                        .cornerRadius(8)
                                         .padding(.horizontal, 16)
                                         .padding(.vertical, 8)
                                     }
@@ -235,7 +235,7 @@ struct FriendsView: View {
                                                 .foregroundColor(.white)
                                                 .padding(4)
                                                 .background(Color("gray"))
-                                                .cornerRadius(10)
+                                                .cornerRadius(8)
                                         }
                                     }
                                     .contentShape(Rectangle())

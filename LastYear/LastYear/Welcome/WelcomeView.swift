@@ -33,7 +33,7 @@ struct WelcomeView: View {
                         .frame(maxWidth: .infinity)
                         .foregroundColor(Color.black)
                         .background(Color.white)
-                        .cornerRadius(10)
+                        .cornerRadius(8)
                 }
                 Spacer()
             }

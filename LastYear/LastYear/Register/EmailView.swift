@@ -67,7 +67,7 @@ struct EmailView: View {
                     .frame(maxWidth: .infinity)
                     .foregroundColor(Color.white)
                     .background(isValidEmail ? Color("primary") : Color.gray)
-                    .cornerRadius(10)
+                    .cornerRadius(8)
             }
             .padding()
             .disabled(!isValidEmail)

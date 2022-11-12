@@ -65,7 +65,7 @@ struct PermissionView: View {
                             .foregroundColor(Color("backgroundColor"))
                             .padding()
                             .background(Color.white)
-                            .cornerRadius(10)
+                            .cornerRadius(8)
                     }
                     Spacer()
                 }
@@ -87,7 +87,7 @@ struct PermissionView: View {
                                     .foregroundColor(Color("backgroundColor"))
                                     .padding()
                                     .background(Color.white)
-                                    .cornerRadius(20)
+                                    .cornerRadius(8)
                             }
                         }
                         .padding(16)

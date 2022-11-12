@@ -83,7 +83,7 @@ struct NotificationPermissionView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 52, height: 52)
-                .cornerRadius(10)
+                .cornerRadius(8)
             VStack(alignment: .leading) {
                 Text("You have 14 pictures to look back on from \(Formatters.dateFormatter.string(from: Date.now))")
                     .font(Font.custom("Poppins-SemiBold", size: 14))
@@ -95,7 +95,7 @@ struct NotificationPermissionView: View {
         }
         .padding(8)
         .background(Color.white)
-        .cornerRadius(20)
+        .cornerRadius(8)
     }
     
     func requestNotiAccess() {

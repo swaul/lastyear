@@ -43,6 +43,8 @@ public class PhotosViewModel: ObservableObject {
 //            checkIfDone()
         }
     }
+    
+    var imageCachingManager = PHCachingImageManager()
     var group = DispatchGroup()
     var many: Bool = false
     
@@ -87,20 +89,12 @@ public class PhotosViewModel: ObservableObject {
             return
         }
         
-        requestsFailed = 0
         countFound = 0
-        countDone = 0
-        test = 0
         
         let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)!.endOfDay
         let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)!.startOfDay
         
-        let manager = PHImageManager.default()
-        
-        let requestOptions = PHImageRequestOptions()
-        requestOptions.isSynchronous = false
-        requestOptions.deliveryMode = .highQualityFormat
-        requestOptions.isNetworkAccessAllowed = true
+        imageCachingManager.allowsCachingHighQualityImages = false
         
         let fetchOptions = PHFetchOptions()
         fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
@@ -109,44 +103,31 @@ public class PhotosViewModel: ObservableObject {
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         
         countFound = results.countOfAssets(with: .image)
-        
-        guard countFound != allPhotos.count else { return }
-        allPhotos.removeAll()
-        
-//        many = countFound > 20
+
+        print("Images found:", countFound)
         
         if results.count > 0 {
             for i in 0..<results.count {
                 group.enter()
                 let asset = results.object(at: i)
-                manager.requestImage(for: asset, targetSize: .zero, contentMode: .aspectFill, options: requestOptions) { [weak self] (image, _) in
-                    guard let self = self else { return }
-                    let data = image?.jpegData(compressionQuality: 0.1)
-                    if let data = data, !asset.isHidden {
-                        let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), image: UIImage(data: data)!, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
-                        
-                        if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
-                            if asset.mediaSubtypes == .photoScreenshot {
-                                photo.photoType = .screenshot
-                                self.allPhotos.append(photo)
-                                self.test += 1
-                                self.group.leave()
-                            } else {
-                                if asset.mediaSubtypes == .photoLive {
-                                    photo.photoType = .live
-                                }
-                                self.allPhotos.append(photo)
-                                self.appendImage(image: UIImage(data: data)!, id: photo.id)
-                                self.test += 1
-                                self.group.leave()
-                            }
-                        } else {
-                            self.test += 1
+                if !asset.isHidden {
+                    let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), assetId: asset.localIdentifier, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
+                    
+                    if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
+                        if asset.mediaSubtypes == .photoScreenshot {
+                            photo.photoType = .screenshot
                             self.group.leave()
-                            self.countFound -= 1
+                            self.countDone += 1
+                            self.allPhotos.append(photo)
+                        } else {
+                            photo.photoType = .photo
+                            self.group.leave()
+                            self.countDone += 1
+                            self.allPhotos.append(photo)
                         }
                     } else {
                         self.group.leave()
+                        self.countFound -= 1
                         self.requestsFailed += 1
                         print("error asset to image ", asset.mediaSubtypes)
                     }
@@ -155,6 +136,7 @@ public class PhotosViewModel: ObservableObject {
             group.notify(queue: .main) {
                 withAnimation {
                     self.loadingState = .done
+                    self.fetchAndSafeImages()
                     WidgetCenter.shared.reloadAllTimelines()
                     print(Helper.getImageIdsFromUserDefault().count)
                 }
@@ -162,6 +144,17 @@ public class PhotosViewModel: ObservableObject {
         } else {
             loadingState = .noPictures
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
+        }
+    }
+    
+    func fetchAndSafeImages() {
+        Task(priority: .background) {
+            for asset in allPhotos {
+                if let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: asset.assetID) {
+                    appendImage(image: image, id: makeID(id: asset.assetID))
+                    print("image appended", asset.id)
+                }
+            }
         }
     }
 
@@ -191,6 +184,12 @@ public class PhotosViewModel: ObservableObject {
         id += formattedDateOneYearAgo
         
         return id
+    }
+    
+    func isSameDay(date1: Date, date2: Date) -> Bool {
+        let one = Calendar.current.dateComponents([.day], from: date1)
+        let two = Calendar.current.dateComponents([.day], from: date2)
+        return one.day == two.day
     }
     
     private func saveIntoUserDefaults() {
@@ -231,12 +230,6 @@ public class PhotosViewModel: ObservableObject {
 //            }
 //        }
 //    }
-    
-    func isSameDay(date1: Date, date2: Date) -> Bool {
-        let one = Calendar.current.dateComponents([.day], from: date1)
-        let two = Calendar.current.dateComponents([.day], from: date2)
-        return one.day == two.day
-    }
     
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
         let size = image.size

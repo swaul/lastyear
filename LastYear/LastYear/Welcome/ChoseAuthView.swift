@@ -71,7 +71,7 @@ struct ChoseAuthView: View {
                         .frame(maxWidth: .infinity)
                         .foregroundColor(Color.white)
                         .background(continueDisabled ? Color.gray : Color("primary"))
-                        .cornerRadius(10)
+                        .cornerRadius(8)
                 }
                 .padding()
                 .disabled(continueDisabled)

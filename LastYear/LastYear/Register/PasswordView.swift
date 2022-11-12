@@ -59,13 +59,13 @@ struct PasswordView: View {
                             .foregroundColor(.white)
                             .padding(8)
                             .background(Color("primary"))
-                            .cornerRadius(10)
+                            .cornerRadius(8)
                     } else {
                         Image(systemName: "eye")
                             .foregroundColor(.white)
                             .padding(8)
                             .background(Color("primary"))
-                            .cornerRadius(10)
+                            .cornerRadius(8)
                     }
                 }
             }
@@ -128,7 +128,7 @@ struct PasswordView: View {
                     .frame(maxWidth: .infinity)
                     .foregroundColor(Color.white)
                     .background(buttonEnabled ? Color("primary") : Color.gray)
-                    .cornerRadius(10)
+                    .cornerRadius(8)
             }
             .padding()
             .disabled(!buttonEnabled)

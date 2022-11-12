@@ -26,7 +26,7 @@ struct MemoriesView: View {
                 ZStack {
                     Color("backgroundColor")
                         .ignoresSafeArea()
-                    imageView
+                    AllPhotosView(photoViewModel: photoViewModel)
                 }
             case .loading:
                 VStack {
@@ -43,7 +43,7 @@ struct MemoriesView: View {
                                 .foregroundColor(.black)
                                 .padding()
                                 .background(Color.white)
-                                .cornerRadius(10)
+                                .cornerRadius(8)
                         }
                     }
                 }
@@ -82,54 +82,54 @@ struct MemoriesView: View {
         }
     }
     
-    var imageView: some View {
-        ZStack {
-            Color("backgroundColor")
-                .ignoresSafeArea()
-            VStack {
-                if visible {
-                    topView
-                        .transition(.move(edge: .top))
-                }
-                if photoViewModel.many {
-                    loadingView
-                        .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
-                        .padding()
-                    Spacer()
-                } else {
-                    Spacer()
-                }
-                if visible {
-                    VStack {
-                        NavigationLink {
-                            if let image = photoViewModel.bestImage {
-                                PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
-                            }
-                        } label: {
-                            Image(uiImage: photoViewModel.bestImage?.waterMarkedImage ?? UIImage(named: "fallback")!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(20)
-                                .transition(.scale)
-                        }
-                    }
-                }
-                Spacer()
-                if visible {
-                    bottomView
-                        .transition(.move(edge: .bottom))
-                        .animation(.easeInOut, value: visible)
-                        .padding(12)
-                }
-            }
-            .padding(16)
-            .onAppear {
-                withAnimation {
-                    visible = true
-                }
-            }
-        }
-    }
+//    var imageView: some View {
+//        ZStack {
+//            Color("backgroundColor")
+//                .ignoresSafeArea()
+//            VStack {
+//                if visible {
+//                    topView
+//                        .transition(.move(edge: .top))
+//                }
+//                if photoViewModel.many {
+//                    loadingView
+//                        .matchedGeometryEffect(id: "progressBar", in: loadingAnimation, anchor: .top)
+//                        .padding()
+//                    Spacer()
+//                } else {
+//                    Spacer()
+//                }
+//                if visible {
+//                    VStack {
+//                        NavigationLink {
+//                            if let image = photoViewModel.bestImage {
+//                                PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
+//                            }
+//                        } label: {
+//                            Image(uiImage: photoViewModel.bestImage?.waterMarkedImage ?? UIImage(named: "fallback")!)
+//                                .resizable()
+//                                .aspectRatio(contentMode: .fit)
+//                                .cornerRadius(8)
+//                                .transition(.scale)
+//                        }
+//                    }
+//                }
+//                Spacer()
+//                if visible {
+//                    bottomView
+//                        .transition(.move(edge: .bottom))
+//                        .animation(.easeInOut, value: visible)
+//                        .padding(12)
+//                }
+//            }
+//            .padding(16)
+//            .onAppear {
+//                withAnimation {
+//                    visible = true
+//                }
+//            }
+//        }
+//    }
     
     var loadingView: some View {
         VStack {
@@ -147,7 +147,7 @@ struct MemoriesView: View {
                     .progressViewStyle(LinearProgressViewStyle(tint: Color("primary")))
                     .padding(4)
                     .background(Color("backgroundColor"))
-                    .cornerRadius(10)
+                    .cornerRadius(8)
                     .padding(.bottom)
                 HStack(spacing: 0) {
                     Text(String(photoViewModel.test))

@@ -44,11 +44,11 @@ struct AllPhotosView: View {
                     VStack {
                         let sortedImages = photoViewModel.allPhotos.sorted()
                         LazyVGrid(columns: layout) {
-                            ForEach(sortedImages) { photo in
+                            ForEach(sortedImages.filter { $0.photoType != .screenshot }) { photo in
                                 NavigationLink {
                                     PhotoDetailView(images: sortedImages, selected: photo.id)
                                 } label: {
-                                    PhotoCard(image: photo)
+                                    PhotoCard(asset: photo)
                                 }
                             }
                         }
@@ -78,7 +78,7 @@ struct AllPhotosView: View {
                                         NavigationLink {
                                             PhotoDetailView(images: sortedScreenshots, selected: photo.id)
                                         } label: {
-                                            PhotoCard(image: photo)
+                                            PhotoCard(asset: photo)
                                         }
                                     }
                                 }

@@ -9,7 +9,8 @@ import SwiftUI
 import UIKit
 import FirebaseStorage
 import ImageViewer
-import BackgroundTasks
+import AWSS3
+import AWSCore
 
 struct PhotoDetailView: View {
     
@@ -20,7 +21,7 @@ struct PhotoDetailView: View {
     }
     
     var images: [PhotoData]
-    
+    @State var selectedImage: UIImage? = nil
     //    let filterTypes: [FilterType] = [.Chrome, .Fade, .Instant, .Mono, .Noir, .Process, .Tonal, .Transfer, .none]
     //
     //    @State var filterIndex: Int = 0
@@ -42,8 +43,13 @@ struct PhotoDetailView: View {
         }
     }
     
-    var selectedImage: UIImage? {
-        return images.first(where: { $0.id == selected })?.waterMarkedImage
+    @State private var zoomScale: CGFloat = 1
+    @State private var previousZoomScale: CGFloat = 1
+    private let minZoomScale: CGFloat = 1
+    private let maxZoomScale: CGFloat = 5
+    
+    var selectedImageId: String? {
+        return images.first(where: { $0.id == selected })?.assetID
     }
     
     var body: some View {
@@ -54,66 +60,55 @@ struct PhotoDetailView: View {
                 LogoView(size: 35)
                     .padding()
                 Spacer()
-                if #available(iOS 16, *) {
-                    GeometryReader { reader in
-                        TabView(selection: $selected) {
-                            ForEach(images, id: \.id) { image in
-                                Image(uiImage: image.waterMarkedImage)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(20)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 20)
-                                            .stroke(.white, lineWidth: 3)
-                                    )
-                                    .padding()
-                                    .tag(image.id)
-                            }
-                        }
-                        .tabViewStyle(.page(indexDisplayMode: .never))
-                        .onTapGesture { point in
-                            let firstThird = reader.size.width / 3
-                            let lastThird = reader.size.width - firstThird
-                            
-                            if point.x < firstThird {
-                                toLeft()
-                            } else if point.x > firstThird && point.x < lastThird {
-                                fullscreenImage = true
-                            } else {
-                                toRight()
-                            }
-                        }
-                        .offset(x: indexIsLimit ? -8 : 0)
-                        .animation(Animation.default.repeatCount(3, autoreverses: true).speed(6), value: indexIsLimit)
-                    }
-                } else {
+                GeometryReader { reader in
                     TabView(selection: $selected) {
                         ForEach(images, id: \.id) { image in
-                            Image(uiImage: image.waterMarkedImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .cornerRadius(20)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .stroke(.white, lineWidth: 3)
-                                )
-                                .padding()
-                                .tag(image.id)
+                            ScrollView(
+                                [.vertical, .horizontal],
+                                showsIndicators: false
+                            ) {
+                                PhotoCard(asset: image)
+                                    .onAppear {
+                                        Task {
+                                            selectedImage = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: image.assetID)
+                                        }
+                                    }
+                                    .onDisappear {
+                                        selectedImage = nil
+                                    }
+                                    .onTapGesture(count: 2, perform: onImageDoubleTapped)
+                                    .gesture(zoomGesture) // Add it here
+                                    .frame(width: reader.size.width * max(minZoomScale, zoomScale))
+                            }
                         }
                     }
                     .tabViewStyle(.page(indexDisplayMode: .never))
+//                    .onTapGesture { point in
+//                        let firstThird = reader.size.width / 3
+//                        let lastThird = reader.size.width - firstThird
+//                        
+//                        if point.x < firstThird {
+//                            toLeft()
+//                        } else if point.x > firstThird && point.x < lastThird {
+//                            fullscreenImage = true
+//                        } else {
+//                            toRight()
+//                        }
+//                    }
+                    .offset(x: indexIsLimit ? -8 : 0)
+                    .animation(Animation.default.repeatCount(3, autoreverses: true).speed(6), value: indexIsLimit)
                 }
                 Spacer()
-                    Button {
-                        shareToLastYearShowing = true
-                    } label: {
-                        HStack {
-                            Text("Share on")
-                            Image("logoSmall")
-                        }
-                        .contentShape(Rectangle())
+                Button {
+                    shareToLastYearShowing = true
+                } label: {
+                    HStack {
+                        Text("Share on")
+                        Image("logoSmall")
                     }
-                    .padding(.horizontal, 4)
+                    .contentShape(Rectangle())
+                }
+                .padding(.horizontal, 4)
                 HStack {
                     VStack(spacing: 0) {
                         Button {
@@ -145,7 +140,7 @@ struct PhotoDetailView: View {
                             .font(Font.custom("Poppins-Bold", size: 12))
                             .foregroundColor(Color.white)
                     }
-                    if #available(iOS 16, *) {
+                    if let image = selectedImage {
                         VStack {
                             ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
                                 Image(systemName: "ellipsis.circle")
@@ -159,12 +154,14 @@ struct PhotoDetailView: View {
                                 .font(Font.custom("Poppins-Bold", size: 12))
                                 .foregroundColor(Color.white)
                         }
+                    } else {
+                        ProgressView()
+                            .frame(width: 32, height: 32)
                     }
                     Spacer()
                     if let image = images.first(where: { $0.id == selected }) {
                         VStack {
                             Text(formatter.string(from: image.date!))
-                            Text(image.city ?? "No locaton")
                         }
                     }
                 }
@@ -178,77 +175,121 @@ struct PhotoDetailView: View {
                     ActivityViewController(activityItems: [selectedImage!])
                 }
                 .sheet(isPresented: $shareToLastYearShowing) {
-                        VStack {
-                            if currentUpload == 0 {
-                                Button {
-                                    shareLastYear()
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "person.2")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(height: 25)
-                                        Spacer()
-                                        VStack(alignment: .leading) {
-                                            Text("Friends")
-                                                .font(Font.custom("Poppins-Bold", size: 24))
-                                                .foregroundColor(Color.white)
-                                            Text("Share with all your friends")
-                                                .font(Font.custom("Poppins-Regular", size: 18))
-                                                .foregroundColor(Color.white)
-                                        }
+                    VStack {
+                        if currentUpload == 0 {
+                            Button {
+                                shareLastYear()
+                            } label: {
+                                HStack {
+                                    Image(systemName: "person.2")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 25)
+                                    Spacer()
+                                    VStack(alignment: .leading) {
+                                        Text("Friends")
+                                            .font(Font.custom("Poppins-Bold", size: 24))
+                                            .foregroundColor(Color.white)
+                                        Text("Share with all your friends")
+                                            .font(Font.custom("Poppins-Regular", size: 18))
+                                            .foregroundColor(Color.white)
                                     }
-                                    .contentShape(Rectangle())
-                                    .padding()
-                                    .background(Color("gray"))
-                                    .cornerRadius(10)
                                 }
+                                .contentShape(Rectangle())
                                 .padding()
-                                Button {
-                                    shareLastYear(toPublic: true)
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "magnifyingglass")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(height: 25)
-                                        Spacer()
-                                        VStack(alignment: .leading) {
-                                            Text("Discovery")
-                                                .font(Font.custom("Poppins-Bold", size: 24))
-                                                .foregroundColor(Color.white)
-                                            Text("Share with all LastYear users")
-                                                .font(Font.custom("Poppins-Regular", size: 18))
-                                                .foregroundColor(Color.white)
-                                        }
+                                .background(Color("gray"))
+                                .cornerRadius(8)
+                            }
+                            .padding()
+                            Button {
+                                shareLastYear(toPublic: true)
+                            } label: {
+                                HStack {
+                                    Image(systemName: "magnifyingglass")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(height: 25)
+                                    Spacer()
+                                    VStack(alignment: .leading) {
+                                        Text("Discovery")
+                                            .font(Font.custom("Poppins-Bold", size: 24))
+                                            .foregroundColor(Color.white)
+                                        Text("Share with all LastYear users")
+                                            .font(Font.custom("Poppins-Regular", size: 18))
+                                            .foregroundColor(Color.white)
                                     }
-                                    .contentShape(Rectangle())
-                                    .padding()
-                                    .background(Color("gray"))
-                                    .cornerRadius(10)
                                 }
+                                .contentShape(Rectangle())
                                 .padding()
-                                Text("Share!")
-                                    .font(Font.custom("Poppins-Bold", size: 28))
-                            } else if uploadDone {
-                                Text("Upload done")
-                                    .font(.title)
-                                    .foregroundColor(.green)
-                            } else {
-                                VStack {
-                                    Text("\(Int(currentUpload.rounded())) %")
-                                    ProgressView(value: currentUpload, total: 100.0)
-                                        .padding(.horizontal)
-                                    Text("Uploading")
-                                        .padding()
-                                }
+                                .background(Color("gray"))
+                                .cornerRadius(8)
+                            }
+                            .padding()
+                            Text("Share!")
+                                .font(Font.custom("Poppins-Bold", size: 28))
+                        } else if uploadDone {
+                            Text("Upload done")
+                                .font(.title)
+                                .foregroundColor(.green)
+                        } else {
+                            VStack {
+                                Text("\(Int(currentUpload.rounded())) %")
+                                ProgressView(value: currentUpload, total: 100.0)
+                                    .padding(.horizontal)
+                                Text("Uploading")
+                                    .padding()
                             }
                         }
-                        .presentationDetents([.fraction(0.4)])
+                    }
+                    .presentationDetents([.fraction(0.4)])
                 }
             }
         }
-        .overlay(ImageViewer(image: .constant(Image(uiImage: selectedImage!)), viewerShown: $fullscreenImage, closeButtonTopRight: true))
+    }
+    
+    func resetImageState() {
+        withAnimation(.interactiveSpring()) {
+            zoomScale = 1
+        }
+    }
+
+    /// On double tap
+    func onImageDoubleTapped() {
+        /// Zoom the photo to 5x scale if the photo isn't zoomed in
+        if zoomScale == 1 {
+            withAnimation(.spring()) {
+                zoomScale = 5
+            }
+        } else {
+            /// Otherwise, reset the photo zoom to 1x
+            resetImageState()
+        }
+    }
+    
+    var zoomGesture: some Gesture {
+        MagnificationGesture()
+            .onChanged(onZoomGestureStarted)
+            .onEnded(onZoomGestureEnded)
+    }
+    
+    func onZoomGestureStarted(value: MagnificationGesture.Value) {
+        withAnimation(.easeIn(duration: 0.1)) {
+            let delta = value / previousZoomScale
+            previousZoomScale = value
+            let zoomDelta = zoomScale * delta
+            var minMaxScale = max(minZoomScale, zoomDelta)
+            minMaxScale = min(maxZoomScale, minMaxScale)
+            zoomScale = minMaxScale
+        }
+    }
+    
+    func onZoomGestureEnded(value: MagnificationGesture.Value) {
+        previousZoomScale = 1
+        if zoomScale <= 1 {
+            resetImageState()
+        } else if zoomScale > 5 {
+            zoomScale = 5
+        }
     }
     
     func toLeft() {
@@ -298,110 +339,139 @@ struct PhotoDetailView: View {
     }
     
     func shareLastYear(toPublic: Bool = false) {
-        guard let user = AuthService.shared.loggedInUser else { return }
-        let storageRef = Storage.storage().reference()
-        
-        guard let image = selectedImage, let data = image.jpegData(compressionQuality: findCompression(image: image)) else { return }
-        
-        let date = Formatters.dateTimeFormatter.string(from: Date.now)
-        
-        // Create a reference to the file you want to upload
-        let imagesRef = storageRef.child("images/\(user.id)")
-        
-        let uploadTask = imagesRef.putData(data, metadata: nil) { metadata, error in
-            if let error = error {
-                print(error.localizedDescription)
-            } else {
-                print(metadata?.path)
-            }
-        }
-        
-        uploadTask.observe(.progress) { snapshot in
-            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
-            print(currentValue)
-            self.currentUpload = currentValue
-        }
-        
-        uploadTask.observe(.success) { snapshot in
-            // Upload completed successfully
-            print("image uploaded to", snapshot.reference)
-            let now = Date.now
-            let discovery = DiscoveryUpload(id: user.id, likes: 0, timePosted: Formatters.dateTimeFormatter.string(from: now), user: user.userName)
+        Task {
+            guard let user = AuthService.shared.loggedInUser else { return }
+            let storageRef = Storage.storage().reference()
             
-            if toPublic {
-                FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
-                    switch result {
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    case .success(()):
-                        print("Uploaded:", selected)
-                        FirebaseHandler.shared.shareToPublic(discovery: discovery) { result in
-                            switch result {
-                            case .failure(let error):
-                                print(error.localizedDescription)
-                            case .success(()):
-                                withAnimation {
-                                    self.uploadDone = true
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                        self.shareToLastYearShowing = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                uploadTask.removeAllObservers()
-            } else {
-                FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
-                    switch result {
-                    case .failure(let error):
-                        print(error.localizedDescription)
-                    case .success(()):
-                        print("Uploaded:", selected)
-                        withAnimation {
-                            self.uploadDone = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                self.shareToLastYearShowing = false
-                            }
-                        }
-                    }
-                }
-                uploadTask.removeAllObservers()
+            guard
+                let imageId = selectedImageId,
+                let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: imageId),
+                let data = image.jpegData(compressionQuality: findCompression(image: image))
+            else { return }
+            
+            let date = Formatters.dateTimeFormatter.string(from: Date.now)
+            
+            let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
+                print("percentage done:", progress.fractionCompleted)
             }
+            let request = AWSS3TransferUtility.default()
+            let expression = AWSS3TransferUtilityUploadExpression()
+            expression.progressBlock = progressBlock
+            
+            request.uploadData(data, bucket: "lastyearapp", key: user.id, contentType: "image/jpeg", expression: expression) { task, error in
+                if let error {
+                    print(error.localizedDescription)
+                } else {
+                    print(task.progress)
+                }
+            }
+            
+            //            let handler = await AWSManager()
+            //            do {
+            //                try await handler.createFile(bucket: "lastyearapp", key: user.id, withData: data)
+            //            } catch let error {
+            //                print(error.localizedDescription)
+            //            }
         }
-        
-        uploadTask.observe(.failure) { snapshot in
-            print(snapshot.error)
-        }
+        //        // Create a reference to the file you want to upload
+        //        let imagesRef = storageRef.child("images/\(user.id)")
+        //
+        //        let uploadTask = imagesRef.putData(data, metadata: nil) { metadata, error in
+        //            if let error = error {
+        //                print(error.localizedDescription)
+        //            } else {
+        //                print(metadata?.path)
+        //            }
+        //        }
+        //
+        //        uploadTask.observe(.progress) { snapshot in
+        //            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
+        //            print(currentValue)
+        //            self.currentUpload = currentValue
+        //        }
+        //
+        //        uploadTask.observe(.success) { snapshot in
+        //            // Upload completed successfully
+        //            print("image uploaded to", snapshot.reference)
+        //            let now = Date.now
+        //            let discovery = DiscoveryUpload(id: user.id, likes: 0, timePosted: Formatters.dateTimeFormatter.string(from: now), user: user.userName)
+        //
+        //            if toPublic {
+        //                FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
+        //                    switch result {
+        //                    case .failure(let error):
+        //                        print(error.localizedDescription)
+        //                    case .success(()):
+        //                        print("Uploaded:", selected)
+        //                        FirebaseHandler.shared.shareToPublic(discovery: discovery) { result in
+        //                            switch result {
+        //                            case .failure(let error):
+        //                                print(error.localizedDescription)
+        //                            case .success(()):
+        //                                withAnimation {
+        //                                    self.uploadDone = true
+        //                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        //                                        self.shareToLastYearShowing = false
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                uploadTask.removeAllObservers()
+        //            } else {
+        //                FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: date) { result in
+        //                    switch result {
+        //                    case .failure(let error):
+        //                        print(error.localizedDescription)
+        //                    case .success(()):
+        //                        print("Uploaded:", selected)
+        //                        withAnimation {
+        //                            self.uploadDone = true
+        //                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        //                                self.shareToLastYearShowing = false
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //                uploadTask.removeAllObservers()
+        //            }
+        //        }
+        //
+        //        uploadTask.observe(.failure) { snapshot in
+        //            print(snapshot.error)
+        //        }
     }
     
     func shareToStory() {
-        if let storiesUrl = URL(string: "instagram-stories://share"), let image = selectedImage {
-            if UIApplication.shared.canOpenURL(storiesUrl) {
-                guard let imageData = image.pngData() else { return }
-                let pasteboardItems: [String: Any] = [
-                    "com.instagram.sharedSticker.backgroundImage": imageData,
-                    //                    "com.instagram.sharedSticker.stickerImage": imageData,
-                    "com.instagram.sharedSticker.backgroundTopColor": "#F8B729",
-                    "com.instagram.sharedSticker.backgroundBottomColor": "#242424"
-                ]
-                let pasteboardOptions = [
-                    UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(300)
-                ]
-                UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
-                
-                simpleSuccess()
-                
-                UIApplication.shared.open(storiesUrl, options: [:], completionHandler: nil)
-                
-            } else if let url = URL(string: "https://instagram.com"), UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                print("Sorry the application is not installed")
+        Task {
+            if let storiesUrl = URL(string: "instagram-stories://share"), let imageId = selectedImageId, let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: imageId) {
+                if await UIApplication.shared.canOpenURL(storiesUrl) {
+                    guard let imageData = image.pngData() else { return }
+                    let pasteboardItems: [String: Any] = [
+                        "com.instagram.sharedSticker.backgroundImage": imageData,
+                        //                    "com.instagram.sharedSticker.stickerImage": imageData,
+                        "com.instagram.sharedSticker.backgroundTopColor": "#F8B729",
+                        "com.instagram.sharedSticker.backgroundBottomColor": "#242424"
+                    ]
+                    let pasteboardOptions = [
+                        UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(300)
+                    ]
+                    UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
+                    
+                    simpleSuccess()
+                    
+                    await UIApplication.shared.open(storiesUrl, options: [:], completionHandler: nil)
+                    
+                } else if let url = URL(string: "https://instagram.com"), await UIApplication.shared.canOpenURL(url) {
+                    await UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    print("Sorry the application is not installed")
+                }
             }
         }
     }
-
+    
     func simpleError() {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.error)

@@ -53,7 +53,7 @@
 //                    .foregroundColor(.black)
 //                    .padding()
 //                    .background(Color.yellow)
-//                    .cornerRadius(10)
+//                    .cornerRadius(8)
 //            }
 //        }
 //    }

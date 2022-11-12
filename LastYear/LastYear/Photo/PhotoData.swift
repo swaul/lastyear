@@ -20,39 +20,31 @@ public enum PhotoType: Codable {
 public class PhotoData: Identifiable, Comparable, Hashable {
     
     public var id: String
-    public var waterMarkedImage: UIImage
     public var date: Date?
     public var formattedDate: String
-    public var location: CLLocation?
     public var isFavorite: Bool
     public var sourceType: PHAssetSourceType
-    public var faces: Int
-    public var city: String? = nil
-    public var postalCode: String? = nil
+    public var assetID: String
+//    public var faces: Int
     public var photoType: PhotoType = .photo
-    public var animal: AnimalType = .none
     
-    init(id: String, image: UIImage, date: Date? = nil, formattedDate: String, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
+    init(id: String, assetId: String, date: Date? = nil, formattedDate: String, location: CLLocation? = nil, isFavorite: Bool, sourceType: PHAssetSourceType) {
         self.id = id
+        self.assetID = assetId
         self.date = date
-        self.location = location
         self.isFavorite = isFavorite
         self.sourceType = sourceType
         self.formattedDate = formattedDate
-        self.waterMarkedImage = image.addWatermark(text: formattedDate)
-        let ciImage = CIImage(image: image)!
-        let options = [CIDetectorAccuracy: CIDetectorAccuracyHigh]
-        let faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: options)!
-
-        let faces = faceDetector.features(in: ciImage)
-        self.faces = faces.count
-
-        if !faces.isEmpty {
-            print("I found \(faces.count) in this image!")
-        }
-        
-        guard let location = location else { return }
-        getCity(location: location)
+//        self.waterMarkedImage = image.addWatermark(text: formattedDate)
+//        let faceDetector = CIDetector(ofType: CIDetectorTypeFace, context: nil, options: options)!
+//
+//        let faces = faceDetector.features(in: ciImage)
+//        self.faces = faces.count
+//
+//        if !faces.isEmpty {
+//            print("I found \(faces.count) in this image!")
+//        }
+//
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -67,33 +59,16 @@ public class PhotoData: Identifiable, Comparable, Hashable {
         if lhs.isFavorite == rhs.isFavorite {
             
             guard let lhsDate = lhs.date, let rhsDate = rhs.date else { return lhs.isFavorite }
-            return (rhs.faces, lhsDate) < (lhs.faces, rhsDate)
+            return lhsDate < rhsDate
             
         } else {
             return lhs.isFavorite && !rhs.isFavorite
-        }
-    }
-    
-    func getCity(location: CLLocation) {
-        CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in
-            if let error {
-                print(error.localizedDescription)
-            } else {
-                self.city = placemarks?.first?.locality ?? "No location"
-                self.postalCode = placemarks?.first?.postalCode ?? "No zip"
-            }
         }
     }
 }
 
 extension PhotoData {
     static var dummy: PhotoData {
-        PhotoData(id: "123", image: UIImage(named: "fallback")!, formattedDate: "20.09.2021", isFavorite: false, sourceType: .typeUserLibrary)
+        PhotoData(id: "123", assetId: "123", formattedDate: "20.09.2021", isFavorite: false, sourceType: .typeUserLibrary)
     }
-}
-
-public enum AnimalType {
-    case cat
-    case dog
-    case none
 }
