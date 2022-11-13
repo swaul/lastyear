@@ -9,6 +9,7 @@ import SwiftUI
 import AlertToast
 
 struct FriendsView: View {
+    @EnvironmentObject var networkMonitor: NetworkMonitor
     @EnvironmentObject var friendsViewModel: FriendsViewModel
     @State var selection = 0
     @State var searchText = ""

@@ -89,6 +89,8 @@
 		9ECC3389291EA6200007C9C9 /* AWSS3 in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECC3388291EA6200007C9C9 /* AWSS3 */; };
 		9ECC338B291F52030007C9C9 /* PhotoLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */; };
 		9ECC338D29203B6B0007C9C9 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC338C29203B6B0007C9C9 /* ImageView.swift */; };
+		9ECC3392292189D10007C9C9 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC3391292189D10007C9C9 /* NetworkMonitor.swift */; };
+		9ECC339429218B8C0007C9C9 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC339329218B8C0007C9C9 /* NetworkError.swift */; };
 		9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */; };
 		9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD18A428EE23F2004DC8A6 /* ShareView.swift */; };
 /* End PBXBuildFile section */
@@ -192,6 +194,8 @@
 		9ECC3370291C06590007C9C9 /* AWSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
 		9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryService.swift; sourceTree = "<group>"; };
 		9ECC338C29203B6B0007C9C9 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		9ECC3391292189D10007C9C9 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
+		9ECC339329218B8C0007C9C9 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToiMessageView.swift; sourceTree = "<group>"; };
 		9EDD18A428EE23F2004DC8A6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -267,6 +271,8 @@
 				9EAADB2C28E37FED00F93097 /* NotificationCenter.swift */,
 				9EBDE92828DE021200264AF3 /* FirebaseHandler.swift */,
 				9ECC3370291C06590007C9C9 /* AWSManager.swift */,
+				9ECC3391292189D10007C9C9 /* NetworkMonitor.swift */,
+				9ECC339329218B8C0007C9C9 /* NetworkError.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -631,6 +637,7 @@
 				9EBDE92B28DE0EEA00264AF3 /* PasswordView.swift in Sources */,
 				9ECC33662919283C0007C9C9 /* DiscoverViewModel.swift in Sources */,
 				9EBDE8E428DDDCE900264AF3 /* PhotoCard.swift in Sources */,
+				9ECC339429218B8C0007C9C9 /* NetworkError.swift in Sources */,
 				9EBDE91528DDF44D00264AF3 /* ChoseAuthView.swift in Sources */,
 				9ECC33612918F3B90007C9C9 /* FriendsViewModel.swift in Sources */,
 				9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */,
@@ -652,6 +659,7 @@
 				9E272813290B3627000C2E64 /* AddFriendView.swift in Sources */,
 				9EBDE8E628DDDD4B00264AF3 /* PhotoData.swift in Sources */,
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
+				9ECC3392292189D10007C9C9 /* NetworkMonitor.swift in Sources */,
 				9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */,
 				9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */,
 				9EBEE6EE28E5C1E000F9FCCC /* LogoView.swift in Sources */,

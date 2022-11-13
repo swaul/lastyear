@@ -16,7 +16,7 @@ class DiscoverViewModel: ObservableObject {
     }
     
     func getDiscoveries() {
-        print("Load Discovery")
+        print("Load Discovery")        
         FirebaseHandler.shared.getDiscoveries{ result in
             switch result {
             case .failure(let error):

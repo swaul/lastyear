@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct FeedView: View {
+    @EnvironmentObject var networkMonitor: NetworkMonitor
+
     @EnvironmentObject var friendsViewModel: FriendsViewModel
     
     @State var images: [Image] = []

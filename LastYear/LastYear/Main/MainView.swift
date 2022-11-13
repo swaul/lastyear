@@ -12,6 +12,7 @@ struct MainView: View {
     
     @EnvironmentObject var authService: AuthService
     
+    var networkMonitor = NetworkMonitor()
     @State var selection = 2
 
     var friendsViewModel = FriendsViewModel()
@@ -21,39 +22,43 @@ struct MainView: View {
                 .ignoresSafeArea()
             TabView(selection: $selection) {
                 FriendsView()
+                    .environmentObject(friendsViewModel)
+                    .environmentObject(networkMonitor)
                     .tabItem {
                         Label("Friends", systemImage: "person.3")
                     }
                     .tag(0)
-                    .environmentObject(friendsViewModel)
                     .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
                 
                 DiscoverView()
+                    .environmentObject(networkMonitor)
                     .tabItem {
                         Label("Discover", systemImage: "magnifyingglass")
                     }
                     .tag(1)
-                
+
                 FeedView()
+                    .environmentObject(friendsViewModel)
+                    .environmentObject(networkMonitor)
                     .tabItem {
                         Label("Home", systemImage: "house")
                     }
                     .tag(2)
-                    .environmentObject(friendsViewModel)
 
                 MemoriesView()
+                    .environmentObject(networkMonitor)
                     .tabItem {
                         Label("Memories", systemImage: "photo")
                     }
                     .tag(3)
-                
+
                 ProfileView()
+                    .environmentObject(networkMonitor)
                     .tabItem {
                         Image(systemName: "person")
                         Text("Profile")
                     }
                     .tag(4)
-
             }
         }
     }

@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseStorage
 import ImageViewer
+import AWSS3
+import AWSCore
 
 struct DiscoveryView: View {
     
@@ -40,10 +42,10 @@ struct DiscoveryView: View {
                             .aspectRatio(contentMode: .fit)
                             .cornerRadius(8)
                         if !downloadDone {
-                            VStack {
-                                Spacer()
-                                ProgressView(value: currentDownload, total: 100.0)
-                            }
+                            Rectangle()
+                                .foregroundColor(.gray)
+                                .aspectRatio(1, contentMode: .fit)
+                            ProgressView()
                         }
                     }
                 }
@@ -86,22 +88,36 @@ struct DiscoveryView: View {
     }
     
     func getImage() {
-        let reference = Storage.storage().reference()
+//        let reference = Storage.storage().reference()
+//
+//        let task = reference.child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
+//            if let error = error {
+//                print(error.localizedDescription)
+//            } else {
+//                guard let image = UIImage(data: data!) else { return }
+//                self.image = Image(uiImage: image)
+//                self.downloadDone = true
+//            }
+//        }
+//
+//        task.observe(.progress) { snapshot in
+//            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
+//            print(currentValue)
+//            self.currentDownload = currentValue
+//        }
+        let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
+            print("percentage done:", progress.fractionCompleted)
+        }
+        let request = AWSS3TransferUtility.default()
+        let expression = AWSS3TransferUtilityDownloadExpression()
+        expression.progressBlock = progressBlock
         
-        let task = reference.child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
-            if let error = error {
-                print(error.localizedDescription)
-            } else {
-                guard let image = UIImage(data: data!) else { return }
-                self.image = Image(uiImage: image)
+        request.downloadData(fromBucket: "lastyearapp", key: id, expression: expression) { task, url, data, error in
+            guard let data = data else { return }
+            self.image = Image(uiImage: UIImage(data: data) ?? UIImage(named: "fallback")!)
+            withAnimation {
                 self.downloadDone = true
             }
-        }
-        
-        task.observe(.progress) { snapshot in
-            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
-            print(currentValue)
-            self.currentDownload = currentValue
         }
     }
     

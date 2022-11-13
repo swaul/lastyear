@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MemoriesView: View {
     @Namespace var loadingAnimation
+    @EnvironmentObject var networkMonitor: NetworkMonitor
 
     @ObservedObject var photoViewModel = PhotosViewModel()
     
