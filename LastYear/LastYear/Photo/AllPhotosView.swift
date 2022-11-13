@@ -46,7 +46,7 @@ struct AllPhotosView: View {
                         LazyVGrid(columns: layout) {
                             ForEach(sortedImages.filter { $0.photoType != .screenshot }) { photo in
                                 NavigationLink {
-                                    PhotoDetailView(images: sortedImages, selected: photo.id)
+                                    PhotoDetailView(images: sortedImages, selected: sortedImages.firstIndex(of: photo) ?? 0, zoomScale: 1)
                                 } label: {
                                     PhotoCard(asset: photo)
                                 }
@@ -76,7 +76,7 @@ struct AllPhotosView: View {
                                 LazyVGrid(columns: layout) {
                                     ForEach(sortedScreenshots) { photo in
                                         NavigationLink {
-                                            PhotoDetailView(images: sortedScreenshots, selected: photo.id)
+                                            PhotoDetailView(images: sortedScreenshots, selected: sortedScreenshots.firstIndex(of: photo) ?? 0, zoomScale: 1)
                                         } label: {
                                             PhotoCard(asset: photo)
                                         }

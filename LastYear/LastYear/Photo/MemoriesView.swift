@@ -186,7 +186,7 @@ struct MemoriesView: View {
             VStack {
                 NavigationLink {
                     if let image = photoViewModel.bestImage {
-                        PhotoDetailView(images: photoViewModel.allPhotos.sorted(), selected: image.id)
+                        PhotoDetailView(images: photoViewModel.allPhotos.sorted(), zoomScale: 1)
                     }
                 } label: {
                     Image(systemName: "square.and.arrow.up")

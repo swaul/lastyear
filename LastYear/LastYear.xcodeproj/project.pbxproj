@@ -88,6 +88,7 @@
 		9ECC3387291EA6200007C9C9 /* AWSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECC3386291EA6200007C9C9 /* AWSCore */; };
 		9ECC3389291EA6200007C9C9 /* AWSS3 in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECC3388291EA6200007C9C9 /* AWSS3 */; };
 		9ECC338B291F52030007C9C9 /* PhotoLibraryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */; };
+		9ECC338D29203B6B0007C9C9 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC338C29203B6B0007C9C9 /* ImageView.swift */; };
 		9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */; };
 		9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD18A428EE23F2004DC8A6 /* ShareView.swift */; };
 /* End PBXBuildFile section */
@@ -190,6 +191,7 @@
 		9ECC3369291AEFF90007C9C9 /* DiscoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryView.swift; sourceTree = "<group>"; };
 		9ECC3370291C06590007C9C9 /* AWSManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWSManager.swift; sourceTree = "<group>"; };
 		9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryService.swift; sourceTree = "<group>"; };
+		9ECC338C29203B6B0007C9C9 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToiMessageView.swift; sourceTree = "<group>"; };
 		9EDD18A428EE23F2004DC8A6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -250,6 +252,7 @@
 				9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */,
 				9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */,
 				9EBDE8E528DDDD4B00264AF3 /* PhotoData.swift */,
+				9ECC338C29203B6B0007C9C9 /* ImageView.swift */,
 				9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */,
 				9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */,
 				9ECC33572918EC7F0007C9C9 /* MemoriesView.swift */,
@@ -631,6 +634,7 @@
 				9EBDE91528DDF44D00264AF3 /* ChoseAuthView.swift in Sources */,
 				9ECC33612918F3B90007C9C9 /* FriendsViewModel.swift in Sources */,
 				9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */,
+				9ECC338D29203B6B0007C9C9 /* ImageView.swift in Sources */,
 				9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */,
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
