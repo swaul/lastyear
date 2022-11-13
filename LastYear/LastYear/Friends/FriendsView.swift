@@ -20,8 +20,17 @@ struct FriendsView: View {
             Color("backgroundColor")
                 .ignoresSafeArea()
             VStack {
-                Text("Friends")                                                .font(Font.custom("Poppins-Bold", size: 26))
-                    .foregroundColor(.white)
+                if networkMonitor.status == .disconnected {
+                    ZStack {
+                        Color.red.ignoresSafeArea()
+                        NetworkError()
+                    }
+                    .transition(.move(edge: .top))
+                    .frame(height: 40)
+                } else {
+                    Text("Friends")                                                .font(Font.custom("Poppins-Bold", size: 26))
+                        .foregroundColor(.white)
+                }
                 TextField(text: $searchText) {
                     Text("Add a friend")
                 }

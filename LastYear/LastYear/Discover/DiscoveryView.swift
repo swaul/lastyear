@@ -14,14 +14,14 @@ import AWSCore
 struct DiscoveryView: View {
     
     @State var user: String = ""
-    @State var image: Image = Image("fallback")
+    @State var image: Image? = nil
     @State var id: String = ""
     @State var currentDownload = 0.0
     @State var downloadDone = false
     @State var timePosted: Double = 0.0
     @State var liked = false
     @State var likes: Int
-
+    
     var body: some View {
         ZStack {
             VStack {
@@ -37,11 +37,12 @@ struct DiscoveryView: View {
                     }
                     .padding(.horizontal)
                     ZStack {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .cornerRadius(8)
-                        if !downloadDone {
+                        if let image = image {
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .cornerRadius(8)
+                        } else {
                             Rectangle()
                                 .foregroundColor(.gray)
                                 .aspectRatio(1, contentMode: .fit)
@@ -88,23 +89,24 @@ struct DiscoveryView: View {
     }
     
     func getImage() {
-//        let reference = Storage.storage().reference()
-//
-//        let task = reference.child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
-//            if let error = error {
-//                print(error.localizedDescription)
-//            } else {
-//                guard let image = UIImage(data: data!) else { return }
-//                self.image = Image(uiImage: image)
-//                self.downloadDone = true
-//            }
-//        }
-//
-//        task.observe(.progress) { snapshot in
-//            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
-//            print(currentValue)
-//            self.currentDownload = currentValue
-//        }
+        guard image == nil else { return }
+        //        let reference = Storage.storage().reference()
+        //
+        //        let task = reference.child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
+        //            if let error = error {
+        //                print(error.localizedDescription)
+        //            } else {
+        //                guard let image = UIImage(data: data!) else { return }
+        //                self.image = Image(uiImage: image)
+        //                self.downloadDone = true
+        //            }
+        //        }
+        //
+        //        task.observe(.progress) { snapshot in
+        //            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
+        //            print(currentValue)
+        //            self.currentDownload = currentValue
+        //        }
         let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
             print("percentage done:", progress.fractionCompleted)
         }

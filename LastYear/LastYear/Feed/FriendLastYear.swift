@@ -12,7 +12,7 @@ import ImageViewer
 struct FriendLastYear: View {
     
     @State var user: String = ""
-    @State var image: Image = Image("fallback")
+    @State var image: Image? = nil
     @State var id: String = ""
     @State var currentDownload = 0.0
     @State var downloadDone = false
@@ -32,15 +32,16 @@ struct FriendLastYear: View {
                 }
                 .padding(.horizontal)
                 ZStack {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(8)
-                    if !downloadDone {
-                        VStack {
-                            Spacer()
-                            ProgressView(value: currentDownload, total: 100.0)
-                        }
+                    if let image = image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .cornerRadius(8)
+                    } else {
+                        Rectangle()
+                            .foregroundColor(.gray)
+                            .aspectRatio(1, contentMode: .fit)
+                        ProgressView()
                     }
                 }
             }
@@ -61,22 +62,37 @@ struct FriendLastYear: View {
     }
     
     func getImage() {
-        let reference = Storage.storage().reference()
+        guard image == nil else { return }
+        //        let reference = Storage.storage().reference()
+        //
+        //        let task = reference.child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
+        //            if let error = error {
+        //                print(error.localizedDescription)
+        //            } else {
+        //                guard let image = UIImage(data: data!) else { return }
+        //                self.image = Image(uiImage: image)
+        //                self.downloadDone = true
+        //            }
+        //        }
+        //
+        //        task.observe(.progress) { snapshot in
+        //            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
+        //            print(currentValue)
+        //            self.currentDownload = currentValue
+        //        }
+        let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
+            print("percentage done:", progress.fractionCompleted)
+        }
+        let request = AWSS3TransferUtility.default()
+        let expression = AWSS3TransferUtilityDownloadExpression()
+        expression.progressBlock = progressBlock
         
-        let task = reference.child("images/\(id)").getData(maxSize: 10 * 1024 * 1024) { data, error in
-            if let error = error {
-                print(error.localizedDescription)
-            } else {
-                guard let image = UIImage(data: data!) else { return }
-                self.image = Image(uiImage: image)
+        request.downloadData(fromBucket: "lastyearapp", key: id, expression: expression) { task, url, data, error in
+            guard let data = data else { return }
+            self.image = Image(uiImage: UIImage(data: data) ?? UIImage(named: "fallback")!)
+            withAnimation {
                 self.downloadDone = true
             }
-        }
-        
-        task.observe(.progress) { snapshot in
-            let currentValue = (100.0 * Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount))
-            print(currentValue)
-            self.currentDownload = currentValue
         }
     }
 }

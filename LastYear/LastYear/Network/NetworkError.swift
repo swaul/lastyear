@@ -12,6 +12,10 @@ struct NetworkError: View {
         Text("Connection Lost")
             .font(Font.custom("Poppins-Regular", size: 24))
             .foregroundColor(.white)
+            .onTapGesture {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                UIApplication.shared.open(url)
+            }
     }
 }
 

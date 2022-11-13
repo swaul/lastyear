@@ -19,10 +19,19 @@ struct FeedView: View {
             Color("backgroundColor")
                 .ignoresSafeArea()
             VStack(spacing: 0) {
+                if networkMonitor.status == .disconnected {
+                    ZStack {
+                        Color.red.ignoresSafeArea()
+                        NetworkError()
+                    }
+                    .transition(.move(edge: .top))
+                    .frame(height: 40)
+                }
                 if friendsViewModel.friends.isEmpty {
                     Text("No friends")
                     Spacer()
                 } else {
+                    
                     Image("logoSmall")
                         .padding(.bottom)
                     ScrollView {
