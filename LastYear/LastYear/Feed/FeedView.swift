@@ -26,14 +26,14 @@ struct FeedView: View {
                     }
                     .transition(.move(edge: .top))
                     .frame(height: 40)
+                } else {
+                    Image("logoSmall")
+                        .padding(.bottom)
                 }
                 if friendsViewModel.friends.isEmpty {
                     Text("No friends")
                     Spacer()
                 } else {
-                    
-                    Image("logoSmall")
-                        .padding(.bottom)
                     ScrollView {
                         VStack {
                             Text("Your friends' memories:")

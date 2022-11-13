@@ -246,6 +246,18 @@ public class FirebaseHandler {
         }
     }
     
+    public func changeLike(selfId: String, user: String, remove: Bool, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestorePublic.document(user).updateData([
+            "likes": remove ? FieldValue.arrayRemove([selfId]) : FieldValue.arrayUnion([selfId])
+        ]) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
+            } else {
+                completion?(.success(()))
+            }
+        }
+    }
+    
     public func changeUserTracking(to granted: Bool) {
         guard let user = Auth.auth().currentUser else { return }
         Analytics.setUserID(user.uid)

@@ -39,7 +39,7 @@ struct DiscoverView: View {
                                 let interval = Date.now.timeIntervalSince(time)
                                 let twentyFourHours: TimeInterval = 60 * 60 * 24
                                 if interval < twentyFourHours {
-                                    DiscoveryView(user: discovery.user, id: discovery.id, likes: discovery.likes)
+                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes)
                                 }
                             }
                         }

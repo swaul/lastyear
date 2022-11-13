@@ -9,7 +9,7 @@ import Foundation
 
 public struct DiscoveryUpload: Hashable {
     let id: String
-    var likes: Int
+    var likes: [String]
     let timePosted: String
     let user: String
     
@@ -17,7 +17,7 @@ public struct DiscoveryUpload: Hashable {
         Formatters.dateTimeFormatter.date(from: timePosted)
     }
     
-    init(id: String, likes: Int, timePosted: String, user: String) {
+    init(id: String, likes: [String], timePosted: String, user: String) {
         self.id = id
         self.likes = likes
         self.timePosted = timePosted
@@ -26,7 +26,7 @@ public struct DiscoveryUpload: Hashable {
     
     init(data: [String: Any]) {
         self.id = data["id"] as! String
-        self.likes = data["likes"] as! Int
+        self.likes = data["likes"] as! [String]
         self.timePosted = data["timePosted"] as! String
         self.user = data["user"] as! String
     }

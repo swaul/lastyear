@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseStorage
 import ImageViewer
+import AWSS3
+import AWSCore
 
 struct FriendLastYear: View {
     

@@ -18,9 +18,9 @@ struct DiscoveryView: View {
     @State var id: String = ""
     @State var currentDownload = 0.0
     @State var downloadDone = false
-    @State var timePosted: Double = 0.0
+    @State var timePosted: Double
     @State var liked = false
-    @State var likes: Int
+    @State var likes: [String]
     
     var body: some View {
         ZStack {
@@ -61,21 +61,34 @@ struct DiscoveryView: View {
                     Spacer()
                     VStack {
                         Button {
-                            simpleSuccess()
                             liked.toggle()
+                            like()
                         } label: {
                             Image(systemName: liked ? "heart.fill" : "heart")
                                 .resizable()
                                 .frame(width: 38, height: 38)
                                 .aspectRatio(1, contentMode: .fit)
                         }
-                        Text(String(liked ? likes + 1 : likes))
+                        Text(String(liked ? likes.count + 1 : likes.count))
                             .font(Font.custom("Poppins-Regular", size: 20))
                             .foregroundColor(Color.white)
                     }
                 }
             }
             .padding()
+        }
+    }
+    
+    func like() {
+        guard let id = AuthService.shared.loggedInUser?.id else { return }
+
+        FirebaseHandler.shared.changeLike(selfId: id, user: self.id, remove: !liked) { result in
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(()):
+                simpleSuccess()
+            }
         }
     }
     
@@ -131,6 +144,6 @@ struct DiscoveryView: View {
 
 struct DiscoveryView_Previews: PreviewProvider {
     static var previews: some View {
-        DiscoveryView(likes: 12)
+        DiscoveryView(timePosted: 0.0, likes: ["12"])
     }
 }
