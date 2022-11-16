@@ -81,32 +81,9 @@ struct FriendsView: View {
                             } else {
                                 ScrollView {
                                     ForEach(friendsViewModel.friendRequestUsers, id: \.id) { user in
-                                        HStack {
-                                            Text(user.userName)
-                                                .font(Font.custom("Poppins-Bold", size: 20))
-                                                .foregroundColor(.white)
-                                            Spacer()
-                                            Button {
-                                                friendsViewModel.acceptRequest(by: user.id)
-                                            } label: {
-                                                Text("Add")
-                                                    .font(Font.custom("Poppins-Regular", size: 20))
-                                                    .foregroundColor(.white)
-                                                    .padding(4)
-                                                    .background(Color("gray"))
-                                                    .cornerRadius(8)
-                                            }
-                                            .padding(.horizontal)
-                                            Button {
-                                                friendsViewModel.denyRequest(user: user.id)
-                                            } label: {
-                                                Image(systemName: "xmark")
-                                                    .font(Font.custom("Poppins-Regular", size: 20))
-                                                    .foregroundColor(.white)
-                                            }
-                                        }
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        FriendRequestRow(user: user)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
                                     }
                                     //                                .listStyle(.plain)
                                     //                                .scrollContentBackground(.hidden)
@@ -142,32 +119,10 @@ struct FriendsView: View {
                             } else {
                                 ScrollView {
                                     ForEach(friendsViewModel.recommendations, id: \.id) { user in
-                                        HStack {
-                                            Text(user.userName)
-                                                .font(Font.custom("Poppins-Bold", size: 20))
-                                                .foregroundColor(.white)
-                                            Spacer()
-                                            Button {
-                                                friendsViewModel.sendFriendRequest(to: user.id)
-                                            } label: {
-                                                Text("Add")
-                                                    .font(Font.custom("Poppins-Regular", size: 20))
-                                                    .foregroundColor(.white)
-                                                    .padding(4)
-                                                    .background(Color("gray"))
-                                                    .cornerRadius(8)
-                                            }
-                                            .padding(.horizontal)
-                                            Button {
-                                                friendsViewModel.recommendations.removeAll(where: { $0.id == user.id })
-                                            } label: {
-                                                Image(systemName: "xmark")
-                                                    .font(Font.custom("Poppins-Regular", size: 20))
-                                                    .foregroundColor(.white)
-                                            }
-                                        }
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        RecommendationRowView(user: user)
+                                            .environmentObject(friendsViewModel)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
                                     }
                                 }
                             }
@@ -201,15 +156,11 @@ struct FriendsView: View {
                             } else {
                                 ScrollView {
                                     ForEach(friendsViewModel.friends, id: \.id) { user in
-                                        HStack {
-                                            Text(user.userName)
-                                                .font(Font.custom("Poppins-Bold", size: 20))
-                                                .foregroundColor(.white)
-                                            Spacer()
-                                        }
-                                        .cornerRadius(8)
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 8)
+                                        FriendRowView(user: user)
+                                            .cornerRadius(8)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                        Divider()
                                     }
                                 }
                             }

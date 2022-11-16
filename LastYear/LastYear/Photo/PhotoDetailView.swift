@@ -111,73 +111,142 @@ struct PhotoDetailView: View {
             ActivityViewController(activityItems: [selectedImage!])
         }
         .sheet(isPresented: $shareToLastYearShowing) {
-            VStack {
-                if currentUpload == 0 {
-                    Button {
-                        shareLastYear()
-                    } label: {
-                        HStack {
-                            Image(systemName: "person.2")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 25)
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                Text("Friends")
-                                    .font(Font.custom("Poppins-Bold", size: 24))
-                                    .foregroundColor(Color.white)
-                                Text("Share with all your friends")
-                                    .font(Font.custom("Poppins-Regular", size: 18))
-                                    .foregroundColor(Color.white)
+            if #available(iOS 16.0, *) {
+                VStack {
+                    if currentUpload == 0 {
+                        Button {
+                            shareLastYear()
+                        } label: {
+                            HStack {
+                                Image(systemName: "person.2")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 25)
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("Friends")
+                                        .font(Font.custom("Poppins-Bold", size: 24))
+                                        .foregroundColor(Color.white)
+                                    Text("Share with all your friends")
+                                        .font(Font.custom("Poppins-Regular", size: 18))
+                                        .foregroundColor(Color.white)
+                                }
                             }
-                        }
-                        .contentShape(Rectangle())
-                        .padding()
-                        .background(Color("gray"))
-                        .cornerRadius(8)
-                    }
-                    .padding()
-                    Button {
-                        shareLastYear(toPublic: true)
-                    } label: {
-                        HStack {
-                            Image(systemName: "magnifyingglass")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 25)
-                            Spacer()
-                            VStack(alignment: .leading) {
-                                Text("Discovery")
-                                    .font(Font.custom("Poppins-Bold", size: 24))
-                                    .foregroundColor(Color.white)
-                                Text("Share with all LastYear users")
-                                    .font(Font.custom("Poppins-Regular", size: 18))
-                                    .foregroundColor(Color.white)
-                            }
-                        }
-                        .contentShape(Rectangle())
-                        .padding()
-                        .background(Color("gray"))
-                        .cornerRadius(8)
-                    }
-                    .padding()
-                    Text("Share!")
-                        .font(Font.custom("Poppins-Bold", size: 28))
-                } else if uploadDone {
-                    Text("Upload done")
-                        .font(.title)
-                        .foregroundColor(.green)
-                } else {
-                    VStack {
-                        Text("\(Int(currentUpload.rounded())) %")
-                        ProgressView(value: currentUpload, total: 100.0)
-                            .padding(.horizontal)
-                        Text("Uploading")
+                            .contentShape(Rectangle())
                             .padding()
+                            .background(Color("gray"))
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                        Button {
+                            shareLastYear(toPublic: true)
+                        } label: {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 25)
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("Discovery")
+                                        .font(Font.custom("Poppins-Bold", size: 24))
+                                        .foregroundColor(Color.white)
+                                    Text("Share with all LastYear users")
+                                        .font(Font.custom("Poppins-Regular", size: 18))
+                                        .foregroundColor(Color.white)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                            .padding()
+                            .background(Color("gray"))
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                        Text("Share!")
+                            .font(Font.custom("Poppins-Bold", size: 28))
+                    } else if uploadDone {
+                        Text("Upload done")
+                            .font(.title)
+                            .foregroundColor(.green)
+                    } else {
+                        VStack {
+                            Text("\(Int(currentUpload.rounded())) %")
+                            ProgressView(value: currentUpload, total: 100.0)
+                                .padding(.horizontal)
+                            Text("Uploading")
+                                .padding()
+                        }
+                    }
+                }
+                .presentationDetents([.fraction(0.4)])
+            } else {
+                VStack {
+                    if currentUpload == 0 {
+                        Button {
+                            shareLastYear()
+                        } label: {
+                            HStack {
+                                Image(systemName: "person.2")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 25)
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("Friends")
+                                        .font(Font.custom("Poppins-Bold", size: 24))
+                                        .foregroundColor(Color.white)
+                                    Text("Share with all your friends")
+                                        .font(Font.custom("Poppins-Regular", size: 18))
+                                        .foregroundColor(Color.white)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                            .padding()
+                            .background(Color("gray"))
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                        Button {
+                            shareLastYear(toPublic: true)
+                        } label: {
+                            HStack {
+                                Image(systemName: "magnifyingglass")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 25)
+                                Spacer()
+                                VStack(alignment: .leading) {
+                                    Text("Discovery")
+                                        .font(Font.custom("Poppins-Bold", size: 24))
+                                        .foregroundColor(Color.white)
+                                    Text("Share with all LastYear users")
+                                        .font(Font.custom("Poppins-Regular", size: 18))
+                                        .foregroundColor(Color.white)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                            .padding()
+                            .background(Color("gray"))
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                        Text("Share!")
+                            .font(Font.custom("Poppins-Bold", size: 28))
+                    } else if uploadDone {
+                        Text("Upload done")
+                            .font(.title)
+                            .foregroundColor(.green)
+                    } else {
+                        VStack {
+                            Text("\(Int(currentUpload.rounded())) %")
+                            ProgressView(value: currentUpload, total: 100.0)
+                                .padding(.horizontal)
+                            Text("Uploading")
+                                .padding()
+                        }
                     }
                 }
             }
-            .presentationDetents([.fraction(0.4)])
         }
         .navigationBarHidden(true)
     }
@@ -261,7 +330,7 @@ struct PhotoDetailView: View {
                         .font(Font.custom("Poppins-Regular", size: 12))
                         .foregroundColor(Color.white)
                 }
-                if let image = selectedImage {
+                if let image = selectedImage, #available(iOS 16, *) {
                     VStack(spacing: 4) {
                         ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
                             Image(systemName: "ellipsis.circle")
@@ -295,7 +364,6 @@ struct PhotoDetailView: View {
                 }
             }
         .padding()
-        .backgroundStyle(.thinMaterial)
     }
 
     func findCompression(image: UIImage) -> Double {
@@ -324,6 +392,9 @@ struct PhotoDetailView: View {
                         
             let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
                 print("percentage done:", progress.fractionCompleted)
+                withAnimation {
+                    currentUpload = progress.fractionCompleted * 100
+                }
             }
             let request = AWSS3TransferUtility.default()
             let expression = AWSS3TransferUtilityUploadExpression()
@@ -333,7 +404,50 @@ struct PhotoDetailView: View {
                 if let error {
                     print(error.localizedDescription)
                 } else {
-                    print(task.progress)
+                    if task.status == .completed {
+                        if toPublic {
+                            FirebaseHandler.shared.shareToPublic(discovery: DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName)) { result in
+                                switch result {
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                case .success(()):
+                                    withAnimation {
+                                        FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
+                                            switch result {
+                                            case .failure(let error):
+                                                print(error.localizedDescription)
+                                            case .success(()):
+                                                withAnimation {
+                                                    self.uploadDone = true
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                        self.shareToLastYearShowing = false
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        self.uploadDone = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            self.shareToLastYearShowing = false
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
+                                switch result {
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                case .success(()):
+                                    withAnimation {
+                                        self.uploadDone = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            self.shareToLastYearShowing = false
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

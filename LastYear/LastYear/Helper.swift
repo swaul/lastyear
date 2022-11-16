@@ -21,18 +21,14 @@ struct Helper {
     }
     
     static func getImageFromUserDefaults(key: String) -> UIImage {
-        os_log("1 LOOKING FOR IMAGE %{public}@", log: OSLog.default, type: .error, key)
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
             if let imageData = userDefaults.object(forKey: key) as? Data,
                let image = UIImage(data: imageData) {
-                os_log("FOUND THE IMAGE %{public}@", log: OSLog.default, type: .error, key)
                 return image
             } else {
-                os_log("DID NOT FIND THE IMAGE %{public}@", log: OSLog.default, type: .error, key)
                 return UIImage(named: "fallback")!
             }
         } else {
-            os_log("DID NOT FIND THE IMAGE %{public}@", log: OSLog.default, type: .error, key)
             return UIImage(named: "fallback")!
         }
     }

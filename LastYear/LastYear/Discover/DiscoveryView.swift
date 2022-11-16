@@ -14,6 +14,7 @@ import AWSCore
 struct DiscoveryView: View {
     
     @State var user: String = ""
+    @State var userPP: Image? = nil
     @State var image: Image? = nil
     @State var id: String = ""
     @State var currentDownload = 0.0
@@ -27,6 +28,21 @@ struct DiscoveryView: View {
             VStack {
                 VStack {
                     HStack {
+                        ZStack {
+                            if let userPP = userPP {
+                                userPP
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 33, height: 33)
+                                    .clipShape(Circle())
+                            } else {
+                                Circle()
+                                    .foregroundColor(.gray)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .frame(width: 33, height: 33)                            
+                                ProgressView()
+                            }
+                        }
                         Text(user)
                             .font(Font.custom("Poppins-Regular", size: 20))
                             .foregroundColor(Color.white)
@@ -54,6 +70,10 @@ struct DiscoveryView: View {
             .padding(.bottom, 12)
             .onAppear {
                 getImage()
+                getPP()
+                if likes.contains(where: { $0 == AuthService.shared.loggedInUser?.id ?? "" }) {
+                    liked = true
+                }
             }
             VStack {
                 Spacer()
@@ -133,6 +153,23 @@ struct DiscoveryView: View {
             withAnimation {
                 self.downloadDone = true
             }
+        }
+    }
+    
+    func getPP() {
+        let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
+            print("percentage done:", progress.fractionCompleted)
+        }
+        let request = AWSS3TransferUtility.default()
+        let expression = AWSS3TransferUtilityDownloadExpression()
+        expression.progressBlock = progressBlock
+        
+        var id = id
+        id += "profilePicture"
+        
+        request.downloadData(fromBucket: "lastyearapp", key: id, expression: expression) { task, url, data, error in
+            guard let data = data else { return }
+            self.userPP = Image(uiImage: UIImage(data: data) ?? UIImage(named: "fallback")!)
         }
     }
     

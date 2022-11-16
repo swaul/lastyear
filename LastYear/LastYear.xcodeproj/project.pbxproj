@@ -7,12 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E01BF202924D9E300749C29 /* FriendRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E01BF1F2924D9E300749C29 /* FriendRowView.swift */; };
+		9E01BF222924DB4A00749C29 /* RecommendationRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E01BF212924DB4A00749C29 /* RecommendationRowView.swift */; };
+		9E01BF242924DBC200749C29 /* FriendRequestRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E01BF232924DBC200749C29 /* FriendRequestRow.swift */; };
 		9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 9E27280B2903FEFA000C2E64 /* ImageViewer */; };
 		9E272811290B357D000C2E64 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272810290B357D000C2E64 /* FeedView.swift */; };
-		9E272813290B3627000C2E64 /* AddFriendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272812290B3627000C2E64 /* AddFriendView.swift */; };
 		9E272815290B4671000C2E64 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 9E272814290B4671000C2E64 /* FirebaseMessaging */; };
 		9E272817290C50AC000C2E64 /* FriendLastYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E272816290C50AC000C2E64 /* FriendLastYear.swift */; };
 		9E272819290C5371000C2E64 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 9E272818290C5371000C2E64 /* FirebaseStorage */; };
+		9E6461A52921AC5000F4141C /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6461A42921AC5000F4141C /* ImagePicker.swift */; };
+		9E6461A72922076200F4141C /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6461A62922076200F4141C /* UserView.swift */; };
+		9E6461AA2922129700F4141C /* PhotoSelectAndCrop in Frameworks */ = {isa = PBXBuildFile; productRef = 9E6461A92922129700F4141C /* PhotoSelectAndCrop */; };
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
@@ -120,9 +125,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9E01BF1F2924D9E300749C29 /* FriendRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRowView.swift; sourceTree = "<group>"; };
+		9E01BF212924DB4A00749C29 /* RecommendationRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationRowView.swift; sourceTree = "<group>"; };
+		9E01BF232924DBC200749C29 /* FriendRequestRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestRow.swift; sourceTree = "<group>"; };
 		9E272810290B357D000C2E64 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
-		9E272812290B3627000C2E64 /* AddFriendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddFriendView.swift; sourceTree = "<group>"; };
 		9E272816290C50AC000C2E64 /* FriendLastYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendLastYear.swift; sourceTree = "<group>"; };
+		9E6461A42921AC5000F4141C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		9E6461A62922076200F4141C /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
@@ -221,6 +230,7 @@
 				9EBDE92528DDFFEB00264AF3 /* FirebaseFirestore in Frameworks */,
 				9E272819290C5371000C2E64 /* FirebaseStorage in Frameworks */,
 				9ECC3389291EA6200007C9C9 /* AWSS3 in Frameworks */,
+				9E6461AA2922129700F4141C /* PhotoSelectAndCrop in Frameworks */,
 				9ECC336429190BEB0007C9C9 /* AlertToast in Frameworks */,
 				9EBDE91F28DDFFEB00264AF3 /* FirebaseAnalytics in Frameworks */,
 				9EBDE92128DDFFEB00264AF3 /* FirebaseAuth in Frameworks */,
@@ -244,8 +254,10 @@
 			isa = PBXGroup;
 			children = (
 				9ECC335E2918EEC90007C9C9 /* FriendsView.swift */,
-				9E272812290B3627000C2E64 /* AddFriendView.swift */,
 				9ECC33602918F3B90007C9C9 /* FriendsViewModel.swift */,
+				9E01BF1F2924D9E300749C29 /* FriendRowView.swift */,
+				9E01BF212924DB4A00749C29 /* RecommendationRowView.swift */,
+				9E01BF232924DBC200749C29 /* FriendRequestRow.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -454,6 +466,8 @@
 			isa = PBXGroup;
 			children = (
 				9ECC33552918EBBE0007C9C9 /* ProfileView.swift */,
+				9E6461A42921AC5000F4141C /* ImagePicker.swift */,
+				9E6461A62922076200F4141C /* UserView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -522,6 +536,7 @@
 				9ECC3384291EA6200007C9C9 /* AWSCognitoIdentityProvider */,
 				9ECC3386291EA6200007C9C9 /* AWSCore */,
 				9ECC3388291EA6200007C9C9 /* AWSS3 */,
+				9E6461A92922129700F4141C /* PhotoSelectAndCrop */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -560,6 +575,7 @@
 				9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
 				9ECC336229190BEB0007C9C9 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */,
+				9E6461A82922129700F4141C /* XCRemoteSwiftPackageReference "PhotoSelectAndCrop" */,
 			);
 			productRefGroup = 9EBDE8D328DDD58A00264AF3 /* Products */;
 			projectDirPath = "";
@@ -640,6 +656,7 @@
 				9ECC339429218B8C0007C9C9 /* NetworkError.swift in Sources */,
 				9EBDE91528DDF44D00264AF3 /* ChoseAuthView.swift in Sources */,
 				9ECC33612918F3B90007C9C9 /* FriendsViewModel.swift in Sources */,
+				9E6461A52921AC5000F4141C /* ImagePicker.swift in Sources */,
 				9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */,
 				9ECC338D29203B6B0007C9C9 /* ImageView.swift in Sources */,
 				9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */,
@@ -651,12 +668,13 @@
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9ECC33532918EB610007C9C9 /* DiscoverView.swift in Sources */,
 				9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */,
+				9E01BF202924D9E300749C29 /* FriendRowView.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* MainView.swift in Sources */,
 				9ECC336829192CE30007C9C9 /* DiscoveryUpload.swift in Sources */,
+				9E6461A72922076200F4141C /* UserView.swift in Sources */,
 				9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */,
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
-				9E272813290B3627000C2E64 /* AddFriendView.swift in Sources */,
 				9EBDE8E628DDDD4B00264AF3 /* PhotoData.swift in Sources */,
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
 				9ECC3392292189D10007C9C9 /* NetworkMonitor.swift in Sources */,
@@ -666,11 +684,13 @@
 				9EBDE92928DE021200264AF3 /* FirebaseHandler.swift in Sources */,
 				9ECC338B291F52030007C9C9 /* PhotoLibraryService.swift in Sources */,
 				9EAADB2228E2633B00F93097 /* Formatters.swift in Sources */,
+				9E01BF242924DBC200749C29 /* FriendRequestRow.swift in Sources */,
 				9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */,
 				9E272817290C50AC000C2E64 /* FriendLastYear.swift in Sources */,
 				9EAADB4C28E3976900F93097 /* Helper.swift in Sources */,
 				9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */,
 				9ECC33562918EBBE0007C9C9 /* ProfileView.swift in Sources */,
+				9E01BF222924DB4A00749C29 /* RecommendationRowView.swift in Sources */,
 				9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -700,12 +720,13 @@
 				INFOPLIST_FILE = LYwidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LYwidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -729,12 +750,13 @@
 				INFOPLIST_FILE = LYwidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LYwidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -882,12 +904,12 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -922,12 +944,12 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -981,6 +1003,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		9E6461A82922129700F4141C /* XCRemoteSwiftPackageReference "PhotoSelectAndCrop" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Rillieux/PhotoSelectAndCrop.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -1022,6 +1052,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9E6461A92922129700F4141C /* PhotoSelectAndCrop */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E6461A82922129700F4141C /* XCRemoteSwiftPackageReference "PhotoSelectAndCrop" */;
+			productName = PhotoSelectAndCrop;
 		};
 		9EBDE91E28DDFFEB00264AF3 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
