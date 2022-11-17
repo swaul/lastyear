@@ -6,36 +6,52 @@
 //
 
 import Foundation
+import SwiftUI
 
 class DiscoverViewModel: ObservableObject {
     
     @Published var discoveries: [DiscoveryUpload] = []
+    @Published var loading: Bool = false
     
     init() {
         getDiscoveries()
     }
     
     func getDiscoveries() {
-        print("Load Discovery")        
-        FirebaseHandler.shared.getDiscoveries{ result in
+        print("Load Discovery")
+        changeLoading(to: true)
+
+        FirebaseHandler.shared.getDiscoveries { [weak self] result in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)
+                self?.changeLoading(to: false)
             case .success(let discoveries):
-                self.discoveries = discoveries
+                self?.discoveries = discoveries
+                self?.changeLoading(to: false)
             }
         }
     }
     
     func getNextDiscoveries() {
         print("Load more Discovery")
-        FirebaseHandler.shared.getNextDiscoveries { result in
+
+        changeLoading(to: true)
+        FirebaseHandler.shared.getNextDiscoveries { [weak self] result in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)
+                self?.changeLoading(to: false)
             case .success(let discoveries):
-                self.discoveries.append(contentsOf: discoveries)
+                self?.discoveries.append(contentsOf: discoveries)
+                self?.changeLoading(to: false)
             }
+        }
+    }
+    
+    func changeLoading(to: Bool) {
+        withAnimation {
+            loading = to
         }
     }
 }

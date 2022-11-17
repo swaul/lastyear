@@ -32,6 +32,7 @@ struct MainView: View {
                 
                 DiscoverView()
                     .environmentObject(networkMonitor)
+                    .environmentObject(friendsViewModel)
                     .tabItem {
                         Label("Discover", systemImage: "magnifyingglass")
                     }

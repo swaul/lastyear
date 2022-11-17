@@ -406,32 +406,61 @@ struct PhotoDetailView: View {
                 } else {
                     if task.status == .completed {
                         if toPublic {
-                            FirebaseHandler.shared.shareToPublic(discovery: DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName)) { result in
-                                switch result {
-                                case .failure(let error):
-                                    print(error.localizedDescription)
-                                case .success(()):
-                                    withAnimation {
-                                        FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
-                                            switch result {
-                                            case .failure(let error):
-                                                print(error.localizedDescription)
-                                            case .success(()):
-                                                withAnimation {
-                                                    self.uploadDone = true
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                                        self.shareToLastYearShowing = false
-                                                    }
-                                                }
+                            for i in 0...41 {
+                                var upload = DiscoveryUpload(id: UUID().uuidString, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: (Date.now - Double(i))), user: user.userName, userId: user.id)
+                                FirebaseHandler.shared.shareToPublic(discovery: upload) { result in
+                                    switch result {
+                                    case .failure(let error):
+                                        print(error.localizedDescription)
+                                    case .success(()):
+                                        withAnimation {
+                                            //                                        FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
+                                            //                                            switch result {
+                                            //                                            case .failure(let error):
+                                            //                                                print(error.localizedDescription)
+                                            //                                            case .success(()):
+                                            //                                                withAnimation {
+                                            //                                                    self.uploadDone = true
+                                            //                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            //                                                        self.shareToLastYearShowing = false
+                                            //                                                    }
+                                            //                                                }
+                                            //                                            }
+                                            //                                        }
+                                            self.uploadDone = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                                self.shareToLastYearShowing = false
                                             }
-                                        }
-                                        self.uploadDone = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            self.shareToLastYearShowing = false
                                         }
                                     }
                                 }
                             }
+//                            FirebaseHandler.shared.shareToPublic(discovery: DiscoveryUpload(id: UUID().uuidString, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName, userId: user.id)) { result in
+//                                switch result {
+//                                case .failure(let error):
+//                                    print(error.localizedDescription)
+//                                case .success(()):
+//                                    withAnimation {
+//                                        FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
+//                                            switch result {
+//                                            case .failure(let error):
+//                                                print(error.localizedDescription)
+//                                            case .success(()):
+//                                                withAnimation {
+//                                                    self.uploadDone = true
+//                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                                                        self.shareToLastYearShowing = false
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
+//                                        self.uploadDone = true
+//                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                                            self.shareToLastYearShowing = false
+//                                        }
+//                                    }
+//                                }
+//                            }
                         } else {
                             FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
                                 switch result {

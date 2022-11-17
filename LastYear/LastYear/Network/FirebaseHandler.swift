@@ -275,6 +275,7 @@ public class FirebaseHandler {
         } else {
             first = firestorePublic
                  .limit(to: 10)
+                 .order(by: "timePosted", descending: true)
         }
 
         first.getDocuments() { (snapshot, error) in
@@ -285,16 +286,23 @@ public class FirebaseHandler {
 
             let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
 
+//            let document = snapshot.documents.first!
+//            for i in 0...42 {
+//                let id = UUID().uuidString
+//                self.firestorePublic.document(id).setData(document.data())
+//            }
+            
             guard let lastSnapshot = snapshot.documents.last else {
-                // The collection is empty.
+                completion?(.failure(FirebaseError.empty()))
                 return
             }
-
+            
             // Construct a new query starting after this document,
             // retrieving the next 25 cities.
             self.next = self.firestorePublic
-                .start(afterDocument: lastSnapshot)
+                .order(by: "timePosted", descending: true)
                 .limit(to: 10)
+                .start(afterDocument: lastSnapshot)
 
             // Use the query for pagination.
             // ...
@@ -323,10 +331,11 @@ public class FirebaseHandler {
             let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
 
             guard let lastSnapshot = snapshot.documents.last else {
-                // The collection is empty.
+                completion?(.failure(FirebaseError.empty()))
                 return
             }
 
+            print(lastSnapshot.data())
             // Construct a new query starting after this document,
             // retrieving the next 25 cities.
             self.next = self.firestorePublic
@@ -352,4 +361,7 @@ public class FirebaseError: Error {
         return FirebaseError()
     }
     
+    static func empty() -> FirebaseError {
+        return FirebaseError()
+    }
 }
