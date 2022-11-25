@@ -16,7 +16,8 @@ public class FirebaseHandler {
     
     let firestoreUsers = Firestore.firestore().collection("users")
     let firestorePublic = Firestore.firestore().collection("public")
-
+    let firestoreFriends = Firestore.firestore().collection("friends")
+    
     
     public func registerUser(email: String, password: String, userName: String, appTracking: Bool, completion: ((Result<LYUser, FirebaseError>) -> Void)?) {
         Auth.auth().createUser(withEmail: email, password: password) { [weak self] authResult, error in
@@ -70,7 +71,6 @@ public class FirebaseHandler {
     public func logout(completion: ((Result<Void, FirebaseError>) -> Void)?) {
         do {
             try Auth.auth().signOut()
-            AuthService.shared.logOut()
             completion?(.success(()))
         } catch let error {
             print("Oh oh")
@@ -186,31 +186,19 @@ public class FirebaseHandler {
         firestoreUsers.document(user)
             .addSnapshotListener { snapshot, error in
                 guard let document = snapshot else {
-                  print("Error fetching document: \(error!)")
-                  return
+                    print("Error fetching document: \(error!)")
+                    return
                 }
                 guard let user = LYUser(data: document.data() ?? [:]) else {
-                  print("Document data was empty.")
-                  return
+                    print("Document data was empty.")
+                    return
                 }
                 completion?(.success(user))
             }
     }
     
-    public func saveUploadedImage(user: String, imageId: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
-        firestoreUsers.document(user).updateData([
-            "sharedLastYear": imageId
-        ]) { error in
-            if let error {
-                completion?(.failure(FirebaseError.error(error: error)))
-            } else {
-                completion?(.success(()))
-            }
-        }
-    }
-    
-    public func shareToPublic(discovery: DiscoveryUpload, completion: ((Result<Void, FirebaseError>) -> Void)?) {
-        firestorePublic.document(discovery.id).setData(discovery.toData()) { error in
+    public func shareMemory(to: Collection, discovery: DiscoveryUpload, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        to.getCollection().document(discovery.id).setData(discovery.toData()) { error in
             if let error {
                 completion?(.failure(FirebaseError.error(error: error)))
             } else {
@@ -265,96 +253,176 @@ public class FirebaseHandler {
         Analytics.setAnalyticsCollectionEnabled(granted)
     }
     
-    var next: Query? = nil
+    var nextDiscovery: Query? = nil
     
     public func getDiscoveries(completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
         var first: Query
         
-        if let next = next {
+        if let next = nextDiscovery {
             first = next
         } else {
             first = firestorePublic
-                 .limit(to: 10)
-                 .order(by: "timePosted", descending: true)
+                .limit(to: 10)
+                .order(by: "timePosted", descending: true)
         }
-
-        first.getDocuments() { (snapshot, error) in
+        
+        first.getDocuments { (snapshot, error) in
             guard let snapshot = snapshot else {
                 print("Error retreving cities: \(error.debugDescription)")
                 return
             }
-
+            
             let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
-
-//            let document = snapshot.documents.first!
-//            for i in 0...42 {
-//                let id = UUID().uuidString
-//                self.firestorePublic.document(id).setData(document.data())
-//            }
             
             guard let lastSnapshot = snapshot.documents.last else {
                 completion?(.failure(FirebaseError.empty()))
                 return
             }
             
-            // Construct a new query starting after this document,
-            // retrieving the next 25 cities.
-            self.next = self.firestorePublic
+            self.nextDiscovery = self.firestorePublic
                 .order(by: "timePosted", descending: true)
                 .limit(to: 10)
                 .start(afterDocument: lastSnapshot)
-
-            // Use the query for pagination.
-            // ...
+            
             completion?(.success(discoveries))
             
         }
-
     }
     
     public func getNextDiscoveries(completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
         var first: Query
         
-        if let next = next {
+        if let next = nextDiscovery {
             first = next
         } else {
             first = firestorePublic
-                 .limit(to: 10)
+                .limit(to: 10)
+                .order(by: "timePosted", descending: true)
         }
-
+        
         first.getDocuments() { (snapshot, error) in
             guard let snapshot = snapshot else {
                 print("Error retreving cities: \(error.debugDescription)")
                 return
             }
-
+            
             let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
-
+            
             guard let lastSnapshot = snapshot.documents.last else {
                 completion?(.failure(FirebaseError.empty()))
                 return
             }
-
+            
             print(lastSnapshot.data())
             // Construct a new query starting after this document,
             // retrieving the next 25 cities.
-            self.next = self.firestorePublic
-                .start(afterDocument: lastSnapshot)
+            self.nextDiscovery = self.firestorePublic
+                .order(by: "timePosted", descending: true)
                 .limit(to: 10)
-
+                .start(afterDocument: lastSnapshot)
+            
+            // Use the query for pagination.
+            // ...
+            completion?(.success(discoveries))
+        }
+    }
+    
+    var nextFriendsMemory: Query? = nil
+    
+    public func getFriendsMemories(ids: [String], completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
+        var first: Query
+        
+        if let next = nextFriendsMemory {
+            first = next
+        } else {
+            first = firestoreFriends
+                .whereField("id", in: ids)
+                .limit(to: 10)
+        }
+        
+        guard !ids.isEmpty else {
+            completion?(.failure(FirebaseError.empty()))
+            return
+        }
+        
+        first.getDocuments { (snapshot, error) in
+            guard let snapshot = snapshot else {
+                print("Error retreving cities: \(error.debugDescription)")
+                return
+            }
+            
+            let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
+            
+            guard let lastSnapshot = snapshot.documents.last else {
+                completion?(.failure(FirebaseError.empty()))
+                return
+            }
+            
+            // Construct a new query starting after this document,
+            // retrieving the next 25 cities.
+            self.nextFriendsMemory = self.firestoreFriends
+                .whereField("id", in: ids)
+                .limit(to: 10)
+                .start(afterDocument: lastSnapshot)
+            
             // Use the query for pagination.
             // ...
             completion?(.success(discoveries))
             
         }
-
+    }
+    
+    public func getNextMemories(ids: [String], completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
+        var first: Query
+        
+        if let next = nextFriendsMemory {
+            first = next
+        } else {
+            first = firestoreFriends
+                .whereField("id", in: ids)
+                .limit(to: 10)
+        }
+        
+        guard !ids.isEmpty else {
+            completion?(.failure(FirebaseError.empty()))
+            return
+        }
+        
+        first.whereField("id", in: ids).getDocuments() { (snapshot, error) in
+            guard let snapshot = snapshot else {
+                print("Error retreving cities: \(error.debugDescription)")
+                return
+            }
+            
+            let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
+            
+            guard let lastSnapshot = snapshot.documents.last else {
+                completion?(.failure(FirebaseError.empty()))
+                return
+            }
+            
+            print(lastSnapshot.data())
+            
+            self.nextFriendsMemory = self.firestoreFriends
+                .whereField("id", in: ids)
+                .start(afterDocument: lastSnapshot)
+                .limit(to: 10)
+            
+            completion?(.success(discoveries))
+        }
     }
 }
 
 public class FirebaseError: Error {
     
+    let description: String?
+    
+    init(description: String? = nil) {
+        self.description = description
+    }
+    
     static func error(error: Error) -> FirebaseError {
-        return FirebaseError()
+        return FirebaseError(description: error.localizedDescription)
     }
     
     static func genericError() -> FirebaseError {
@@ -363,5 +431,20 @@ public class FirebaseError: Error {
     
     static func empty() -> FirebaseError {
         return FirebaseError()
+    }
+}
+
+public enum Collection {
+    
+    case _public
+    case friends
+    
+    func getCollection() -> CollectionReference {
+        switch self {
+        case ._public:
+            return Firestore.firestore().collection("public")
+        case .friends:
+            return Firestore.firestore().collection("friends")
+        }
     }
 }

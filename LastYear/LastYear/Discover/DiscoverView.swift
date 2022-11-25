@@ -13,10 +13,6 @@ struct DiscoverView: View {
     
     @ObservedObject var viewModel = DiscoverViewModel()
     
-    init() {
-        UIScrollView.appearance().bounces = false
-    }
-    
     var body: some View {
         ZStack {
             Color("backgroundColor")
@@ -32,36 +28,49 @@ struct DiscoverView: View {
                             let interval = Date.now.timeIntervalSince(time)
                             let twentyFourHours: TimeInterval = 60 * 60 * 24
                             if interval < twentyFourHours {
-                                DiscoveryView(user: discovery.user, id: discovery.userId, timePosted: interval, likes: discovery.likes, screen: screen)
+                                
+                                DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen)
                                     .environmentObject(friendsViewModel)
                                     .onAppear {
-                                        if index % 9 == 0 {
+                                        if index == 0 && index == viewModel.discoveries.count {
+                                            viewModel.getNextDiscoveries()
+                                        } else if index != 0 && index % 9 == 0 {
                                             viewModel.getNextDiscoveries()
                                         }
                                     }
                             }
                         }
                     }
-                    if viewModel.loading {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                    } else {
-                        Text("No more memories left...")
-                            .font(Font.custom("Poppins-Regular", size: 20))
-                            .foregroundColor(Color("gray"))
-                            .padding()
-                            .onAppear {
-                                viewModel.getNextDiscoveries()
-                            }
-                    }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .rotationEffect(Angle(degrees: 90), anchor: .topLeading)
                 .frame(width: screen.height, height: screen.width)
                 .offset(x: screen.width)
+            }
+            VStack(spacing: 0) {
+                if networkMonitor.status == .disconnected {
+                    ZStack {
+                        Color.red.ignoresSafeArea()
+                        NetworkError()
+                    }
+                    .transition(.move(edge: .top))
+                    .frame(height: 40)
+                } else {
+                    ZStack {
+                        Image("logoSmall")
+                            .padding(2)
+                            .background(Color("backgroundColor"))
+                            .cornerRadius(8)
+                            .overlay(Color("backgroundColor").opacity(viewModel.loading ? 1.0 : 0.0 ))
+                        if viewModel.loading {
+                            ProgressView()
+                        }
+                    }
+                    .padding(2)
+                    .background(Color("backgroundColor"))
+                    .cornerRadius(8)
+                }
+                Spacer()
             }
         }
     }

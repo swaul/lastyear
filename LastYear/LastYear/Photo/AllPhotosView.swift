@@ -6,11 +6,16 @@
 //
 
 import SwiftUI
+import ImageViewer
+import Photos
 
 struct AllPhotosView: View {
     
-    @ObservedObject var photoViewModel: PhotosViewModel
+    @EnvironmentObject var photoViewModel: PhotosViewModel
     @State var expanded: Bool = false
+    @State var selecting: Bool = false
+    @State var detail: Bool = false
+    @State var selected: String? = nil
     
     let layout = [
         GridItem(.flexible()),
@@ -30,25 +35,47 @@ struct AllPhotosView: View {
                         .foregroundColor(.white)
                         .padding(.horizontal, 16)
                     HStack {
-                        Spacer()    
-                        Button {
-                            photoViewModel.getAllPhotos()
-                        } label: {
-                            Image(systemName: "arrow.clockwise")
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 16)
+                        Spacer()
+                        if selecting {
+                            Button {
+                                withAnimation {
+                                    selecting = false
+                                }
+                            } label: {
+                                Text("Cancel")
+                                    .padding(.horizontal, 16)
+                            }
+                        } else {
+                            Button {
+                                photoViewModel.getAllPhotos()
+                            } label: {
+                                Image(systemName: "arrow.clockwise")
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 16)
+                            }
                         }
                     }
                 }
                 ScrollView {
                     VStack {
                         let sortedImages = photoViewModel.allPhotos.sorted()
-                        LazyVGrid(columns: layout) {
+                        LazyVGrid(columns: layout, spacing: 0) {
                             ForEach(sortedImages.filter { $0.photoType != .screenshot }) { photo in
-                                NavigationLink {
-                                    PhotoDetailView(images: sortedImages, selected: sortedImages.firstIndex(of: photo) ?? 0, zoomScale: 1)
-                                } label: {
-                                    PhotoCard(asset: photo)
+                                PhotoCard(asset: photo, selecting: $selecting)
+                                    .padding(4)
+                                .onTapGesture {
+                                    withAnimation {
+                                        if selecting {
+                                            photo.selected.toggle()
+                                        } else {
+                                            selected = photo.assetID
+                                            detail = true
+                                        }
+                                    }
+                                }
+                                .onLongPressGesture {
+                                    photo.selected = true
+                                    selecting = true
                                 }
                             }
                         }
@@ -76,9 +103,9 @@ struct AllPhotosView: View {
                                 LazyVGrid(columns: layout) {
                                     ForEach(sortedScreenshots) { photo in
                                         NavigationLink {
-                                            PhotoDetailView(images: sortedScreenshots, selected: sortedScreenshots.firstIndex(of: photo) ?? 0, zoomScale: 1)
+                                            PhotoDetailView(selected: photo.assetID)
                                         } label: {
-                                            PhotoCard(asset: photo)
+                                            PhotoCard(asset: photo, selecting: $selecting)
                                         }
                                     }
                                 }
@@ -99,6 +126,25 @@ struct AllPhotosView: View {
                     }
                 }
             }
+//            if detail {
+//                PhotoDetailView(images: photoViewModel.allPhotos, zoomScale: 1)
+//                    .transition(.move(edge: .bottom))
+//            }
         }
+        .fullScreenCover(isPresented: $detail) {
+            PhotoDetailView(selected: selected ?? "fallback")
+        }
+//        .overlay(ImageViewer(image: self.$selected, viewerShown: self.$detail, closeButtonTopRight: true))
+    }
+    
+    func loadImageAsset(asset: String, targetSize: CGSize = PHImageManagerMaximumSize, completion: ((Image?) -> Void)?) async {
+        guard let uiImage = try? await PhotoLibraryService.shared
+            .fetchImage(
+                byLocalIdentifier: asset,
+                targetSize: targetSize
+            ) else {
+                return
+            }
+        completion?(Image(uiImage: uiImage))
     }
 }

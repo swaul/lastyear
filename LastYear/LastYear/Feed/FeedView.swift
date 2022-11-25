@@ -9,15 +9,47 @@ import SwiftUI
 
 struct FeedView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
-
     @EnvironmentObject var friendsViewModel: FriendsViewModel
     
-    @State var images: [Image] = []
+    @ObservedObject var feedViewModel = FeedViewModel()
     
     var body: some View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
+            if feedViewModel.friendsMemories.isEmpty {
+                Text("You need more friends..")
+            } else {
+                GeometryReader { reader in
+                    
+                    let screen = reader.frame(in: .global)
+                    
+                    TabView {
+                        ForEach(0..<feedViewModel.friendsMemories.count, id: \.self) { index in
+                            let discovery = feedViewModel.friendsMemories[index]
+                            if let time = discovery.timePostedDate {
+                                let interval = Date.now.timeIntervalSince(time)
+                                let twentyFourHours: TimeInterval = 60 * 60 * 24
+                                if interval < twentyFourHours {
+                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen)
+                                        .environmentObject(friendsViewModel)
+                                        .onAppear {
+                                            if index == 0 && index == feedViewModel.friendsMemories.count {
+                                                feedViewModel.getNextDiscoveries()
+                                            } else if index != 0 && index % 9 == 0 {
+                                                feedViewModel.getNextDiscoveries()
+                                            }
+                                        }
+                                }
+                            }
+                        }
+                    }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .rotationEffect(Angle(degrees: 90), anchor: .topLeading)
+                    .frame(width: screen.height, height: screen.width)
+                    .offset(x: screen.width)
+                }
+            }
             VStack(spacing: 0) {
                 if networkMonitor.status == .disconnected {
                     ZStack {
@@ -27,37 +59,21 @@ struct FeedView: View {
                     .transition(.move(edge: .top))
                     .frame(height: 40)
                 } else {
-                    Image("logoSmall")
-                        .padding(.bottom)
-                }
-                if friendsViewModel.friends.isEmpty {
-                    Text("No friends")
-                    Spacer()
-                } else {
-                    ScrollView {
-                        VStack {
-                            Text("Your friends' memories:")
-                                .font(Font.custom("Poppins-Regular", size: 24))
-                                .foregroundColor(.white)
-                                .padding(.vertical)
-                            ForEach(friendsViewModel.friends, id: \.id) { friend in
-                                if let time = friend.sharedLastYear,
-                                   !time.isEmpty,
-                                   let date = Formatters.dateTimeFormatter.date(from: time) {
-                                    let interval = Date.now.timeIntervalSince(date)
-                                    let twentyFourHours: TimeInterval = 60 * 60 * 24
-                                    if interval < twentyFourHours {
-                                        FriendLastYear(user: friend.userName, id: friend.id, timePosted: interval)
-                                    }
-                                }
-                            }
-                            Text("Want more? Add new friends!")
-                                .font(Font.custom("Poppins-Regular", size: 20))
-                                .foregroundColor(Color("gray"))
-                                .padding()
+                    ZStack {
+                        Image("logoSmall")
+                            .padding(2)
+                            .background(Color("backgroundColor"))
+                            .cornerRadius(8)
+                            .overlay(Color("backgroundColor").opacity(friendsViewModel.loading ? 1.0 : 0.0 ))
+                        if friendsViewModel.loading {
+                            ProgressView()
                         }
                     }
+                    .padding(2)
+                    .background(Color("backgroundColor"))
+                    .cornerRadius(8)
                 }
+                Spacer()
             }
         }
     }

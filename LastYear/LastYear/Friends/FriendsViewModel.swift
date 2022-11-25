@@ -16,9 +16,9 @@ class FriendsViewModel: ObservableObject {
     @Published var error: String = ""
     @Published var errorShowing: Bool = false
     @Published var userFound = false
-    
+    @Published var loading = false
+        
     init() {        
-        subscribeToFriends()
         getFriendRequests()
         getFriends()
     }

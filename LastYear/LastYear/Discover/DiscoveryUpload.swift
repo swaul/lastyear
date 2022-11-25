@@ -12,18 +12,16 @@ public struct DiscoveryUpload: Hashable {
     var likes: [String]
     let timePosted: String
     let user: String
-    let userId: String
     
     var timePostedDate: Date? {
         Formatters.dateTimeFormatter.date(from: timePosted)
     }
     
-    init(id: String, likes: [String], timePosted: String, user: String, userId: String) {
+    init(id: String, likes: [String], timePosted: String, user: String) {
         self.id = id
         self.likes = likes
         self.timePosted = timePosted
         self.user = user
-        self.userId = userId
     }
     
     init(data: [String: Any]) {
@@ -31,7 +29,6 @@ public struct DiscoveryUpload: Hashable {
         self.likes = data["likes"] as! [String]
         self.timePosted = data["timePosted"] as! String
         self.user = data["user"] as! String
-        self.userId = data["userId"] as! String
     }
     
     func toData() -> [String: Any] {
@@ -39,9 +36,7 @@ public struct DiscoveryUpload: Hashable {
             "id": id,
             "likes": likes,
             "timePosted": timePosted,
-            "user": user,
-            "userId": userId
-
+            "user": user
         ]
         return data
     }

@@ -17,8 +17,9 @@ public enum PhotoType: Codable {
     case live
 }
 
-public class PhotoData: Identifiable, Comparable, Hashable {
+public class PhotoData: ObservableObject, Identifiable, Comparable, Hashable {
     
+    @Published var selected: Bool = false
     public var id: String
     public var date: Date?
     public var formattedDate: String

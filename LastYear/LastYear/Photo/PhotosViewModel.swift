@@ -7,45 +7,26 @@
 
 import Foundation
 import Photos
-import AVFoundation
 import CoreData
 import SwiftUI
-import VisionKit
 import Combine
 import WidgetKit
-import Vision
 
 public class PhotosViewModel: ObservableObject {
     
     @Published var formattedDateOneYearAgo: String = ""
     @Published var bestImage: PhotoData?
     @Published var countFound = 0
-    @Published var test = 0 {
-        didSet {
-            print(allPhotos.count)
-        }
-    }
-    @Published var countDone = 0
     @Published var requestsFailed = 0
-    @Published var loadingState: LoadingState = .idle
     @Published var dateOneYearAgo: Date? {
         didSet {
             guard let dateOneYearAgo else { return }
             formattedDateOneYearAgo = Formatters.dateFormatter.string(from: dateOneYearAgo)
         }
     }
-    @Published var allPhotos = [PhotoData]() {
-        didSet {
-            withAnimation {
-                countDone = allPhotos.count
-            }
-            getBestImage()
-//            checkIfDone()
-        }
-    }
+    @Published var allPhotos = [PhotoData]()
     
     var imageCachingManager = PHCachingImageManager()
-    var group = DispatchGroup()
     var many: Bool = false
     
     @ObservedObject var authService = AuthService.shared
@@ -54,6 +35,7 @@ public class PhotosViewModel: ObservableObject {
     
     init() {
         dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
+        load()
     }
     
     func load() {
@@ -67,8 +49,6 @@ public class PhotosViewModel: ObservableObject {
         allPhotos.removeAll()
         bestImage = nil
         countFound = 0
-        countDone = 0
-        requestsFailed = 0
     }
     
     func setupBinding() {
@@ -79,13 +59,13 @@ public class PhotosViewModel: ObservableObject {
         }.store(in: &cancellabels)
     }
     
+    func reloadPhotos() {
+        allPhotos.removeAll()
+        getAllPhotos()
+    }
+    
     func getAllPhotos() {
-        withAnimation {
-            loadingState = .loading
-        }
-        
         guard let lastYear = dateOneYearAgo else {
-            loadingState = .failed
             return
         }
         
@@ -103,12 +83,15 @@ public class PhotosViewModel: ObservableObject {
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         
         countFound = results.countOfAssets(with: .image)
+        
+//        DispatchQueue.main.async {
+//            LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows(with: results.countOfAssets(with: .image))
+//        }
 
         print("Images found:", countFound)
         
         if results.count > 0 {
             for i in 0..<results.count {
-                group.enter()
                 let asset = results.object(at: i)
                 if !asset.isHidden {
                     let photo = PhotoData(id: self.makeID(id: asset.localIdentifier), assetId: asset.localIdentifier, date: asset.creationDate, formattedDate: self.formattedDateOneYearAgo, location: asset.location, isFavorite: asset.isFavorite, sourceType: asset.sourceType)
@@ -116,33 +99,19 @@ public class PhotosViewModel: ObservableObject {
                     if let date = asset.creationDate, self.isSameDay(date1: date, date2: lastYear) {
                         if asset.mediaSubtypes == .photoScreenshot {
                             photo.photoType = .screenshot
-                            self.group.leave()
-                            self.countDone += 1
                             self.allPhotos.append(photo)
                         } else {
                             photo.photoType = .photo
-                            self.group.leave()
-                            self.countDone += 1
                             self.allPhotos.append(photo)
                         }
                     } else {
-                        self.group.leave()
                         self.countFound -= 1
                         self.requestsFailed += 1
                         print("error asset to image ", asset.mediaSubtypes)
                     }
                 }
             }
-            group.notify(queue: .main) {
-                withAnimation {
-                    self.loadingState = .done
-                    self.fetchAndSafeImages()
-                    WidgetCenter.shared.reloadAllTimelines()
-                    print(Helper.getImageIdsFromUserDefault().count)
-                }
-            }
         } else {
-            loadingState = .noPictures
             print("No photos to display for ", Formatters.dateFormatter.string(from: lastYear))
         }
     }
@@ -199,38 +168,8 @@ public class PhotosViewModel: ObservableObject {
             userDefaults.set(data, forKey: userDefaultsPhotosKey)
         }
         
-//        WidgetCenter.shared.reloadAllTimelines()
-    }
-    
-    func getBestImage() {
-        if !allPhotos.isEmpty, countFound == (allPhotos.count + requestsFailed) {
-            let sorted = allPhotos.sorted()
-            bestImage = sorted.first!
-        } else if allPhotos.count == 1 && countFound == 1 {
-            bestImage = allPhotos.first!
-        } else if !allPhotos.isEmpty {
-            bestImage = allPhotos.first!
-        }
     }
 
-//    func checkIfDone() {
-//        if countDone >= 1 && many {
-//            withAnimation {
-//                WidgetCenter.shared.reloadAllTimelines()
-//                loadingState = .done
-//            }
-//        }
-//        if countDone == countFound {
-//            withAnimation {
-//                WidgetCenter.shared.reloadAllTimelines()
-//                loadingState = .done
-//            }
-//            withAnimation {
-//                many = false
-//            }
-//        }
-//    }
-    
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
         let size = image.size
         
@@ -262,15 +201,6 @@ public class PhotosViewModel: ObservableObject {
         guard let newImage else { return image }
         return newImage
     }
-}
-
-public enum LoadingState {
-    case loading
-    case loadingMany
-    case idle
-    case failed
-    case noPictures
-    case done
 }
 
 extension Date {

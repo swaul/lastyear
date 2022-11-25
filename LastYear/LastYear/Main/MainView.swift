@@ -11,16 +11,18 @@ import FirebaseAnalytics
 struct MainView: View {
     
     @EnvironmentObject var authService: AuthService
+    @StateObject var fotoService = PhotoService.shared
     
     var networkMonitor = NetworkMonitor()
-    @State var selection = 2
+//    @State var selection = 2
 
     var friendsViewModel = FriendsViewModel()
+    
     var content: some View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
-            TabView(selection: $selection) {
+            TabView {
                 FriendsView()
                     .environmentObject(friendsViewModel)
                     .environmentObject(networkMonitor)
@@ -52,6 +54,7 @@ struct MainView: View {
                         Label("Memories", systemImage: "photo")
                     }
                     .tag(3)
+                    .badge(fotoService.todaysPhotos)
 
                 ProfileView()
                     .environmentObject(networkMonitor)

@@ -8,17 +8,16 @@
 import SwiftUI
 import AWSS3
 import AWSCore
-import PhotoSelectAndCrop
 
 struct UserView: View {
     @Environment(\.presentationMode) private var presentationMode
     
-    @State var uiImage: UIImage?
+    @Binding var noImage: Bool
+    
+    @Binding var uiImage: UIImage?
     @State private var showSheet = false
     @State var user: LYUser
-            
-    @State var cropped: UIImage? = nil
-    
+                
     var body: some View {
         VStack {
             Text("Hello \(user.userName)")
@@ -26,7 +25,21 @@ struct UserView: View {
                 .foregroundColor(.white)
                 .padding()
             if let uiImage {
-                ImagePane(image: ImageAttributes(image: Image(uiImage: uiImage), originalImage: uiImage, croppedImage: cropped, scale: 1, xWidth: 10, yHeight: 10), isEditMode: .constant(true))
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .clipShape(Circle())
+                    .onTapGesture {
+                        showSheet = true
+                    }
+            } else if noImage {
+                Image(uiImage: UIImage(named: "fallback")!)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .clipShape(Circle())
+                    .onTapGesture {
+                        showSheet = true
+                    }
             } else {
                 ZStack {
                     Circle()
@@ -39,13 +52,10 @@ struct UserView: View {
                     showSheet = true
                 }
             }
-            if let uiImage = cropped {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            }
             Spacer()
-
+                .fullScreenCover(isPresented: $showSheet) {
+                    ImagePicker(selectedImage: $uiImage)
+                }
             Button {
                 savePP()
             } label: {
@@ -80,12 +90,31 @@ struct UserView: View {
         .padding()
     }
     
+    func cropImage2(image: UIImage?) -> UIImage? {
+        guard let image = image else { return nil }
+        let height = image.size.height
+        let width = image.size.width
+        if width < height {
+            UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: width), true, 0.0)
+            image.draw(at: CGPoint(x: 0, y: (width - height) / 2))
+        } else {
+            UIGraphicsBeginImageContextWithOptions(CGSize(width: height, height: height), true, 0.0)
+            image.draw(at: CGPoint(x: (height - width) / 2, y: 0))
+        }
+
+        let croppedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return croppedImage
+    }
+    
     func savePP() {
         Task {
             guard let user = AuthService.shared.loggedInUser else { return }
             
+            guard let image = cropImage2(image: uiImage) else { return }
+            
             guard
-                let data = uiImage?.jpegData(compressionQuality: 0.2)
+                let data = image.jpegData(compressionQuality: 0.2)
             else { return }
                         
             var imageId = user.id
@@ -119,11 +148,5 @@ struct UserView: View {
         }
         
         presentationMode.wrappedValue.dismiss()
-    }
-}
-
-struct UserView_Previews: PreviewProvider {
-    static var previews: some View {
-        UserView(user: LYUser(data: [:])!)
     }
 }

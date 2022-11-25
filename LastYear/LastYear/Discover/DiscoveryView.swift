@@ -35,44 +35,38 @@ struct DiscoveryView: View {
     @State var showDetail: Bool = false
     
     var body: some View {
-        ZStack {
+        VStack {
 //            backgroundView
+            userView
+
             ZStack {
+                Color.white
                 if let image = image {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: getRect().width)
-                        .cornerRadius(8)
-                    
                 } else {
                     Rectangle()
                         .foregroundColor(.gray)
-                        .aspectRatio(1, contentMode: .fit)
                     ProgressView()
                 }
             }
-            VStack {
-                userView
+            .frame(width: getRect().width)
+            .aspectRatio(0.8, contentMode: .fit)
+            .cornerRadius(8)
 
-                Spacer()
-                
-                HStack {
-                    Button {
-                        liked.toggle()
-                        like()
-                    } label: {
-                        likeImage
-                            .resizable()
-                            .frame(width: 38, height: 38)
-                            .aspectRatio(1, contentMode: .fit)
-                        
-                    }
+            HStack {
+                Button {
+                    liked.toggle()
+                    like()
+                } label: {
+                    likeImage
+                        .aspectRatio(contentMode: .fit)
                     
-                    Spacer()
                 }
+                getLikes()
+                Spacer()
             }
-            .padding()
             //        VStack {
             //            Spacer()
             //            HStack {
@@ -97,6 +91,7 @@ struct DiscoveryView: View {
             //            }
             //            .padding()
         }
+        .padding()
         .onTapGesture(count: 2) {
             withAnimation{
                 liked = true
@@ -109,7 +104,9 @@ struct DiscoveryView: View {
             }
         }
         .onAppear {
-            getImage()
+            if image == nil {
+                getImage()
+            }
             getPP()
             if likes.contains(where: { $0 == AuthService.shared.loggedInUser?.id ?? "" }) {
                 serverLiked = true

@@ -56,13 +56,22 @@ struct FriendsView: View {
                     )
                 }
                 VStack {
-                    Picker("What is your favorite color?", selection: $selection) {
-                        Text("Friends").tag(0)
-                        Text("Recommended").tag(1)
-                        Text("Requests").tag(2)
+                    ZStack {
+                        Picker("What is your favorite color?", selection: $selection) {
+                            Text("Friends").tag(0)
+                            Text("Recommended").tag(1)
+                            Text("Requests").tag(2)
+                        }
+                        .pickerStyle(.segmented)
+                        HStack {
+                            Spacer()
+                            Text("1")
+                                .foregroundColor(.white)
+                                .padding(2)
+                                .background(Circle().fill(Color.red))
+                                .offset(y: -12)
+                        }
                     }
-                    .pickerStyle(.segmented)
-                    
                     switch selection {
                     case 2:
                         VStack {

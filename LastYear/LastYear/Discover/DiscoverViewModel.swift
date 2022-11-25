@@ -20,8 +20,9 @@ class DiscoverViewModel: ObservableObject {
     func getDiscoveries() {
         print("Load Discovery")
         changeLoading(to: true)
+        guard let user = AuthService.shared.loggedInUser else { return }
 
-        FirebaseHandler.shared.getDiscoveries { [weak self] result in
+        FirebaseHandler.shared.getDiscoveries() { [weak self] result in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)
@@ -37,7 +38,7 @@ class DiscoverViewModel: ObservableObject {
         print("Load more Discovery")
 
         changeLoading(to: true)
-        FirebaseHandler.shared.getNextDiscoveries { [weak self] result in
+        FirebaseHandler.shared.getNextDiscoveries() { [weak self] result in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)

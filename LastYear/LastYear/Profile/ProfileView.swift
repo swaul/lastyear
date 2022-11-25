@@ -17,6 +17,7 @@ struct ProfileView: View {
     @State private var userViewShowing = false
     
     @State var uiImage: UIImage? = nil
+    @State var noImage: Bool = false
     
     var body: some View {
         ZStack {
@@ -58,7 +59,7 @@ struct ProfileView: View {
                 .padding(.horizontal, 7)
                 .sheet(isPresented: $userViewShowing) {
                     if let user = AuthService.shared.loggedInUser {
-                        UserView(uiImage: uiImage, user: user)
+                        UserView(noImage: $noImage, uiImage: $uiImage, user: user)
                     }
                 }
             }
@@ -227,6 +228,7 @@ struct ProfileView: View {
                 print(error.localizedDescription)
             case .success():
                 print("logged out")
+                AuthService.shared.logOut()
             }
         }
     }
@@ -240,7 +242,11 @@ struct ProfileView: View {
             if let imageData = userDefaults.object(forKey: id) as? Data,
                let image = UIImage(data: imageData) {
                 self.uiImage = image
+            } else {
+                loadImage()
             }
+        } else {
+            loadImage()
         }
     }
     
@@ -252,12 +258,18 @@ struct ProfileView: View {
         let expression = AWSS3TransferUtilityDownloadExpression()
         expression.progressBlock = progressBlock
         
-        guard let user else { return }
+        guard let user else {
+            noImage = true
+            return
+        }
         var id = user.id
         id += "profilePicture"
         
         request.downloadData(fromBucket: "lastyearapp", key: id, expression: expression) { task, url, data, error in
-            guard let data = data else { return }
+            guard let data = data else {
+                noImage = true
+                return
+            }
             self.uiImage = UIImage(data: data)
             if let userDefaults = UserDefaults(suiteName: appGroupName) {
                 if let jpegRepresentation = uiImage?.jpegData(compressionQuality: 0.75) {

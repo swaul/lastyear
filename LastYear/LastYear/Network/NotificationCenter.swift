@@ -36,14 +36,14 @@ class LocalNotificationCenter: NSObject, ObservableObject {
         center.add(request)
     }
     
-    func checkPermissionAndScheduleTomorrows() {
+    func checkPermissionAndScheduleTomorrows(with count: Int) {
         center.getNotificationSettings { settings in
             guard settings.authorizationStatus == .authorized else { return }
-            self.scheduleTomorrows()
+            self.scheduleTomorrows(with: count)
         }
     }
     
-    func scheduleTomorrows() {
+    func scheduleTomorrows(with count: Int) {
         let today = Date.now
         let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
         
@@ -55,32 +55,19 @@ class LocalNotificationCenter: NSObject, ObservableObject {
             })
             
             if !scheduled {
-                self.scheduleTomorrowsWithFotos(tomorrow: tomorrow)
+                self.scheduleTomorrowsWithFotos(tomorrow: tomorrow, imageCount: count)
             }
         }
     }
     
-    func scheduleTomorrowsWithFotos(tomorrow: Date) {
+    func scheduleTomorrowsWithFotos(tomorrow: Date, imageCount: Int) {
         let dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         let dateTomorrowOYA = Calendar.current.date(byAdding: .day, value: 1, to: dateOneYearAgo!)
         guard let lastYearTomorrow = dateTomorrowOYA else { return }
-                
-        let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYearTomorrow)!.endOfDay
-        let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYearTomorrow)!.startOfDay
-        
-        let requestOptions = PHImageRequestOptions()
-        requestOptions.isSynchronous = false
-        requestOptions.deliveryMode = .highQualityFormat
-        
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
         
         let content = UNMutableNotificationContent()
         
-        let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        guard results.count != 0 else { return }
-        content.title = "You have \(results.count) pictures to look back on from \(Formatters.dateFormatter.string(from: lastYearTomorrow))"
+        content.title = "You have \(imageCount) pictures to look back on from \(Formatters.dateFormatter.string(from: lastYearTomorrow))"
         content.subtitle = "Take a look and share it with your friends!"
         content.sound = UNNotificationSound.default
         

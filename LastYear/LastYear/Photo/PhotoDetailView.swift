@@ -22,24 +22,15 @@ struct PhotoDetailView: View {
         return formatter
     }
     
-    var images: [PhotoData]
     @State var selectedImage: UIImage? = nil
-    @State var fullscreenImage: Bool = false
-    @State var selected: Int = 0
+    @State var fullscreenImage: Bool = true
+    @State var selected: String
     @State var isShowingiMessages = false
     @State var isShowingShare = false
     @State var shareToLastYearShowing = false
     @State var currentUpload = 0.0
     @State var uploadDone = false
     @State var toolbarShowing: Bool = true
-    @State var zoomScale: CGFloat
-    @State var previousZoomScale: CGFloat = 1
-    private let minZoomScale: CGFloat = 1
-    private let maxZoomScale: CGFloat = 5
-    
-    var selectedImageId: String? {
-        return images[selected].assetID
-    }
     
     var body: some View {
         ZStack {
@@ -47,27 +38,17 @@ struct PhotoDetailView: View {
                 .ignoresSafeArea()
             VStack {
                 ZStack {
-                    if let uiImage = selectedImage, let image = Image(uiImage: uiImage)  {
-                        GeometryReader { reader in
-                            ScrollView(
-                                [.vertical, .horizontal],
-                                showsIndicators: false
-                            ) {
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .cornerRadius(8)
-                                    .onTapGesture(count: 2, perform: onImageDoubleTapped)
-                                    .onTapGesture(count: 1, perform: {
-                                        withAnimation {
-                                            toolbarShowing.toggle()
-                                        }
-                                    })
-                                    .gesture(zoomGesture)
-                                    .frame(width: reader.size.width * max(minZoomScale, zoomScale))
-                                    .frame(maxHeight: .infinity)
+                    if let selectedImage, let image = Image(uiImage: selectedImage) {
+                        ImageViewer(image: .constant(image), viewerShown: $fullscreenImage, closeButtonTopRight: false)
+                            .ignoresSafeArea()
+                            .onChange(of: fullscreenImage) { newValue in
+                                presentationMode.wrappedValue.dismiss()
                             }
-                        }
+                            .onTapGesture {
+                                withAnimation {
+                                    toolbarShowing.toggle()
+                                }
+                            }
                     } else {
                         Rectangle()
                             .foregroundColor(.gray)
@@ -254,34 +235,20 @@ struct PhotoDetailView: View {
     func loadImageAsset(
         targetSize: CGSize = PHImageManagerMaximumSize
     ) async {
+        if selected == "fallback" {
+            selectedImage = UIImage(named: selected)
+            return
+        }
+        
         guard let uiImage = try? await PhotoLibraryService.shared
             .fetchImage(
-                byLocalIdentifier: selectedImageId!,
+                byLocalIdentifier: selected,
                 targetSize: targetSize
             ) else {
             selectedImage = nil
             return
         }
         selectedImage = uiImage
-    }
-    
-    func resetImageState() {
-        withAnimation(.interactiveSpring()) {
-            zoomScale = 1
-        }
-    }
-    
-    /// On double tap
-    func onImageDoubleTapped() {
-        /// Zoom the photo to 5x scale if the photo isn't zoomed in
-        if zoomScale == 1 {
-            withAnimation(.spring()) {
-                zoomScale = 5
-            }
-        } else {
-            /// Otherwise, reset the photo zoom to 1x
-            resetImageState()
-        }
     }
     
     var toolbarTop: some View {
@@ -332,7 +299,7 @@ struct PhotoDetailView: View {
                 }
                 if let image = selectedImage, #available(iOS 16, *) {
                     VStack(spacing: 4) {
-                        ShareLink(item: Image(uiImage: selectedImage!), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: selectedImage!))) {
+                        ShareLink(item: Image(uiImage: image), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: image))) {
                             Image(systemName: "ellipsis.circle")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
@@ -370,7 +337,7 @@ struct PhotoDetailView: View {
         let numbers = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
         
         for number in numbers {
-            if let data = image.jpegData(compressionQuality: number), data.count <= 10485760 {
+            if let data = image.jpegData(compressionQuality: number), data.count <= 1000000 {
                 return number
             } else {
                 continue
@@ -385,8 +352,7 @@ struct PhotoDetailView: View {
             guard let user = AuthService.shared.loggedInUser else { return }
             
             guard
-                let imageId = selectedImageId,
-                let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: imageId),
+                let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: selected),
                 let data = image.jpegData(compressionQuality: findCompression(image: image))
             else { return }
                         
@@ -405,64 +371,24 @@ struct PhotoDetailView: View {
                     print(error.localizedDescription)
                 } else {
                     if task.status == .completed {
+                        let upload = DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName)
+                        
                         if toPublic {
-                            for i in 0...41 {
-                                var upload = DiscoveryUpload(id: UUID().uuidString, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: (Date.now - Double(i))), user: user.userName, userId: user.id)
-                                FirebaseHandler.shared.shareToPublic(discovery: upload) { result in
-                                    switch result {
-                                    case .failure(let error):
-                                        print(error.localizedDescription)
-                                    case .success(()):
-                                        withAnimation {
-                                            //                                        FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
-                                            //                                            switch result {
-                                            //                                            case .failure(let error):
-                                            //                                                print(error.localizedDescription)
-                                            //                                            case .success(()):
-                                            //                                                withAnimation {
-                                            //                                                    self.uploadDone = true
-                                            //                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            //                                                        self.shareToLastYearShowing = false
-                                            //                                                    }
-                                            //                                                }
-                                            //                                            }
-                                            //                                        }
-                                            self.uploadDone = true
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                                self.shareToLastYearShowing = false
-                                            }
+                            FirebaseHandler.shared.shareMemory(to: ._public, discovery: upload) { result in
+                                switch result {
+                                case .failure(let error):
+                                    print(error.localizedDescription)
+                                case .success(()):
+                                    withAnimation {
+                                        self.uploadDone = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            self.shareToLastYearShowing = false
                                         }
                                     }
                                 }
                             }
-//                            FirebaseHandler.shared.shareToPublic(discovery: DiscoveryUpload(id: UUID().uuidString, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName, userId: user.id)) { result in
-//                                switch result {
-//                                case .failure(let error):
-//                                    print(error.localizedDescription)
-//                                case .success(()):
-//                                    withAnimation {
-//                                        FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
-//                                            switch result {
-//                                            case .failure(let error):
-//                                                print(error.localizedDescription)
-//                                            case .success(()):
-//                                                withAnimation {
-//                                                    self.uploadDone = true
-//                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                                                        self.shareToLastYearShowing = false
-//                                                    }
-//                                                }
-//                                            }
-//                                        }
-//                                        self.uploadDone = true
-//                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                                            self.shareToLastYearShowing = false
-//                                        }
-//                                    }
-//                                }
-//                            }
                         } else {
-                            FirebaseHandler.shared.saveUploadedImage(user: user.id, imageId: Formatters.dateTimeFormatter.string(from: Date.now)) { result in
+                            FirebaseHandler.shared.shareMemory(to: .friends, discovery: upload) { result in
                                 switch result {
                                 case .failure(let error):
                                     print(error.localizedDescription)
@@ -484,7 +410,7 @@ struct PhotoDetailView: View {
     
     func shareToStory() {
         Task {
-            if let storiesUrl = URL(string: "instagram-stories://share"), let imageId = selectedImageId, let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: imageId) {
+            if let storiesUrl = URL(string: "instagram-stories://share"), let image = selectedImage {
                 if await UIApplication.shared.canOpenURL(storiesUrl) {
                     guard let imageData = image.pngData() else { return }
                     let pasteboardItems: [String: Any] = [
@@ -519,37 +445,6 @@ struct PhotoDetailView: View {
     func simpleSuccess() {
         let generator = UINotificationFeedbackGenerator()
         generator.notificationOccurred(.success)
-    }
-}
-
-extension PhotoDetailView {
-    
-    var zoomGesture: some Gesture {
-        MagnificationGesture()
-            .onChanged(onZoomGestureStarted)
-            .onEnded(onZoomGestureEnded)
-    }
-    
-    func onZoomGestureStarted(value: MagnificationGesture.Value) {
-        withAnimation(.easeIn(duration: 0.1)) {
-            let delta = value / previousZoomScale
-            previousZoomScale = value
-            let zoomDelta = zoomScale * delta
-            var minMaxScale = max(minZoomScale, zoomDelta)
-            minMaxScale = min(maxZoomScale, minMaxScale)
-            zoomScale = minMaxScale
-        }
-    }
-    
-    func onZoomGestureEnded(value: MagnificationGesture.Value) {
-        previousZoomScale = 1
-        if zoomScale <= 1 {
-            withAnimation(.interactiveSpring()) {
-                zoomScale = 1
-            }
-        } else if zoomScale > 5 {
-            zoomScale = 5
-        }
     }
 }
 

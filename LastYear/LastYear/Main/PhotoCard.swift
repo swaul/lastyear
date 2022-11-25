@@ -10,9 +10,10 @@ import Photos
 
 struct PhotoCard: View {
     
-    var asset: PhotoData
+    @ObservedObject var asset: PhotoData
     
     @State private var image: Image?
+    @Binding var selecting: Bool
     
     var formatter: DateFormatter {
         let formatter = DateFormatter()
@@ -51,6 +52,19 @@ struct PhotoCard: View {
                 // be square
                 .aspectRatio(1, contentMode: .fit)
                 .cornerRadius(8)
+                if asset.selected && selecting {
+                    Color.white.opacity(0.5)
+                        .cornerRadius(8)
+                    HStack {
+                        Spacer()
+                        VStack {
+                            Spacer()
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundColor(Color.blue)
+                                .padding(6)
+                        }
+                    }
+                }
             } else {
                 // Otherwise, show a gray rectangle with a
                 // spinning progress view
@@ -71,6 +85,11 @@ struct PhotoCard: View {
         .onDisappear {
             image = nil
         }
+        .onChange(of: selecting) { newValue in
+            if !newValue {
+                asset.selected = false
+            }
+        }
     }
     
     func loadImageAsset(
@@ -90,6 +109,6 @@ struct PhotoCard: View {
 
 struct PhotoCard_Previews: PreviewProvider {
     static var previews: some View {
-        PhotoCard(asset: PhotoData.dummy)
+        PhotoCard(asset: PhotoData.dummy, selecting: .constant(false))
     }
 }

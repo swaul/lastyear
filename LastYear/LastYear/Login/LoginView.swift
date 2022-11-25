@@ -13,11 +13,20 @@ struct LoginView: View {
 
     @State var email: String = ""
     @State var password: String = ""
+    @State var error: String? = nil
     
+    @State var loading: Bool = false
+
     @State var showPassword: Bool = false
     
+    @FocusState var secureFieldFocus
+    @FocusState var textfieldfocus
+
     var loginButtonDisabled: Bool {
-        !isValidEmail || password.count < 8
+        if loading {
+            return true
+        }
+        return !isValidEmail || password.count < 8
     }
     
     var isValidEmail: Bool {
@@ -50,16 +59,23 @@ struct LoginView: View {
                     }
                     .textFieldStyle(.roundedBorder)
                     .textContentType(.password)
+                    .focused($textfieldfocus)
                 } else {
                     SecureField(text: $password) {
                         Text("Password")
                     }
                     .textFieldStyle(.roundedBorder)
                     .textContentType(.password)
+                    .focused($secureFieldFocus)
                 }
                 Button {
                     withAnimation {
                         showPassword.toggle()
+                    }
+                    if secureFieldFocus {
+                        textfieldfocus = true
+                    } else if textfieldfocus {
+                        secureFieldFocus = true
                     }
                 } label: {
                     if showPassword {
@@ -77,19 +93,29 @@ struct LoginView: View {
                     }
                 }
             }
-            Button {
-                login()
-            } label: {
-                Text("Continue")
-                    .font(Font.custom("Poppins-Bold", size: 18))
-                    .padding(8)
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(Color.white)
-                    .background(loginButtonDisabled ? Color.gray : Color("primary"))
-                    .cornerRadius(8)
+            if let error {
+                Text(error)
+                    .font(Font.custom("Poppins-Regular", size: 12))
+                    .foregroundColor(.red)
             }
-            .padding()
-            .disabled(loginButtonDisabled)
+            ZStack {
+                Button {
+                    login()
+                } label: {
+                    Text("Continue")
+                        .font(Font.custom("Poppins-Bold", size: 18))
+                        .padding(8)
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(loading ? Color.gray : Color.white)
+                        .background(loginButtonDisabled ? Color.gray : Color("primary"))
+                        .cornerRadius(8)
+                }
+                .padding()
+                .disabled(loginButtonDisabled)
+                if loading {
+                    ProgressView()
+                }
+            }
             Spacer()
         }
         .onAppear {
@@ -100,12 +126,18 @@ struct LoginView: View {
     }
     
     func login() {
+        loading = true
         FirebaseHandler.shared.loginUser(email: email, password: password) { result in
             switch result {
             case .failure(let error):
+                withAnimation {
+                    loading = false
+                    self.error = error.description ?? error.localizedDescription
+                }
                 print("[LOG] - Login failed with error", error)
             case .success(let user):
                 print("[LOG] - User logged in with", user.email)
+                loading = false
                 let credentials = Credentials(email: email, password: password)
                 do {
                     try CredentialsHandler.setPassword(credentials: credentials)
