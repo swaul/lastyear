@@ -207,6 +207,32 @@ public class FirebaseHandler {
         }
     }
     
+    public func changeReaction(selfId: String, user: String, reaction: String, remove: Bool, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        
+        firestorePublic.document(user).collection("reactions").document(reaction).getDocument(completion: { snapshot, error in
+            if snapshot?.data() != nil {
+                self.firestorePublic.document(user).collection("reactions").document(reaction).updateData([
+                    "users": remove ? FieldValue.arrayRemove([selfId]) : FieldValue.arrayUnion([selfId])
+                ]) { error in
+                    if let error {
+                        completion?(.failure(FirebaseError.error(error: error)))
+                    } else {
+                        completion?(.success(()))
+                    }
+                }
+            } else {
+                let newReaction = Reaction(id: reaction, reaction: reaction, users: [user]).toData()
+                self.firestorePublic.document(user).collection("reactions").document(reaction).setData(newReaction) { error in
+                    if let error {
+                        completion?(.failure(FirebaseError.error(error: error)))
+                    } else {
+                        completion?(.success(()))
+                    }
+                }
+            }
+        })
+    }
+    
     public func removeMemory(user: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
         firestoreUsers.document(user).updateData([
             "sharedLastYear": ""

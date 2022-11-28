@@ -15,10 +15,13 @@ struct FriendsView: View {
     @State var searchText = ""
     @FocusState private var searchFocused: Bool
     
+    @ObservedObject var authService = AuthService.shared
+    
     var body: some View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
+            
             VStack {
                 if networkMonitor.status == .disconnected {
                     ZStack {
@@ -28,7 +31,8 @@ struct FriendsView: View {
                     .transition(.move(edge: .top))
                     .frame(height: 40)
                 } else {
-                    Text("Friends")                                                .font(Font.custom("Poppins-Bold", size: 26))
+                    Text("Friends")
+                        .font(Font.custom("Poppins-Bold", size: 26))
                         .foregroundColor(.white)
                 }
                 TextField(text: $searchText) {
@@ -58,18 +62,27 @@ struct FriendsView: View {
                 VStack {
                     ZStack {
                         Picker("What is your favorite color?", selection: $selection) {
-                            Text("Friends").tag(0)
-                            Text("Recommended").tag(1)
-                            Text("Requests").tag(2)
+                            Text("Friends")
+                                .font(Font.custom("Poppins-Regular", size: 16))
+                                .tag(0)
+                            Text("Recommended")
+                                .font(Font.custom("Poppins-Regular", size: 16))
+                                .tag(1)
+                            Text("Requests")
+                                .font(Font.custom("Poppins-Regular", size: 16))
+                                .tag(2)
                         }
                         .pickerStyle(.segmented)
-                        HStack {
-                            Spacer()
-                            Text("1")
-                                .foregroundColor(.white)
-                                .padding(2)
-                                .background(Circle().fill(Color.red))
-                                .offset(y: -12)
+                        if authService.requests != 0 {
+                            HStack {
+                                Spacer()
+                                Text(String(authService.requests))
+                                    .font(Font.custom("Poppins-Regular", size: 14))
+                                    .foregroundColor(.white)
+                                    .frame(width: authService.requests >= 10 ? 28 : 20, height: 20)
+                                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.red))
+                                    .offset(y: -12)
+                            }
                         }
                     }
                     switch selection {
@@ -78,6 +91,9 @@ struct FriendsView: View {
                             Text("Friend requests")
                                 .font(.largeTitle)
                                 .padding()
+                                .onAppear {
+                                    authService.requests = 0
+                                }
                             Spacer()
                             if friendsViewModel.friendRequestUsers.isEmpty {
                                 Text("No friend requests")

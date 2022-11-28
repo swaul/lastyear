@@ -17,7 +17,10 @@ struct FeedView: View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
-            if feedViewModel.friendsMemories.isEmpty {
+                .task {
+                    feedViewModel.getMemories()
+                }
+            if feedViewModel.friendsMemories.isEmpty && !feedViewModel.loading {
                 Text("You need more friends..")
             } else {
                 GeometryReader { reader in
@@ -31,7 +34,7 @@ struct FeedView: View {
                                 let interval = Date.now.timeIntervalSince(time)
                                 let twentyFourHours: TimeInterval = 60 * 60 * 24
                                 if interval < twentyFourHours {
-                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen)
+                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen, reactions: [])
                                         .environmentObject(friendsViewModel)
                                         .onAppear {
                                             if index == 0 && index == feedViewModel.friendsMemories.count {
@@ -64,7 +67,8 @@ struct FeedView: View {
                             .padding(2)
                             .background(Color("backgroundColor"))
                             .cornerRadius(8)
-                            .overlay(Color("backgroundColor").opacity(friendsViewModel.loading ? 1.0 : 0.0 ))
+                            .opacity(friendsViewModel.loading ? 0.0 : 1.0 )
+//                            .overlay(Color("backgroundColor").opacity(friendsViewModel.loading ? 1.0 : 0.0 ))
                         if friendsViewModel.loading {
                             ProgressView()
                         }

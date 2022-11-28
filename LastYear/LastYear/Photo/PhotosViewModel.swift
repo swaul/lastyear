@@ -16,7 +16,7 @@ public class PhotosViewModel: ObservableObject {
     
     @Published var formattedDateOneYearAgo: String = ""
     @Published var bestImage: PhotoData?
-    @Published var countFound = 0
+    @Published var countFound: Int? = nil
     @Published var requestsFailed = 0
     @Published var dateOneYearAgo: Date? {
         didSet {
@@ -27,7 +27,6 @@ public class PhotosViewModel: ObservableObject {
     @Published var allPhotos = [PhotoData]()
     
     var imageCachingManager = PHCachingImageManager()
-    var many: Bool = false
     
     @ObservedObject var authService = AuthService.shared
     
@@ -48,13 +47,20 @@ public class PhotosViewModel: ObservableObject {
     func reset() {
         allPhotos.removeAll()
         bestImage = nil
-        countFound = 0
+        countFound = nil
     }
     
     func setupBinding() {
         authService.$loggedIn.sink { [weak self] isLoggedIn in
             if !isLoggedIn {
                 self?.reset()
+            }
+        }.store(in: &cancellabels)
+        
+        $allPhotos.sink { [weak self] data in
+            guard let countFound = self?.countFound else { return }
+            if countFound == data.count {
+                self?.fetchAndSafeImages()
             }
         }.store(in: &cancellabels)
     }
@@ -69,7 +75,7 @@ public class PhotosViewModel: ObservableObject {
             return
         }
         
-        countFound = 0
+        countFound = nil
         
         let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYear)!.endOfDay
         let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYear)!.startOfDay
@@ -105,7 +111,7 @@ public class PhotosViewModel: ObservableObject {
                             self.allPhotos.append(photo)
                         }
                     } else {
-                        self.countFound -= 1
+                        self.countFound! -= 1
                         self.requestsFailed += 1
                         print("error asset to image ", asset.mediaSubtypes)
                     }
@@ -117,7 +123,7 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func fetchAndSafeImages() {
-        Task(priority: .background) {
+        Task  {
             for asset in allPhotos {
                 if let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: asset.assetID) {
                     appendImage(image: image, id: makeID(id: asset.assetID))

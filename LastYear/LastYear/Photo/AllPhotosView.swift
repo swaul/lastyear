@@ -103,7 +103,7 @@ struct AllPhotosView: View {
                                 LazyVGrid(columns: layout) {
                                     ForEach(sortedScreenshots) { photo in
                                         NavigationLink {
-                                            PhotoDetailView(selected: photo.assetID)
+                                            PhotoDetailView(selected: .constant(photo.assetID))
                                         } label: {
                                             PhotoCard(asset: photo, selecting: $selecting)
                                         }
@@ -132,9 +132,14 @@ struct AllPhotosView: View {
 //            }
         }
         .fullScreenCover(isPresented: $detail) {
-            PhotoDetailView(selected: selected ?? "fallback")
+            PhotoDetailView(selected: $selected)
         }
 //        .overlay(ImageViewer(image: self.$selected, viewerShown: self.$detail, closeButtonTopRight: true))
+    }
+    
+    func showDetail(selected: String) {
+        self.selected = selected
+        detail = true
     }
     
     func loadImageAsset(asset: String, targetSize: CGSize = PHImageManagerMaximumSize, completion: ((Image?) -> Void)?) async {

@@ -9,7 +9,13 @@ import Foundation
 
 public class AuthService: NSObject, ObservableObject {
     @Published public var loggedIn: Bool = false
-    @Published public var loggedInUser: LYUser? = nil
+    @Published public var loggedInUser: LYUser? = nil {
+        didSet {
+            guard let user = loggedInUser else { return }
+            requests = user.friendRequests.count
+        }
+    }
+    @Published public var requests: Int = 0
     
     public static let shared = AuthService()
     

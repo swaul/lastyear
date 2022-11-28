@@ -10,6 +10,7 @@ import FirebaseStorage
 import ImageViewer
 import AWSS3
 import AWSCore
+import Shared
 
 struct DiscoveryView: View {
     @EnvironmentObject var friendsViewModel: FriendsViewModel
@@ -25,8 +26,14 @@ struct DiscoveryView: View {
     @State var liked = false
     @State var serverLiked = false
     @State var likes: [String]
-    
+    @State var showEmoji = false
+    @State var selectedEmoji: Emoji? = nil
     @State var screen: CGRect
+    @State var reactions: [Reaction]
+    
+    @State var searching: Bool = false
+    
+    @State var selectedDetent: PresentationDetent = .fraction(0.3)
     
     var likeImage: Image {
         return Image(systemName: likes.contains(where: { $0 == AuthService.shared.loggedInUser?.id ?? "" }) ? "heart.fill" : "heart")
@@ -36,9 +43,9 @@ struct DiscoveryView: View {
     
     var body: some View {
         VStack {
-//            backgroundView
+            //            backgroundView
             userView
-
+            
             ZStack {
                 Color.white
                 if let image = image {
@@ -54,7 +61,23 @@ struct DiscoveryView: View {
             .frame(width: getRect().width)
             .aspectRatio(0.8, contentMode: .fit)
             .cornerRadius(8)
-
+            .onChange(of: selectedEmoji, perform: { newValue in
+                guard let user = AuthService.shared.loggedInUser, let newValue else { return }
+                FirebaseHandler.shared.changeReaction(selfId: user.id, user: user.id, reaction: newValue.string, remove: false) { result in
+                    switch result {
+                    case .success(()):
+                        print("reacted!")
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                }
+            })
+            .onLongPressGesture {
+                withAnimation {
+                    showEmoji.toggle()
+                }
+            }
+            
             HStack {
                 Button {
                     liked.toggle()
@@ -65,33 +88,26 @@ struct DiscoveryView: View {
                     
                 }
                 getLikes()
+                if selectedEmoji != nil {
+                    Text(selectedEmoji!.string)
+                        .font(.system(size: 20))
+                }
+                ForEach(reactions) { reaction in
+                    Text(reaction.reaction)
+                        .font(.system(size: 20))
+                }
+                
                 Spacer()
             }
-            //        VStack {
-            //            Spacer()
-            //            HStack {
-            //                Spacer()
-            //                VStack {
-            //                    Button {
-            //                        liked.toggle()
-            //                        like()
-            //                    } label: {
-            //                        likeImage
-            //                            .resizable()
-            //                            .frame(width: 38, height: 38)
-            //                            .aspectRatio(1, contentMode: .fit)
-            //                    }
-            //                    .matchedGeometryEffect(id: "heart", in: details)
-            //                    .buttonStyle(.plain)
-            //                    Text(String(likes.count))
-            //                        .font(Font.custom("Poppins-Regular", size: 20))
-            //                        .foregroundColor(Color.white)
-            //                        .matchedGeometryEffect(id: "text", in: details)
-            //                }
-            //            }
-            //            .padding()
         }
         .padding()
+        .sheet(isPresented: $showEmoji) {
+                HappyPanel(selectedEmoji: $selectedEmoji, isSearching: $searching)
+                    .presentationDetents([.fraction(0.5), .fraction(0.9)], selection: $selectedDetent)
+                    .onChange(of: searching) { newValue in
+                        selectedDetent = .fraction(0.9)
+                    }
+        }
         .onTapGesture(count: 2) {
             withAnimation{
                 liked = true
@@ -116,16 +132,6 @@ struct DiscoveryView: View {
         .frame(width: screen.width, height: screen.height)
     }
     
-    //    func evaluateLikes() -> Int {
-    //        if serverLiked {
-    //            return likes.count
-    //        } else if liked {
-    //            return likes.count + 1
-    //        } else {
-    //            return likes.count
-    //        }
-    //    }
-    
     var backgroundView: some View {
         if let image = image {
             return AnyView(
@@ -143,9 +149,9 @@ struct DiscoveryView: View {
                 })
         } else {
             return AnyView(
-            Color.black
-                .opacity(showDetail ? 1.0 : 0.4)
-                .ignoresSafeArea()
+                Color.black
+                    .opacity(showDetail ? 1.0 : 0.4)
+                    .ignoresSafeArea()
             )
         }
     }
@@ -300,9 +306,10 @@ struct DiscoveryView: View {
     }
 }
 
+@available(iOS 16.0, *)
 struct DiscoveryView_Previews: PreviewProvider {
     static var previews: some View {
-        DiscoveryView(timePosted: 0.0, likes: ["12"], screen: CGRect())
+        DiscoveryView(timePosted: 0.0, likes: ["12"], screen: CGRect(), reactions: [])
     }
 }
 

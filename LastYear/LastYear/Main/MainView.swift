@@ -10,13 +10,13 @@ import FirebaseAnalytics
 
 struct MainView: View {
     
-    @EnvironmentObject var authService: AuthService
     @StateObject var fotoService = PhotoService.shared
+    @ObservedObject var authService = AuthService.shared
     
     var networkMonitor = NetworkMonitor()
-//    @State var selection = 2
-
     var friendsViewModel = FriendsViewModel()
+
+    @State var selection = 2
     
     var content: some View {
         ZStack {
@@ -30,7 +30,7 @@ struct MainView: View {
                         Label("Friends", systemImage: "person.3")
                     }
                     .tag(0)
-                    .badge(AuthService.shared.loggedInUser?.friendRequests.count ?? 0)
+                    .badge(authService.requests)
                 
                 DiscoverView()
                     .environmentObject(networkMonitor)

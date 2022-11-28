@@ -11,16 +11,11 @@ import SwiftUI
 class DiscoverViewModel: ObservableObject {
     
     @Published var discoveries: [DiscoveryUpload] = []
-    @Published var loading: Bool = false
-    
-    init() {
-        getDiscoveries()
-    }
+    @Published var loading: Bool = true
     
     func getDiscoveries() {
         print("Load Discovery")
         changeLoading(to: true)
-        guard let user = AuthService.shared.loggedInUser else { return }
 
         FirebaseHandler.shared.getDiscoveries() { [weak self] result in
             switch result {

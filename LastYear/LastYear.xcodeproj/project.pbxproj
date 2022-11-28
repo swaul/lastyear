@@ -20,6 +20,8 @@
 		9E6461A72922076200F4141C /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6461A62922076200F4141C /* UserView.swift */; };
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
+		9E835E79293540DF0098810A /* HappyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E835E78293540DF0098810A /* HappyPanel.swift */; };
+		9E835E7F2935460B0098810A /* Shared in Frameworks */ = {isa = PBXBuildFile; productRef = 9E835E7E2935460B0098810A /* Shared */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
 		9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */; };
 		9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */; };
@@ -134,6 +136,8 @@
 		9E6461A42921AC5000F4141C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9E6461A62922076200F4141C /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
+		9E835E78293540DF0098810A /* HappyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HappyPanel.swift; sourceTree = "<group>"; };
+		9E835E7D293545C30098810A /* Shared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Shared; path = "../../Downloads/HappyPanel-master/Shared"; sourceTree = "<group>"; };
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
 		9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPhotosView.swift; sourceTree = "<group>"; };
@@ -229,6 +233,7 @@
 				9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */,
 				9ECC3385291EA6200007C9C9 /* AWSCognitoIdentityProvider in Frameworks */,
 				9EBDE92528DDFFEB00264AF3 /* FirebaseFirestore in Frameworks */,
+				9E835E7F2935460B0098810A /* Shared in Frameworks */,
 				9E272819290C5371000C2E64 /* FirebaseStorage in Frameworks */,
 				9ECC3389291EA6200007C9C9 /* AWSS3 in Frameworks */,
 				9ECC336429190BEB0007C9C9 /* AlertToast in Frameworks */,
@@ -260,6 +265,14 @@
 				9E01BF232924DBC200749C29 /* FriendRequestRow.swift */,
 			);
 			path = Friends;
+			sourceTree = "<group>";
+		};
+		9E835E7A293543BF0098810A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				9E835E7D293545C30098810A /* Shared */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		9EAADB2328E2681400F93097 /* Photo */ = {
@@ -333,6 +346,7 @@
 		9EBDE8C928DDD58A00264AF3 = {
 			isa = PBXGroup;
 			children = (
+				9E835E7A293543BF0098810A /* Packages */,
 				9EAADB4F28E426EC00F93097 /* LYwidgetExtension.entitlements */,
 				9EBDE8D428DDD58A00264AF3 /* LastYear */,
 				9EAADB3928E3968400F93097 /* LYwidget */,
@@ -458,6 +472,7 @@
 				9ECC33652919283C0007C9C9 /* DiscoverViewModel.swift */,
 				9ECC336729192CE30007C9C9 /* DiscoveryUpload.swift */,
 				9ECC3369291AEFF90007C9C9 /* DiscoveryView.swift */,
+				9E835E78293540DF0098810A /* HappyPanel.swift */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -537,6 +552,7 @@
 				9ECC3384291EA6200007C9C9 /* AWSCognitoIdentityProvider */,
 				9ECC3386291EA6200007C9C9 /* AWSCore */,
 				9ECC3388291EA6200007C9C9 /* AWSS3 */,
+				9E835E7E2935460B0098810A /* Shared */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -674,6 +690,7 @@
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
 				9EBDE8E628DDDD4B00264AF3 /* PhotoData.swift in Sources */,
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
+				9E835E79293540DF0098810A /* HappyPanel.swift in Sources */,
 				9ECC3392292189D10007C9C9 /* NetworkMonitor.swift in Sources */,
 				9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */,
 				9EAADB2B28E37A4A00F93097 /* NotificationPermissionView.swift in Sources */,
@@ -720,7 +737,7 @@
 				INFOPLIST_FILE = LYwidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LYwidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -750,7 +767,7 @@
 				INFOPLIST_FILE = LYwidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = LYwidget;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -904,7 +921,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -944,7 +961,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1044,6 +1061,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9EBDE91D28DDFFEB00264AF3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		9E835E7E2935460B0098810A /* Shared */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Shared;
 		};
 		9EBDE91E28DDFFEB00264AF3 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

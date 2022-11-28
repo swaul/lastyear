@@ -24,7 +24,7 @@ struct PhotoDetailView: View {
     
     @State var selectedImage: UIImage? = nil
     @State var fullscreenImage: Bool = true
-    @State var selected: String
+    @Binding var selected: String?
     @State var isShowingiMessages = false
     @State var isShowingShare = false
     @State var shareToLastYearShowing = false
@@ -59,6 +59,11 @@ struct PhotoDetailView: View {
                 .ignoresSafeArea()
                 .task {
                     await loadImageAsset()
+                }
+                .onChange(of: selected) { _ in
+                    Task {
+                        await loadImageAsset()
+                    }
                 }
                 // Finally, when the view disappears, we need to free it
                 // up from the memory
@@ -235,10 +240,8 @@ struct PhotoDetailView: View {
     func loadImageAsset(
         targetSize: CGSize = PHImageManagerMaximumSize
     ) async {
-        if selected == "fallback" {
-            selectedImage = UIImage(named: selected)
-            return
-        }
+        
+        guard let selected else { return }
         
         guard let uiImage = try? await PhotoLibraryService.shared
             .fetchImage(
@@ -349,7 +352,7 @@ struct PhotoDetailView: View {
     
     func shareLastYear(toPublic: Bool = false) {
         Task {
-            guard let user = AuthService.shared.loggedInUser else { return }
+            guard let user = AuthService.shared.loggedInUser, let selected else { return }
             
             guard
                 let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: selected),
@@ -371,7 +374,7 @@ struct PhotoDetailView: View {
                     print(error.localizedDescription)
                 } else {
                     if task.status == .completed {
-                        let upload = DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName)
+                        let upload = DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName, reactions: [])
                         
                         if toPublic {
                             FirebaseHandler.shared.shareMemory(to: ._public, discovery: upload) { result in

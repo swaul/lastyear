@@ -13,39 +13,49 @@ struct DiscoverView: View {
     
     @ObservedObject var viewModel = DiscoverViewModel()
     
+    @State var text = ""
+    
     var body: some View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
-            GeometryReader { reader in
-                
-                let screen = reader.frame(in: .global)
-                
-                TabView {
-                    ForEach(0..<viewModel.discoveries.count, id: \.self) { index in
-                        let discovery = viewModel.discoveries[index]
-                        if let time = discovery.timePostedDate {
-                            let interval = Date.now.timeIntervalSince(time)
-                            let twentyFourHours: TimeInterval = 60 * 60 * 24
-                            if interval < twentyFourHours {
-                                
-                                DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen)
-                                    .environmentObject(friendsViewModel)
-                                    .onAppear {
-                                        if index == 0 && index == viewModel.discoveries.count {
-                                            viewModel.getNextDiscoveries()
-                                        } else if index != 0 && index % 9 == 0 {
-                                            viewModel.getNextDiscoveries()
+                .task {
+                    viewModel.getDiscoveries()
+                }
+            if viewModel.discoveries.isEmpty && !viewModel.loading {
+                Text("You need more friends..")
+            } else {
+                GeometryReader { reader in
+                    
+                    let screen = reader.frame(in: .global)
+                    
+                    TabView {
+                        ForEach(0..<viewModel.discoveries.count, id: \.self) { index in
+                            let discovery = viewModel.discoveries[index]
+                            if let time = discovery.timePostedDate {
+                                let interval = Date.now.timeIntervalSince(time)
+                                let twentyFourHours: TimeInterval = 60 * 60 * 24
+                                if interval < twentyFourHours {
+                                    
+                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen, reactions: discovery.reactions)
+                                        .environmentObject(friendsViewModel)
+                                        .onAppear {
+                                            if index == 0 && index == viewModel.discoveries.count {
+                                                viewModel.getNextDiscoveries()
+                                            } else if index != 0 && index % 9 == 0 {
+                                                viewModel.getNextDiscoveries()
+                                            }
                                         }
-                                    }
+                                    
+                                }
                             }
                         }
                     }
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                    .rotationEffect(Angle(degrees: 90), anchor: .topLeading)
+                    .frame(width: screen.height, height: screen.width)
+                    .offset(x: screen.width)
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .rotationEffect(Angle(degrees: 90), anchor: .topLeading)
-                .frame(width: screen.height, height: screen.width)
-                .offset(x: screen.width)
             }
             VStack(spacing: 0) {
                 if networkMonitor.status == .disconnected {
@@ -61,7 +71,8 @@ struct DiscoverView: View {
                             .padding(2)
                             .background(Color("backgroundColor"))
                             .cornerRadius(8)
-                            .overlay(Color("backgroundColor").opacity(viewModel.loading ? 1.0 : 0.0 ))
+                            .opacity(viewModel.loading ? 0.0 : 1.0 )
+                        //                            .overlay(Color("backgroundColor").opacity(viewModel.loading ? 1.0 : 0.0 ))
                         if viewModel.loading {
                             ProgressView()
                         }
