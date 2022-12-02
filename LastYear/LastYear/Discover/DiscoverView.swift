@@ -47,6 +47,7 @@ struct DiscoverView: View {
                                                 viewModel.getNextDiscoveries()
                                             }
                                         }
+                                        .id(index)
                                 }
                             }
                         }
@@ -72,6 +73,7 @@ struct DiscoverView: View {
                             .background(Color("backgroundColor"))
                             .cornerRadius(8)
                             .opacity(viewModel.loading ? 0.0 : 1.0 )
+
                         //                            .overlay(Color("backgroundColor").opacity(viewModel.loading ? 1.0 : 0.0 ))
                         if viewModel.loading {
                             ProgressView()

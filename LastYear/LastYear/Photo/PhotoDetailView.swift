@@ -15,7 +15,7 @@ import Photos
 
 struct PhotoDetailView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
-
+    
     var formatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
@@ -100,54 +100,59 @@ struct PhotoDetailView: View {
             if #available(iOS 16.0, *) {
                 VStack {
                     if currentUpload == 0 {
-                        
-                        Grid() {
-                            GridRow {
-                                Image(systemName: "person.2")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 25)
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("Friends")
-                                        .font(Font.custom("Poppins-Bold", size: 24))
-                                        .foregroundColor(Color.white)
-                                    Text("Share with all your friends")
-                                        .font(Font.custom("Poppins-Regular", size: 18))
-                                        .foregroundColor(Color.white)
+                    
+                            VStack {
+                                Button {
+                                    shareLastYear()
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "person.2")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxWidth: 30)
+                                            .padding(.trailing, 20)
+                                        VStack(alignment: .leading) {
+                                            Text("Friends")
+                                                .font(Font.custom("Poppins-Bold", size: 24))
+                                                .foregroundColor(Color.white)
+                                            Text("Share with all your friends")
+                                                .font(Font.custom("Poppins-Regular", size: 18))
+                                                .foregroundColor(Color.white)
+                                        }
+                                        Spacer()
+                                    }
+                                    .contentShape(Rectangle())
+                                    .padding()
+                                    .background(Color("gray"))
+                                    .cornerRadius(8)
+                                }
+                                
+                                Button {
+                                    shareLastYear(toPublic: true)
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "magnifyingglass")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(maxWidth: 30)
+                                            .padding(.trailing, 20)
+                                        VStack(alignment: .leading) {
+                                            Text("Discovery")
+                                                .font(Font.custom("Poppins-Bold", size: 24))
+                                                .foregroundColor(Color.white)
+                                            Text("Share with all LastYear users")
+                                                .font(Font.custom("Poppins-Regular", size: 18))
+                                                .foregroundColor(Color.white)
+                                        }
+                                        Spacer()
+                                    }
+                                    .contentShape(Rectangle())
+                                    .padding()
+                                    .background(Color("gray"))
+                                    .cornerRadius(8)
                                 }
                             }
-                            .contentShape(Rectangle())
-                            .padding()
-                            .background(Color("gray"))
-                            .cornerRadius(8)
-                            .onTapGesture {
-                                shareLastYear()
-                            }
-                            
-                            GridRow {
-                                Image(systemName: "magnifyingglass")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 25)
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("Discovery")
-                                        .font(Font.custom("Poppins-Bold", size: 24))
-                                        .foregroundColor(Color.white)
-                                    Text("Share with all LastYear users")
-                                        .font(Font.custom("Poppins-Regular", size: 18))
-                                        .foregroundColor(Color.white)
-                                }
-                            }
-                            .contentShape(Rectangle())
-                            .padding()
-                            .background(Color("gray"))
-                            .cornerRadius(8)
-                            .onTapGesture {
-                                shareLastYear(toPublic: true)
-                            }
-                        }
+                            .padding(.horizontal)
                         Text("Share!")
                             .font(Font.custom("Poppins-Bold", size: 28))
                     } else if uploadDone {
@@ -269,73 +274,73 @@ struct PhotoDetailView: View {
     }
     
     var toolbarBot: some View {
-            HStack {
+        HStack {
+            VStack(spacing: 4) {
+                Button {
+                    shareToStory()
+                } label: {
+                    Image("instagram")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 32)
+                        .foregroundColor(.white)
+                }
+                .padding(.horizontal, 8)
+                Text("Instagram")
+                    .font(Font.custom("Poppins-Regular", size: 12))
+                    .foregroundColor(Color.white)
+            }
+            VStack(spacing: 4) {
+                Button {
+                    isShowingiMessages = true
+                } label: {
+                    Image(systemName: "message")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 32)
+                        .foregroundColor(.green)
+                }
+                .padding(.horizontal, 8)
+                Text("iMessage")
+                    .font(Font.custom("Poppins-Regular", size: 12))
+                    .foregroundColor(Color.white)
+            }
+            if let image = selectedImage, #available(iOS 16, *) {
                 VStack(spacing: 4) {
-                    Button {
-                        shareToStory()
-                    } label: {
-                        Image("instagram")
+                    ShareLink(item: Image(uiImage: image), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: image))) {
+                        Image(systemName: "ellipsis.circle")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 32)
                             .foregroundColor(.white)
                     }
                     .padding(.horizontal, 8)
-                    Text("Instagram")
+                    Text("Others")
                         .font(Font.custom("Poppins-Regular", size: 12))
                         .foregroundColor(Color.white)
                 }
+            } else {
+                ProgressView()
+                    .frame(width: 32)
+            }
+            Spacer()
+            Button {
+                shareToLastYearShowing = true
+            } label: {
                 VStack(spacing: 4) {
-                    Button {
-                        isShowingiMessages = true
-                    } label: {
-                        Image(systemName: "message")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 32)
-                            .foregroundColor(.green)
-                    }
-                    .padding(.horizontal, 8)
-                    Text("iMessage")
+                    Text("Share to")
                         .font(Font.custom("Poppins-Regular", size: 12))
                         .foregroundColor(Color.white)
-                }
-                if let image = selectedImage, #available(iOS 16, *) {
-                    VStack(spacing: 4) {
-                        ShareLink(item: Image(uiImage: image), preview: SharePreview("Look at my memory from LastYear!", image: Image(uiImage: image))) {
-                            Image(systemName: "ellipsis.circle")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 32)
-                                .foregroundColor(.white)
-                        }
-                        .padding(.horizontal, 8)
-                        Text("Others")
-                            .font(Font.custom("Poppins-Regular", size: 12))
-                            .foregroundColor(Color.white)
-                    }
-                } else {
-                    ProgressView()
-                        .frame(width: 32)
-                }
-                Spacer()
-                Button {
-                    shareToLastYearShowing = true
-                } label: {
-                    VStack(spacing: 4) {
-                        Text("Share to")
-                            .font(Font.custom("Poppins-Regular", size: 12))
-                            .foregroundColor(Color.white)
-                        Image("logoSmall")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 80)
-                    }
+                    Image("logoSmall")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80)
                 }
             }
+        }
         .padding()
     }
-
+    
     func findCompression(image: UIImage) -> Double {
         let numbers = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
         
@@ -358,7 +363,7 @@ struct PhotoDetailView: View {
                 let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: selected),
                 let data = image.jpegData(compressionQuality: findCompression(image: image))
             else { return }
-                        
+            
             let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
                 print("percentage done:", progress.fractionCompleted)
                 withAnimation {
@@ -418,7 +423,7 @@ struct PhotoDetailView: View {
                 }
             }
         }
-
+        
     }
     
     func shareToStory() {
