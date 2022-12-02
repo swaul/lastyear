@@ -100,10 +100,9 @@ struct PhotoDetailView: View {
             if #available(iOS 16.0, *) {
                 VStack {
                     if currentUpload == 0 {
-                        Button {
-                            shareLastYear()
-                        } label: {
-                            HStack {
+                        
+                        Grid() {
+                            GridRow {
                                 Image(systemName: "person.2")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -122,12 +121,11 @@ struct PhotoDetailView: View {
                             .padding()
                             .background(Color("gray"))
                             .cornerRadius(8)
-                        }
-                        .padding()
-                        Button {
-                            shareLastYear(toPublic: true)
-                        } label: {
-                            HStack {
+                            .onTapGesture {
+                                shareLastYear()
+                            }
+                            
+                            GridRow {
                                 Image(systemName: "magnifyingglass")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
@@ -146,8 +144,10 @@ struct PhotoDetailView: View {
                             .padding()
                             .background(Color("gray"))
                             .cornerRadius(8)
+                            .onTapGesture {
+                                shareLastYear(toPublic: true)
+                            }
                         }
-                        .padding()
                         Text("Share!")
                             .font(Font.custom("Poppins-Bold", size: 28))
                     } else if uploadDone {
@@ -377,38 +377,48 @@ struct PhotoDetailView: View {
                         let upload = DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName, reactions: [])
                         
                         if toPublic {
-                            FirebaseHandler.shared.shareMemory(to: ._public, discovery: upload) { result in
-                                switch result {
-                                case .failure(let error):
-                                    print(error.localizedDescription)
-                                case .success(()):
-                                    withAnimation {
-                                        self.uploadDone = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            self.shareToLastYearShowing = false
-                                        }
-                                    }
-                                }
-                            }
+                            shareToPublicStory(upload: upload)
                         } else {
-                            FirebaseHandler.shared.shareMemory(to: .friends, discovery: upload) { result in
-                                switch result {
-                                case .failure(let error):
-                                    print(error.localizedDescription)
-                                case .success(()):
-                                    withAnimation {
-                                        self.uploadDone = true
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                                            self.shareToLastYearShowing = false
-                                        }
-                                    }
-                                }
-                            }
+                            shareToFriendsStory(upload: upload)
                         }
                     }
                 }
             }
         }
+    }
+    
+    func shareToPublicStory(upload: DiscoveryUpload) {
+        FirebaseHandler.shared.shareMemory(to: ._public, discovery: upload) { result in
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(()):
+                withAnimation {
+                    self.uploadDone = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.shareToLastYearShowing = false
+                    }
+                    self.shareToFriendsStory(upload: upload)
+                }
+            }
+        }
+    }
+    
+    func shareToFriendsStory(upload: DiscoveryUpload) {
+        FirebaseHandler.shared.shareMemory(to: .friends, discovery: upload) { result in
+            switch result {
+            case .failure(let error):
+                print(error.localizedDescription)
+            case .success(()):
+                withAnimation {
+                    self.uploadDone = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.shareToLastYearShowing = false
+                    }
+                }
+            }
+        }
+
     }
     
     func shareToStory() {

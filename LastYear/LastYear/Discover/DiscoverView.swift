@@ -37,7 +37,8 @@ struct DiscoverView: View {
                                 let twentyFourHours: TimeInterval = 60 * 60 * 24
                                 if interval < twentyFourHours {
                                     
-                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen, reactions: discovery.reactions)
+                                    let reactions = reactionsMapped(reactions: discovery.reactions)
+                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen, reactions: reactions)
                                         .environmentObject(friendsViewModel)
                                         .onAppear {
                                             if index == 0 && index == viewModel.discoveries.count {
@@ -46,7 +47,6 @@ struct DiscoverView: View {
                                                 viewModel.getNextDiscoveries()
                                             }
                                         }
-                                    
                                 }
                             }
                         }
@@ -91,6 +91,10 @@ struct DiscoverView: View {
             .font(Font.custom("Poppins-Regular", size: 24))
             .foregroundColor(.white)
             .padding(.vertical)
+    }
+    
+    func reactionsMapped(reactions: [Reaction]) -> [Reaction: Int] {
+        reactions.reduce(into: [:]) { $0[$1, default: 0] += 1 }
     }
 }
 

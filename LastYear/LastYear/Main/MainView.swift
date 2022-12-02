@@ -22,7 +22,7 @@ struct MainView: View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
-            TabView {
+            TabView(selection: $selection) {
                 FriendsView()
                     .environmentObject(friendsViewModel)
                     .environmentObject(networkMonitor)

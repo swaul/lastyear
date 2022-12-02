@@ -47,7 +47,7 @@ struct AllPhotosView: View {
                             }
                         } else {
                             Button {
-                                photoViewModel.getAllPhotos()
+                                photoViewModel.reloadPhotos()
                             } label: {
                                 Image(systemName: "arrow.clockwise")
                                     .foregroundColor(.white)
@@ -100,12 +100,23 @@ struct AllPhotosView: View {
                             .contentShape(Rectangle())
                             if expanded {
                                 let sortedScreenshots = photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()
-                                LazyVGrid(columns: layout) {
+                                LazyVGrid(columns: layout, spacing: 0) {
                                     ForEach(sortedScreenshots) { photo in
-                                        NavigationLink {
-                                            PhotoDetailView(selected: .constant(photo.assetID))
-                                        } label: {
-                                            PhotoCard(asset: photo, selecting: $selecting)
+                                        PhotoCard(asset: photo, selecting: $selecting)
+                                            .padding(4)
+                                        .onTapGesture {
+                                            withAnimation {
+                                                if selecting {
+                                                    photo.selected.toggle()
+                                                } else {
+                                                    selected = photo.assetID
+                                                    detail = true
+                                                }
+                                            }
+                                        }
+                                        .onLongPressGesture {
+                                            photo.selected = true
+                                            selecting = true
                                         }
                                     }
                                 }
@@ -114,7 +125,7 @@ struct AllPhotosView: View {
                         }
                         Spacer()
                         VStack {
-                            Text("\(photoViewModel.countFound) Photos found for " + photoViewModel.formattedDateOneYearAgo)
+                            Text("\(photoViewModel.countFound ?? 0) Photos found for " + photoViewModel.formattedDateOneYearAgo)
                                 .font(Font.custom("Poppins-Regular", size: 18))
                                 .foregroundColor(Color("primary"))
                             if photoViewModel.requestsFailed > 0 {
@@ -126,15 +137,10 @@ struct AllPhotosView: View {
                     }
                 }
             }
-//            if detail {
-//                PhotoDetailView(images: photoViewModel.allPhotos, zoomScale: 1)
-//                    .transition(.move(edge: .bottom))
-//            }
         }
         .fullScreenCover(isPresented: $detail) {
             PhotoDetailView(selected: $selected)
         }
-//        .overlay(ImageViewer(image: self.$selected, viewerShown: self.$detail, closeButtonTopRight: true))
     }
     
     func showDetail(selected: String) {

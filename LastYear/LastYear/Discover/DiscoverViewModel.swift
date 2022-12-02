@@ -23,6 +23,7 @@ class DiscoverViewModel: ObservableObject {
                 print(error.localizedDescription)
                 self?.changeLoading(to: false)
             case .success(let discoveries):
+                print("Found: Loaded \(discoveries.count) discoveries")
                 self?.discoveries = discoveries
                 self?.changeLoading(to: false)
             }
@@ -47,6 +48,7 @@ class DiscoverViewModel: ObservableObject {
     
     func changeLoading(to: Bool) {
         withAnimation {
+            print("discovery loading:", to)
             loading = to
         }
     }

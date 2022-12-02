@@ -7,31 +7,35 @@
 
 import Foundation
 
-public struct Reaction: Decodable, Hashable, Identifiable {
-    
+public struct Reaction: Decodable, Hashable, Identifiable, Equatable {
+
     public let id: String
     public let reaction: String
-    public var users: [String]
+    public var user: String
     
-    init(id: String, reaction: String, users: [String]) {
+    init(id: String, reaction: String, user: String) {
         self.id = id
         self.reaction = reaction
-        self.users = users
+        self.user = user
     }
     
     init(data: [String: Any]) {
         self.id = data["id"] as! String
         self.reaction = data["reaction"] as! String
-        self.users = data["users"] as! [String]
+        self.user = data["user"] as! String
     }
     
     func toData() -> [String: Any] {
         let data: [String: Any] = [
             "id": id,
             "reaction": reaction,
-            "users": users
+            "user": user
         ]
         return data
+    }
+    
+    public static func == (lhs: Reaction, rhs: Reaction) -> Bool {
+        lhs.reaction == rhs.reaction
     }
 }
 
@@ -59,8 +63,8 @@ public struct DiscoveryUpload: Hashable {
         self.likes = data["likes"] as! [String]
         self.timePosted = data["timePosted"] as! String
         self.user = data["user"] as! String
-        if let reactions = data["reactions"] as? [Reaction] {
-            self.reactions = reactions
+        if let reactions = data["reactions"] as? [[String: Any]] {
+            self.reactions = reactions.map { Reaction(data: $0) }
         } else {
             self.reactions = []
         }

@@ -207,30 +207,27 @@ public class FirebaseHandler {
         }
     }
     
-    public func changeReaction(selfId: String, user: String, reaction: String, remove: Bool, completion: ((Result<Void, FirebaseError>) -> Void)?) {
-        
-        firestorePublic.document(user).collection("reactions").document(reaction).getDocument(completion: { snapshot, error in
-            if snapshot?.data() != nil {
-                self.firestorePublic.document(user).collection("reactions").document(reaction).updateData([
-                    "users": remove ? FieldValue.arrayRemove([selfId]) : FieldValue.arrayUnion([selfId])
-                ]) { error in
-                    if let error {
-                        completion?(.failure(FirebaseError.error(error: error)))
-                    } else {
-                        completion?(.success(()))
-                    }
-                }
+    public func changeReaction(id: String, selfId: String, user: String, reaction: String, remove: Bool, completion: ((Result<Void, FirebaseError>) -> Void)?) {
+        firestorePublic.document(user).updateData(
+            [
+                "reactions" : remove ? FieldValue.arrayRemove(
+                    [
+                        Reaction(id: id, reaction: reaction, user: selfId).toData()
+                    ]
+                ) : FieldValue.arrayUnion(
+                    [
+                        Reaction(id: id, reaction: reaction, user: selfId).toData()
+                    ]
+                )
+            ]
+        ) { error in
+            if let error {
+                completion?(.failure(FirebaseError.error(error: error)))
             } else {
-                let newReaction = Reaction(id: reaction, reaction: reaction, users: [user]).toData()
-                self.firestorePublic.document(user).collection("reactions").document(reaction).setData(newReaction) { error in
-                    if let error {
-                        completion?(.failure(FirebaseError.error(error: error)))
-                    } else {
-                        completion?(.success(()))
-                    }
-                }
+                completion?(.success(()))
             }
-        })
+        }
+        
     }
     
     public func removeMemory(user: String, completion: ((Result<Void, FirebaseError>) -> Void)?) {
@@ -297,7 +294,7 @@ public class FirebaseHandler {
                 print("Error retreving cities: \(error.debugDescription)")
                 return
             }
-            
+                        
             let discoveries = snapshot.documents.map { DiscoveryUpload(data: $0.data()) }
             
             guard let lastSnapshot = snapshot.documents.last else {
@@ -310,9 +307,12 @@ public class FirebaseHandler {
                 .limit(to: 10)
                 .start(afterDocument: lastSnapshot)
             
+            print("Found: \(discoveries.count) discoveries")
+            
             completion?(.success(discoveries))
             
         }
+        
     }
     
     public func getNextDiscoveries(completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {

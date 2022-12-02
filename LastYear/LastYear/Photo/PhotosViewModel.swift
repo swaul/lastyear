@@ -34,7 +34,6 @@ public class PhotosViewModel: ObservableObject {
     
     init() {
         dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
-        load()
     }
     
     func load() {
@@ -59,6 +58,7 @@ public class PhotosViewModel: ObservableObject {
         
         $allPhotos.sink { [weak self] data in
             guard let countFound = self?.countFound else { return }
+            print("Found: \(countFound) allPhotos: \(data.count)")
             if countFound == data.count {
                 self?.fetchAndSafeImages()
             }
@@ -91,10 +91,10 @@ public class PhotosViewModel: ObservableObject {
         countFound = results.countOfAssets(with: .image)
         
 //        DispatchQueue.main.async {
-//            LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows(with: results.countOfAssets(with: .image))
+        LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows(with: results.countOfAssets(with: .image))
 //        }
 
-        print("Images found:", countFound)
+        print("Images found:", countFound!)
         
         if results.count > 0 {
             for i in 0..<results.count {
