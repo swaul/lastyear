@@ -17,7 +17,7 @@ class DiscoverViewModel: ObservableObject {
         print("Load Discovery")
         changeLoading(to: true)
 
-        FirebaseHandler.shared.getDiscoveries() { [weak self] result in
+        FirebaseHandler.shared.getDiscoveries(empty: discoveries.isEmpty) { [weak self] result in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)

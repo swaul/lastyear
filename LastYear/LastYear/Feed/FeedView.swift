@@ -17,9 +17,6 @@ struct FeedView: View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
-                .task {
-                    feedViewModel.getMemories()
-                }
             if feedViewModel.friendsMemories.isEmpty && !feedViewModel.loading {
                 Text("You need more friends..")
             } else {
@@ -68,7 +65,7 @@ struct FeedView: View {
                             .background(Color("backgroundColor"))
                             .cornerRadius(8)
                             .opacity(friendsViewModel.loading ? 0.0 : 1.0 )
-//                            .overlay(Color("backgroundColor").opacity(friendsViewModel.loading ? 1.0 : 0.0 ))
+                        //                            .overlay(Color("backgroundColor").opacity(friendsViewModel.loading ? 1.0 : 0.0 ))
                         if friendsViewModel.loading {
                             ProgressView()
                         }
@@ -80,8 +77,11 @@ struct FeedView: View {
                 Spacer()
             }
         }
+        .task {
+            feedViewModel.getMemories()
+        }
     }
-    
+
 }
 
 struct FeedView_Previews: PreviewProvider {

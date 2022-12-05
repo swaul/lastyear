@@ -278,10 +278,10 @@ public class FirebaseHandler {
     
     var nextDiscovery: Query? = nil
     
-    public func getDiscoveries(completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
+    public func getDiscoveries(empty: Bool, completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
         var first: Query
         
-        if let next = nextDiscovery {
+        if let next = nextDiscovery, !empty {
             first = next
         } else {
             first = firestorePublic
@@ -355,10 +355,10 @@ public class FirebaseHandler {
     
     var nextFriendsMemory: Query? = nil
     
-    public func getFriendsMemories(ids: [String], completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
+    public func getFriendsMemories(ids: [String], empty: Bool, completion: ((Result<[DiscoveryUpload], FirebaseError>) -> Void)?) {
         var first: Query
         
-        if let next = nextFriendsMemory {
+        if let next = nextFriendsMemory, !empty {
             first = next
         } else {
             first = firestoreFriends

@@ -123,13 +123,14 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func fetchAndSafeImages() {
-        Task  {
+        Task {
             for asset in allPhotos {
                 if let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: asset.assetID) {
                     appendImage(image: image, id: makeID(id: asset.assetID))
                     print("image appended", asset.id)
                 }
             }
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
 

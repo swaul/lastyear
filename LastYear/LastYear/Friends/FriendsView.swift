@@ -88,13 +88,6 @@ struct FriendsView: View {
                     switch selection {
                     case 2:
                         VStack {
-                            Text("Friend requests")
-                                .font(.largeTitle)
-                                .padding()
-                                .onAppear {
-                                    authService.requests = 0
-                                }
-                            Spacer()
                             if friendsViewModel.friendRequestUsers.isEmpty {
                                 Text("No friend requests")
                                     .font(Font.custom("Poppins-Regular", size: 20))
@@ -113,14 +106,13 @@ struct FriendsView: View {
                                     //                                .listStyle(.plain)
                                     //                                .scrollContentBackground(.hidden)
                                 }
+                                .onAppear {
+                                    authService.requests = 0
+                                }
                             }
                         }
                     case 1:
                         VStack {
-                            Text("Recommendations")
-                                .font(.largeTitle)
-                                .padding()
-                            Spacer()
                             if friendsViewModel.recommendations.isEmpty {
                                 HStack(spacing: 0) {
                                     Text("No friends yet, ")
@@ -154,10 +146,6 @@ struct FriendsView: View {
                         }
                     default:
                         VStack {
-                            Text("Your Friends")
-                                .font(.largeTitle)
-                                .padding()
-                            Spacer()
                             if friendsViewModel.friends.isEmpty {
                                 HStack(spacing: 0) {
                                     Text("No friends yet, ")

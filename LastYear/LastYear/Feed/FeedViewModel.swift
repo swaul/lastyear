@@ -10,16 +10,25 @@ import SwiftUI
 
 public class FeedViewModel: ObservableObject {
     
-    @Published var loading = true
+    @Published var loading = false
     @Published var friendsMemories: [DiscoveryUpload] = []
     
+    init() {
+        getMemories()
+    }
+    
     func getMemories() {
+        guard !loading else { return }
         print("Load Friends Memories")
+
         changeLoading(to: true)
         
-        guard let user = AuthService.shared.loggedInUser else { return }
+        guard let user = AuthService.shared.loggedInUser else {
+            self.changeLoading(to: false)
+            return
+        }
         
-        FirebaseHandler.shared.getFriendsMemories(ids: user.friends) { [weak self] result in
+        FirebaseHandler.shared.getFriendsMemories(ids: user.friends, empty: friendsMemories.isEmpty) { [weak self] result in
             switch result {
             case .failure(let error):
                 print(error.localizedDescription)
