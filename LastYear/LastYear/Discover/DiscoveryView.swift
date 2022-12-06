@@ -30,7 +30,7 @@ struct DiscoveryView: View {
     @State var selectedEmoji: Emoji? = nil
     @State var screen: CGRect
     @State var reactions: [Reaction: Int]
-    
+    @State var reacting: Bool = false
     @State var searching: Bool = false
     
     @State var selectedDetent: PresentationDetent = .fraction(0.3)
@@ -42,9 +42,9 @@ struct DiscoveryView: View {
     @State var showDetail: Bool = false
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center) {
             userView
-            
+                .padding(.horizontal, 8)
             ZStack {
                 Color.white
                 if let image = image {
@@ -61,29 +61,35 @@ struct DiscoveryView: View {
             .aspectRatio(0.8, contentMode: .fit)
             .cornerRadius(8)
             .onChange(of: selectedEmoji, perform: { newValue in
-                guard let localUser = AuthService.shared.loggedInUser, let newValue else { return }
+                guard let localUser = AuthService.shared.loggedInUser, let newValue, !reacting else { return }
+                reacting = true
                 let id = UUID().uuidString
 
                 FirebaseHandler.shared.changeReaction(id: id, selfId: localUser.id, user: self.id, reaction: newValue.string, remove: false) { result in
                     switch result {
                     case .success(()):
                         print("reacted!")
-                        guard let selectedEmoji else { return }
+                        guard let selectedEmoji else {
+                            reacting = false
+                            return
+                        }
                         if let reaction = reactions.first(where: { $0.key.reaction == selectedEmoji.string })?.key {
                             withAnimation {
                                 reactions[reaction]! += 1
+                                reacting = false
                             }
                         } else {
                             withAnimation {
                                 reactions[Reaction(id: UUID().uuidString, reaction: selectedEmoji.string, user: localUser.id)] = 1
+                                reacting = false
                             }
                         }
                     case .failure(let error):
                         print(error.localizedDescription)
+                        reacting = false
                     }
                 }
             })
-            
             if let localUser = AuthService.shared.loggedInUser {
                 HStack {
                     Button {
@@ -92,68 +98,78 @@ struct DiscoveryView: View {
                     } label: {
                         likeImage
                             .aspectRatio(contentMode: .fit)
-                        
+                            .frame(minHeight: 40)
                     }
                     getLikes()
                     
-                    ForEach(reactions.sorted(by: { lhs, rhs in
-                        lhs.value < rhs.value
-                    }), id: \.key) { key, value in
-                        HStack(spacing: 0) {
-                            Text(key.reaction)
-                                .font(.system(size: 28))
-                                .onTapGesture {
-                                    guard let localUser = AuthService.shared.loggedInUser else { return }
-                                    if key.user == localUser.id {
-                                        FirebaseHandler.shared.changeReaction(id: key.id, selfId: localUser.id, user: id, reaction: key.reaction, remove: true) { result in
-                                            switch result {
-                                            case .success(()):
-                                                print("reacted!")
-                                                if let reaction = reactions.first(where: { $0.key.reaction == key.reaction })?.key {
-                                                    withAnimation {
-                                                        reactions.removeValue(forKey: reaction)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(reactions.sorted(by: { lhs, rhs in
+                                lhs.value < rhs.value
+                            }), id: \.key) { key, value in
+                                HStack(spacing: 0) {
+                                    Text(key.reaction)
+                                        .font(.system(size: 28))
+                                        .onTapGesture {
+                                            guard let localUser = AuthService.shared.loggedInUser else { return }
+                                            if key.user == localUser.id {
+                                                FirebaseHandler.shared.changeReaction(id: key.id, selfId: localUser.id, user: id, reaction: key.reaction, remove: true) { result in
+                                                    switch result {
+                                                    case .success(()):
+                                                        print("removed reaction!")
+                                                        if let reaction = reactions.first(where: { $0.key.reaction == key.reaction })?.key {
+                                                            withAnimation {
+                                                                reactions.removeValue(forKey: reaction)
+                                                            }
+                                                        }
+                                                    case .failure(let error):
+                                                        print(error.localizedDescription)
                                                     }
                                                 }
-                                            case .failure(let error):
-                                                print(error.localizedDescription)
-                                            }
-                                        }
-                                    } else {
-                                        FirebaseHandler.shared.changeReaction(id: id, selfId: localUser.id, user: self.id, reaction: key.reaction, remove: false) { result in
-                                            switch result {
-                                            case .success(()):
-                                                print("reacted!")
-                                                guard let selectedEmoji else { return }
-                                                if let reaction = reactions.first(where: { $0.key.reaction == selectedEmoji.string })?.key {
-                                                    withAnimation {
-                                                        reactions[reaction]! += 1
-                                                    }
-                                                } else {
-                                                    withAnimation {
-                                                        reactions[Reaction(id: UUID().uuidString, reaction: selectedEmoji.string, user: localUser.id)] = 1
+                                            } else {
+                                                FirebaseHandler.shared.changeReaction(id: id, selfId: localUser.id, user: self.id, reaction: key.reaction, remove: false) { result in
+                                                    switch result {
+                                                    case .success(()):
+                                                        print("reacted too!")
+                                                        guard let selectedEmoji else { return }
+                                                        if let reaction = reactions.first(where: { $0.key.reaction == selectedEmoji.string })?.key {
+                                                            withAnimation {
+                                                                reactions[reaction]! += 1
+                                                            }
+                                                        } else {
+                                                            withAnimation {
+                                                                reactions[Reaction(id: UUID().uuidString, reaction: selectedEmoji.string, user: localUser.id)] = 1
+                                                            }
+                                                        }
+                                                    case .failure(let error):
+                                                        print(error.localizedDescription)
                                                     }
                                                 }
-                                            case .failure(let error):
-                                                print(error.localizedDescription)
                                             }
                                         }
+                                    if value > 1 {
+                                        Text(String(value))
+                                            .font(.system(size: 20))
                                     }
                                 }
-                            if value > 1 {
-                                Text(String(value))
-                                    .font(.system(size: 20))
+                                .padding(2)
+                                .background(key.user == localUser.id ? Color.blue.opacity(0.2) : Color("gray"))
+                                .cornerRadius(8)
                             }
                         }
-                        .padding(2)
-                        .background(key.user == localUser.id ? Color.blue.opacity(0.2) : Color("gray"))
-                        .cornerRadius(8)
                     }
-                    
                     Spacer()
                 }
+                .padding(.horizontal, 8)
+            } else {
+                HStack {
+                    likeImage
+                        .aspectRatio(contentMode: .fit)
+                    getLikes()
+                }
+                .padding(.horizontal, 8)
             }
         }
-        .padding()
         .sheet(isPresented: $showEmoji) {
             HappyPanel(selectedEmoji: $selectedEmoji, isSearching: $searching)
                 .presentationDetents([.fraction(0.5), .large], selection: $selectedDetent)
@@ -179,7 +195,7 @@ struct DiscoveryView: View {
                 like()
             }
         }
-        .onLongPressGesture {
+        .onLongPressGesture(minimumDuration: 0.25) {
             withAnimation {
                 showEmoji.toggle()
             }

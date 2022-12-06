@@ -35,7 +35,7 @@ public struct Reaction: Decodable, Hashable, Identifiable, Equatable {
     }
     
     public static func == (lhs: Reaction, rhs: Reaction) -> Bool {
-        lhs.reaction == rhs.reaction
+        lhs.id == rhs.id
     }
 }
 

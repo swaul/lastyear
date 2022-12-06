@@ -103,8 +103,6 @@ struct FriendsView: View {
                                             .padding(.horizontal, 16)
                                             .padding(.vertical, 8)
                                     }
-                                    //                                .listStyle(.plain)
-                                    //                                .scrollContentBackground(.hidden)
                                 }
                                 .onAppear {
                                     authService.requests = 0

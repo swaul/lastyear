@@ -96,7 +96,18 @@ struct DiscoverView: View {
     }
     
     func reactionsMapped(reactions: [Reaction]) -> [Reaction: Int] {
-        reactions.reduce(into: [:]) { $0[$1, default: 0] += 1 }
+        let myGroup = DispatchGroup()
+
+        var dict = [Reaction: Int]()
+        for reaction in reactions {
+            if let found = dict.first(where: { $0.key.reaction == reaction.reaction }) {
+                dict[found.key]! += 1
+            } else {
+                dict[reaction] = 1
+            }
+        }
+        
+        return dict
     }
 }
 
