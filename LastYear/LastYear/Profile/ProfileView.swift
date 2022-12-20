@@ -19,6 +19,8 @@ struct ProfileView: View {
     @State var uiImage: UIImage? = nil
     @State var noImage: Bool = false
     
+    var options: [MenuSection] = optionset
+    
     var body: some View {
         ZStack {
             Color("backgroundColor")
@@ -27,49 +29,77 @@ struct ProfileView: View {
                 Text("Settings")
                     .font(Font.custom("Poppins-Bold", size: 26))
                     .foregroundColor(.white)
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 12) {
+                List {
+                    NavigationLink {
+                        UserView(noImage: $noImage, uiImage: $uiImage, user: user ?? nil)
+                    } label: {
                         userView
-                            .onTapGesture {
-                                userViewShowing = true
+                    }
+                    ForEach(options) { option in
+                        Section(option.name) {
+                            ForEach(option.items) { item in
+                                if item.options.isEmpty {
+                                    Button {
+                                        print(item.name)
+                                    } label: {
+                                        Text(item.name)
+                                            .font(Font.custom("Poppins-Regular", size: 20))
+                                            .foregroundColor(.white)
+                                    }
+                                } else {
+                                    NavigationLink {
+                                        SettingsDetailView(item: item, user: user!)
+                                    } label: {
+                                        Text(item.name)
+                                            .font(Font.custom("Poppins-Regular", size: 20))
+                                            .foregroundColor(.white)
+                                    }
+                                }
                             }
-                        settingsView
-                            .padding(.vertical)
-                        aboutView
-                            .padding(.vertical)
-                        Spacer(minLength: 32)
+                        }
+                    }
+                    
+                    Spacer(minLength: 60)
+                        .listRowBackground(Color.clear)
+                    
+                    Section {
                         Button {
-                            logout()
+                            print("Logout")
                         } label: {
                             HStack {
                                 Spacer()
                                 Text("Sign out")
-                                    .font(Font.custom("Poppins-Regular", size: 16))
+                                    .font(Font.custom("Poppins-Regular", size: 20))
                                     .foregroundColor(.red)
                                 Spacer()
                             }
-                            .padding()
-                            .background(Color.red.opacity(0.1))
-                            .cornerRadius(8)
                         }
-                        .padding(.vertical)
-
+                        .listRowBackground(Color.red.opacity(0.2))
+                    }
+                    Section {
+                        Button {
+                            print("Delete Acc")
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Delete Account")
+                                    .font(Font.custom("Poppins-Regular", size: 20))
+                                    .foregroundColor(.red)
+                                Spacer()
+                            }
+                        }
+                        .listRowBackground(Color.red.opacity(0.2))
                     }
                 }
-                .padding(.horizontal, 7)
-                .sheet(isPresented: $userViewShowing) {
-                    if let user = AuthService.shared.loggedInUser {
-                        UserView(noImage: $noImage, uiImage: $uiImage, user: user)
-                    }
-                }
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
-            .padding(8)
             if networkMonitor.status == .disconnected {
                 ZStack {
                     Color.red.ignoresSafeArea()
                     VStack {
                         NetworkError()
-                     Spacer()
+                        Spacer()
                     }
                 }
                 .transition(.move(edge: .top))
@@ -105,12 +135,7 @@ struct ProfileView: View {
                             getImage()
                         }
                     Spacer()
-                    Image(systemName: "chevron.right")
                 }
-                    .padding()
-                    .background(Color("gray"))
-                    .cornerRadius(8)
-
             )
             
         } else {
@@ -121,106 +146,6 @@ struct ProfileView: View {
         }
     }
     
-    var settingsView: some View {
-        VStack(alignment: .leading) {
-            Text("SETTIINGS")
-                .font(Font.custom("Poppins-Regular", size: 16))
-                .foregroundColor(.white)
-            
-            HStack {
-                Image(systemName: "bell.badge")
-                Text("notifications")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-            
-            HStack {
-                Image(systemName: "globe")
-                Text("language")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-            
-            HStack {
-                Image(systemName: "lock")
-                Text("privacy")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-        }
-    }
-    
-    var aboutView: some View {
-        VStack(alignment: .leading) {
-            Text("ABOUT")
-                .font(Font.custom("Poppins-Regular", size: 16))
-                .foregroundColor(.white)
-            
-            HStack {
-                Image(systemName: "star")
-                Text("rate LastYear")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-            
-            HStack {
-                Image(systemName: "questionmark.circle")
-                Text("help")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-            
-            HStack {
-                Image(systemName: "info.circle")
-                Text("about us")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-            
-            HStack {
-                Image(systemName: "square.and.arrow.up")
-                Text("share LastYear")
-                    .font(Font.custom("Poppins-Regular", size: 20))
-                    .foregroundColor(.white)
-                Spacer()
-                Image(systemName: "chevron.right")
-            }
-            .padding()
-            .background(Color("gray"))
-            .cornerRadius(8)
-        }
-    }
-
     func logout() {
         FirebaseHandler.shared.logout { result in
             switch result {
@@ -285,3 +210,95 @@ struct ProfileView_Previews: PreviewProvider {
         ProfileView()
     }
 }
+
+struct MenuSection: Identifiable {
+    var id: String
+    var name: String
+    var items: [MenuItem]
+}
+
+struct MenuItem: Equatable, Identifiable {
+    static func == (lhs: MenuItem, rhs: MenuItem) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    var id: String
+    var name: String
+    var options: [Option]
+}
+
+class Option: Identifiable, ObservableObject {
+    var id: String
+    var name: String
+    var description: String?
+    var isDBStored: Bool
+    var hasSwitch: Bool
+    @State var isOn: Bool = false
+    
+    init(id: String, name: String, description: String?, hasSwitch: Bool, isDBStored: Bool) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.hasSwitch = hasSwitch
+        self.isDBStored = isDBStored
+    }
+}
+
+let optionset = [
+    MenuSection(
+        id: "settings",
+        name: "Settings",
+        items: [
+            MenuItem(
+                id: "notifications",
+                name: "notifications",
+                options: [
+                    Option(
+                        id: "notificationstatus",
+                        name: "status",
+                        description: "allow notifications",
+                        hasSwitch: true,
+                        isDBStored: false
+                    )
+                ]
+            ),
+            MenuItem(
+                id: "privacy",
+                name: "privacy",
+                options: [
+                    Option(
+                        id: "apptracking",
+                        name: "App tracking",
+                        description: "This allows us to track crashes and actions of your app, to fix problems in upcoming updates!",
+                        hasSwitch: true,
+                        isDBStored: true
+                    )
+                ]
+            )
+        ]),
+    MenuSection(
+        id: "about",
+        name: "About",
+        items: [
+            MenuItem(
+                id: "rateLastYear",
+                name: "rate LastYear",
+                options: []
+            ),
+            MenuItem(
+                id: "help",
+                name: "help",
+                options: []
+            ),
+            MenuItem(
+                id: "aboutus",
+                name: "about us",
+                options: []
+            ),
+            MenuItem(
+                id: "shareLastYear",
+                name: "share LastYear",
+                options: []
+            ),
+        ])
+]

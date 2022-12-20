@@ -64,6 +64,13 @@ struct MainView: View {
                     }
                     .tag(4)
             }
+            .task {
+                if let userDefaults = UserDefaults(suiteName: appGroupName) {
+                    if let asked = userDefaults.value(forKey: "permissionAsked") as? Bool, asked {
+                        LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows()
+                    }
+                }
+            }
         }
     }
     

@@ -89,6 +89,7 @@ struct FriendsView: View {
                     case 2:
                         VStack {
                             if friendsViewModel.friendRequestUsers.isEmpty {
+                                Spacer()
                                 Text("No friend requests")
                                     .font(Font.custom("Poppins-Regular", size: 20))
                                     .foregroundColor(.white)
@@ -112,6 +113,7 @@ struct FriendsView: View {
                     case 1:
                         VStack {
                             if friendsViewModel.recommendations.isEmpty {
+                                Spacer()
                                 HStack(spacing: 0) {
                                     Text("No friends yet, ")
                                         .font(Font.custom("Poppins-Regular", size: 20))
@@ -145,6 +147,7 @@ struct FriendsView: View {
                     default:
                         VStack {
                             if friendsViewModel.friends.isEmpty {
+                                Spacer()
                                 HStack(spacing: 0) {
                                     Text("No friends yet, ")
                                         .font(Font.custom("Poppins-Regular", size: 20))

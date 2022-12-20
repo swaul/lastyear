@@ -106,8 +106,14 @@ struct NotificationPermissionView: View {
                     PermissionHandler.shared.notDetermined = false
                 }
                 LocalNotificationCenter.shared.scheduleFirst()
+                if let userDefaults = UserDefaults(suiteName: appGroupName) {
+                    userDefaults.set(true, forKey: "permissionAsked")
+                }
                 presentationMode.wrappedValue.dismiss()
             } else {
+                if let userDefaults = UserDefaults(suiteName: appGroupName) {
+                    userDefaults.set(true, forKey: "permissionAsked")
+                }
                 presentationMode.wrappedValue.dismiss()
             }
         }

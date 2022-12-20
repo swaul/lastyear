@@ -27,7 +27,7 @@ class LocalNotificationCenter: NSObject, ObservableObject {
         content.sound = UNNotificationSound.default
         
         // show this notification five seconds from now
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
         
         // choose a random identifier
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
@@ -36,38 +36,33 @@ class LocalNotificationCenter: NSObject, ObservableObject {
         center.add(request)
     }
     
-    func checkPermissionAndScheduleTomorrows(with count: Int) {
+    func checkPermissionAndScheduleTomorrows() {
         center.getNotificationSettings { settings in
             guard settings.authorizationStatus == .authorized else { return }
-            self.scheduleTomorrows(with: count)
+            self.scheduleTomorrowsWithFotos(tomorrow: Date.tomorrow)
         }
     }
     
-    func scheduleTomorrows(with count: Int) {
-        let today = Date.now
-        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-        
-        center.getPendingNotificationRequests { requests in
-            let calendarNotis = requests.map { $0.trigger as? UNCalendarNotificationTrigger }
-            let scheduled = calendarNotis.contains(where: {
-                guard let date = $0?.nextTriggerDate() else { return false }
-                return Calendar.current.isDate(date, inSameDayAs: tomorrow)
-            })
-            
-            if !scheduled {
-                self.scheduleTomorrowsWithFotos(tomorrow: tomorrow, imageCount: count)
-            }
-        }
-    }
-    
-    func scheduleTomorrowsWithFotos(tomorrow: Date, imageCount: Int) {
+    func scheduleTomorrowsWithFotos(tomorrow: Date) {
         let dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         let dateTomorrowOYA = Calendar.current.date(byAdding: .day, value: 1, to: dateOneYearAgo!)
         guard let lastYearTomorrow = dateTomorrowOYA else { return }
+                
+        let oneBeforeLastYear = Calendar.current.date(byAdding: .day, value: -1, to: lastYearTomorrow)!.endOfDay
+        let oneAfterLastYear = Calendar.current.date(byAdding: .day, value: 1, to: lastYearTomorrow)!.startOfDay
+        
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = false
+        requestOptions.deliveryMode = .highQualityFormat
+        
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        fetchOptions.predicate = NSPredicate(format: "creationDate > %@ && creationDate < %@", oneBeforeLastYear as NSDate, oneAfterLastYear as NSDate)
         
         let content = UNMutableNotificationContent()
         
-        content.title = "You have \(imageCount) pictures to look back on from \(Formatters.dateFormatter.string(from: lastYearTomorrow))"
+        let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        content.title = "You have \(results.count) pictures to look back on from \(Formatters.dateFormatter.string(from: lastYearTomorrow))"
         content.subtitle = "Take a look and share it with your friends!"
         content.sound = UNNotificationSound.default
         
@@ -91,4 +86,15 @@ extension LocalNotificationCenter: UNUserNotificationCenterDelegate {
         completionHandler([.badge, .banner, .sound])
     }
     
+}
+
+extension Date {
+    static var tomorrow: Date {
+        let calendar = Calendar.current
+        let today = Date()
+        let midnight = calendar.startOfDay(for: today)
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: midnight)!
+        
+        return tomorrow
+    }
 }

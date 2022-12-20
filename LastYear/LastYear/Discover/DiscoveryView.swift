@@ -119,7 +119,13 @@ struct DiscoveryView: View {
                                                         print("removed reaction!")
                                                         if let reaction = reactions.first(where: { $0.key.reaction == key.reaction })?.key {
                                                             withAnimation {
-                                                                reactions.removeValue(forKey: reaction)
+                                                                if let count = reactions[reaction] {
+                                                                    if count > 0 {
+                                                                        reactions[reaction]! -= 1
+                                                                    } else {
+                                                                        reactions.removeValue(forKey: reaction)
+                                                                    }
+                                                                }
                                                             }
                                                         }
                                                     case .failure(let error):
@@ -158,6 +164,7 @@ struct DiscoveryView: View {
                             }
                         }
                     }
+                    .padding(.horizontal, 8)
                     Spacer()
                 }
                 .padding(.horizontal, 8)

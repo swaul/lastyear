@@ -34,6 +34,17 @@ public class PhotosViewModel: ObservableObject {
     
     init() {
         dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
+        removeOld()
+    }
+    
+    func removeOld() {
+        if let userDefaults = UserDefaults(suiteName: appGroupName) {
+            if let data = userDefaults.value(forKey: userDefaultsPhotosKey) as? Data {
+                let decoded = try! JSONDecoder().decode([String].self, from: data)
+                
+                print(decoded)
+            }
+        }
     }
     
     func load() {
@@ -91,7 +102,7 @@ public class PhotosViewModel: ObservableObject {
         countFound = results.countOfAssets(with: .image)
         
 //        DispatchQueue.main.async {
-        LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows(with: results.countOfAssets(with: .image))
+//        LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows(with: results.countOfAssets(with: .image))
 //        }
 
         print("Images found:", countFound!)
@@ -131,6 +142,7 @@ public class PhotosViewModel: ObservableObject {
                 }
             }
             WidgetCenter.shared.reloadAllTimelines()
+            print("reloading all timelines")
         }
     }
 
@@ -139,7 +151,7 @@ public class PhotosViewModel: ObservableObject {
         // Save image in userdefaults
         if let userDefaults = UserDefaults(suiteName: appGroupName) {
 
-            let resized = resizeImage(image: image, targetSize: CGSize(width: 1404, height: 3038))
+            let resized = resizeImage(image: image, targetSize: CGSize(width: 702, height: 1519))
 
             if let jpegRepresentation = resized.jpegData(compressionQuality: 0) {
 

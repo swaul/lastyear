@@ -34,7 +34,7 @@ struct Provider: TimelineProvider {
             completion(timeline)
             return
         }
-        // testing for 5 seconds
+        
         let timeRangeInSecond = imageIds.count * 60 * 60
         
         for index in 0 ..< imageIds.count {
@@ -240,14 +240,4 @@ struct LYwidget_Previews: PreviewProvider {
         LYwidgetEntryView(entry: SimpleEntry(date: Date.now, dateLastYear: Date.now, imageID: "", dateString: "", numberOfIds: 12, imageIds: []))
             .previewContext(WidgetPreviewContext(family: .systemLarge))
     }
-}
-
-extension Color {
-    
-    public static var random: Color {
-        return Color(red: .random(in: 0...1),
-                     green: .random(in: 0...1),
-                     blue: .random(in: 0...1))
-    }
-    
 }

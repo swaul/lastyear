@@ -16,78 +16,71 @@ struct UserView: View {
     
     @Binding var uiImage: UIImage?
     @State private var showSheet = false
-    @State var user: LYUser
+    @State var user: LYUser?
                 
     var body: some View {
-        VStack {
-            Text("Hello \(user.userName)")
-                .font(Font.custom("Poppins-Bold", size: 26))
-                .foregroundColor(.white)
-                .padding()
-            if let uiImage {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(Circle())
+        if let user = user {
+            VStack {
+                Text("Hello \(user.userName)")
+                    .font(Font.custom("Poppins-Bold", size: 26))
+                    .foregroundColor(.white)
+                    .padding()
+                if let uiImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(Circle())
+                        .onTapGesture {
+                            showSheet = true
+                        }
+                } else if noImage {
+                    Image(uiImage: UIImage(named: "fallback")!)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(Circle())
+                        .onTapGesture {
+                            showSheet = true
+                        }
+                } else {
+                    ZStack {
+                        Circle()
+                            .foregroundColor(.gray)
+                            .aspectRatio(1, contentMode: .fit)
+                        ProgressView()
+                    }
+                    .padding()
                     .onTapGesture {
                         showSheet = true
                     }
-            } else if noImage {
-                Image(uiImage: UIImage(named: "fallback")!)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(Circle())
-                    .onTapGesture {
-                        showSheet = true
-                    }
-            } else {
-                ZStack {
-                    Circle()
-                        .foregroundColor(.gray)
-                        .aspectRatio(1, contentMode: .fit)
-                    ProgressView()
                 }
-                .padding()
-                .onTapGesture {
-                    showSheet = true
-                }
-            }
-            Spacer()
-                .fullScreenCover(isPresented: $showSheet) {
-                    ImagePicker(selectedImage: $uiImage)
-                }
-            Button {
-                savePP()
-            } label: {
-                HStack {
-                    Spacer()
-                    Text("Save")
-                        .font(Font.custom("Poppins-Bold", size: 16))
-                        .foregroundColor(Color("backgroundColor"))
-                        .padding()
-                    Spacer()
-                    
-                }
-            }
-            .background(Color("primary"))
-            .cornerRadius(8)
-            .padding(.vertical)
-            HStack {
                 Spacer()
+                    .fullScreenCover(isPresented: $showSheet) {
+                        ImagePicker(selectedImage: $uiImage)
+                    }
                 Button {
-                    print("Delete acc")
+                    savePP()
                 } label: {
-                    Text("delete account")
-                        .font(Font.custom("Poppins-Bold", size: 16))
-                        .foregroundColor(.red)
-                        .padding()
+                    HStack {
+                        Spacer()
+                        Text("Save")
+                            .font(Font.custom("Poppins-Bold", size: 16))
+                            .foregroundColor(Color("backgroundColor"))
+                            .padding()
+                        Spacer()
+                        
+                    }
                 }
-                Spacer()
+                .background(Color("primary"))
+                .cornerRadius(8)
+                .padding(.vertical)
             }
-            .background(Color.red.opacity(0.2))
-            .cornerRadius(8)
+            .padding()
+        } else {
+            EmptyView()
+                .onAppear {
+                    AuthService.shared.logOut()
+                }
         }
-        .padding()
     }
     
     func cropImage2(image: UIImage?) -> UIImage? {

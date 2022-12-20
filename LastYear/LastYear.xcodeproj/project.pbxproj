@@ -98,6 +98,9 @@
 		9ECC338D29203B6B0007C9C9 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC338C29203B6B0007C9C9 /* ImageView.swift */; };
 		9ECC3392292189D10007C9C9 /* NetworkMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC3391292189D10007C9C9 /* NetworkMonitor.swift */; };
 		9ECC339429218B8C0007C9C9 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ECC339329218B8C0007C9C9 /* NetworkError.swift */; };
+		9ED25DE829487EAF00438645 /* NotificationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED25DE729487EAF00438645 /* NotificationSettingsView.swift */; };
+		9ED25DEA29488A8000438645 /* SettingsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED25DE929488A8000438645 /* SettingsDetailView.swift */; };
+		9ED25DEC2948A35300438645 /* SettingsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED25DEB2948A35300438645 /* SettingsRow.swift */; };
 		9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */; };
 		9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD18A428EE23F2004DC8A6 /* ShareView.swift */; };
 /* End PBXBuildFile section */
@@ -210,6 +213,9 @@
 		9ECC338C29203B6B0007C9C9 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		9ECC3391292189D10007C9C9 /* NetworkMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitor.swift; sourceTree = "<group>"; };
 		9ECC339329218B8C0007C9C9 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
+		9ED25DE729487EAF00438645 /* NotificationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingsView.swift; sourceTree = "<group>"; };
+		9ED25DE929488A8000438645 /* SettingsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailView.swift; sourceTree = "<group>"; };
+		9ED25DEB2948A35300438645 /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToiMessageView.swift; sourceTree = "<group>"; };
 		9EDD18A428EE23F2004DC8A6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -459,8 +465,11 @@
 		9EBEE6F228E5E45E00F9FCCC /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				9ED25DE929488A8000438645 /* SettingsDetailView.swift */,
 				9EBEE6F028E5E15600F9FCCC /* PrivacyView.swift */,
 				9EAADB2828E2FBD000F93097 /* SettingsView.swift */,
+				9ED25DE729487EAF00438645 /* NotificationSettingsView.swift */,
+				9ED25DEB2948A35300438645 /* SettingsRow.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -661,6 +670,7 @@
 			files = (
 				9ECC335F2918EEC90007C9C9 /* FriendsView.swift in Sources */,
 				9EBDE93328E18DCE00264AF3 /* PermissionView.swift in Sources */,
+				9ED25DEA29488A8000438645 /* SettingsDetailView.swift in Sources */,
 				9ECC336A291AEFF90007C9C9 /* DiscoveryView.swift in Sources */,
 				9EBEE6F128E5E15600F9FCCC /* PrivacyView.swift in Sources */,
 				9EBDE8E928DDED0800264AF3 /* WelcomeView.swift in Sources */,
@@ -677,6 +687,7 @@
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
+				9ED25DE829487EAF00438645 /* NotificationSettingsView.swift in Sources */,
 				9E272811290B357D000C2E64 /* FeedView.swift in Sources */,
 				9EBDE93528E195DD00264AF3 /* PhotoDetailView.swift in Sources */,
 				9ECC33532918EB610007C9C9 /* DiscoverView.swift in Sources */,
@@ -684,6 +695,7 @@
 				9E01BF202924D9E300749C29 /* FriendRowView.swift in Sources */,
 				9EBDE92F28DE54BA00264AF3 /* AuthService.swift in Sources */,
 				9EBDE8D828DDD58A00264AF3 /* MainView.swift in Sources */,
+				9ED25DEC2948A35300438645 /* SettingsRow.swift in Sources */,
 				9ECC336829192CE30007C9C9 /* DiscoveryUpload.swift in Sources */,
 				9E6461A72922076200F4141C /* UserView.swift in Sources */,
 				9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */,

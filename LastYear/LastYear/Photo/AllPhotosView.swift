@@ -24,45 +24,42 @@ struct AllPhotosView: View {
     ]
     
     var body: some View {
-        ZStack {
-            Color("backgroundColor")
-                .ignoresSafeArea()
-            VStack {
-                LogoView(size: 35)
-                ZStack {
-                    Text(photoViewModel.formattedDateOneYearAgo)
-                        .font(Font.custom("Poppins-Regular", size: 24))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                    HStack {
-                        Spacer()
-                        if selecting {
-                            Button {
-                                withAnimation {
-                                    selecting = false
-                                }
-                            } label: {
-                                Text("Cancel")
-                                    .padding(.horizontal, 16)
+        VStack {
+            LogoView(size: 35)
+            ZStack {
+                Text(photoViewModel.formattedDateOneYearAgo)
+                    .font(Font.custom("Poppins-Regular", size: 24))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                HStack {
+                    Spacer()
+                    if selecting {
+                        Button {
+                            withAnimation {
+                                selecting = false
                             }
-                        } else {
-                            Button {
-                                photoViewModel.reloadPhotos()
-                            } label: {
-                                Image(systemName: "arrow.clockwise")
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 16)
-                            }
+                        } label: {
+                            Text("Cancel")
+                                .padding(.horizontal, 16)
+                        }
+                    } else {
+                        Button {
+                            photoViewModel.reloadPhotos()
+                        } label: {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 16)
                         }
                     }
                 }
-                ScrollView {
-                    VStack {
-                        let sortedImages = photoViewModel.allPhotos.sorted()
-                        LazyVGrid(columns: layout, spacing: 0) {
-                            ForEach(sortedImages.filter { $0.photoType != .screenshot }) { photo in
-                                PhotoCard(asset: photo, selecting: $selecting)
-                                    .padding(4)
+            }
+            ScrollView {
+                VStack {
+                    let sortedImages = photoViewModel.allPhotos.sorted()
+                    LazyVGrid(columns: layout, spacing: 0) {
+                        ForEach(sortedImages.filter { $0.photoType != .screenshot }) { photo in
+                            PhotoCard(asset: photo, selecting: $selecting)
+                                .padding(4)
                                 .onTapGesture {
                                     withAnimation {
                                         if selecting {
@@ -77,33 +74,33 @@ struct AllPhotosView: View {
                                     photo.selected = true
                                     selecting = true
                                 }
-                            }
                         }
-                        .padding(12)
-                        if !photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.isEmpty {
-                            Button {
-                                withAnimation {
-                                    expanded.toggle()
-                                }
-                            } label: {
-                                HStack {
-                                    Text("Show screenshots")
-                                        .font(Font.custom("Poppins-Regular", size: 18))
-                                        .foregroundColor(Color.white)
-                                    Spacer()
-                                    Image(systemName: "chevron.down")
-                                        .foregroundColor(.white)
-                                        .rotationEffect(Angle(degrees: expanded ? 180 : 0))
-                                }
-                                .padding(.horizontal, 12)
+                    }
+                    .padding(12)
+                    if !photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.isEmpty {
+                        Button {
+                            withAnimation {
+                                expanded.toggle()
                             }
-                            .contentShape(Rectangle())
-                            if expanded {
-                                let sortedScreenshots = photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()
-                                LazyVGrid(columns: layout, spacing: 0) {
-                                    ForEach(sortedScreenshots) { photo in
-                                        PhotoCard(asset: photo, selecting: $selecting)
-                                            .padding(4)
+                        } label: {
+                            HStack {
+                                Text("Show screenshots")
+                                    .font(Font.custom("Poppins-Regular", size: 18))
+                                    .foregroundColor(Color.white)
+                                Spacer()
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(.white)
+                                    .rotationEffect(Angle(degrees: expanded ? 180 : 0))
+                            }
+                            .padding(.horizontal, 12)
+                        }
+                        .contentShape(Rectangle())
+                        if expanded {
+                            let sortedScreenshots = photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()
+                            LazyVGrid(columns: layout, spacing: 0) {
+                                ForEach(sortedScreenshots) { photo in
+                                    PhotoCard(asset: photo, selecting: $selecting)
+                                        .padding(4)
                                         .onTapGesture {
                                             withAnimation {
                                                 if selecting {
@@ -118,21 +115,20 @@ struct AllPhotosView: View {
                                             photo.selected = true
                                             selecting = true
                                         }
-                                    }
                                 }
-                                .padding(12)
                             }
+                            .padding(12)
                         }
-                        Spacer()
-                        VStack {
-                            Text("\(photoViewModel.countFound ?? 0) Photos found for " + photoViewModel.formattedDateOneYearAgo)
+                    }
+                    Spacer()
+                    VStack {
+                        Text("\(photoViewModel.countFound ?? 0) Photos found for " + photoViewModel.formattedDateOneYearAgo)
+                            .font(Font.custom("Poppins-Regular", size: 18))
+                            .foregroundColor(Color("primary"))
+                        if photoViewModel.requestsFailed > 0 {
+                            Text("\(photoViewModel.requestsFailed) Photos couldn't be imported")
                                 .font(Font.custom("Poppins-Regular", size: 18))
-                                .foregroundColor(Color("primary"))
-                            if photoViewModel.requestsFailed > 0 {
-                                Text("\(photoViewModel.requestsFailed) Photos couldn't be imported")
-                                    .font(Font.custom("Poppins-Regular", size: 18))
-                                    .foregroundColor(.red)
-                            }
+                                .foregroundColor(.red)
                         }
                     }
                 }
@@ -154,8 +150,8 @@ struct AllPhotosView: View {
                 byLocalIdentifier: asset,
                 targetSize: targetSize
             ) else {
-                return
-            }
+            return
+        }
         completion?(Image(uiImage: uiImage))
     }
 }

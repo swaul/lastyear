@@ -11,7 +11,7 @@ import Photos
 struct PhotoCard: View {
     
     @ObservedObject var asset: PhotoData
-    
+    @State var loading: Bool = false
     @State private var image: Image?
     @Binding var selecting: Bool
     
@@ -65,6 +65,19 @@ struct PhotoCard: View {
                         }
                     }
                 }
+            } else if loading == false {
+                ZStack {
+                    Rectangle()
+                        .foregroundColor(.gray)
+                        .aspectRatio(1, contentMode: .fit)
+                    Image(systemName: "exclamationmark.circle")
+                        .foregroundColor(.red)
+                        .onTapGesture {
+                            Task {
+                                await loadImageAsset()
+                            }
+                        }
+                }
             } else {
                 // Otherwise, show a gray rectangle with a
                 // spinning progress view
@@ -95,14 +108,17 @@ struct PhotoCard: View {
     func loadImageAsset(
         targetSize: CGSize = PHImageManagerMaximumSize
     ) async {
+        loading = true
         guard let uiImage = try? await PhotoLibraryService.shared
             .fetchImage(
                 byLocalIdentifier: asset.assetID,
                 targetSize: targetSize
             ) else {
+            loading = false
                 image = nil
                 return
             }
+        loading = false
         image = Image(uiImage: uiImage)
     }
 }
