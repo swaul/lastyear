@@ -285,7 +285,7 @@ public class FirebaseHandler {
             first = next
         } else {
             first = firestorePublic
-                .limit(to: 10)
+                .limit(to: 50)
                 .order(by: "timePosted", descending: true)
         }
         
@@ -304,7 +304,7 @@ public class FirebaseHandler {
             
             self.nextDiscovery = self.firestorePublic
                 .order(by: "timePosted", descending: true)
-                .limit(to: 10)
+                .limit(to: 50)
                 .start(afterDocument: lastSnapshot)
             
             print("Found: \(discoveries.count) discoveries")
@@ -322,7 +322,7 @@ public class FirebaseHandler {
             first = next
         } else {
             first = firestorePublic
-                .limit(to: 10)
+                .limit(to: 50)
                 .order(by: "timePosted", descending: true)
         }
         
@@ -344,7 +344,7 @@ public class FirebaseHandler {
             // retrieving the next 25 cities.
             self.nextDiscovery = self.firestorePublic
                 .order(by: "timePosted", descending: true)
-                .limit(to: 10)
+                .limit(to: 50)
                 .start(afterDocument: lastSnapshot)
             
             // Use the query for pagination.
@@ -363,7 +363,7 @@ public class FirebaseHandler {
         } else {
             first = firestoreFriends
                 .whereField("id", in: ids)
-                .limit(to: 10)
+                .limit(to: 50)
         }
         
         guard !ids.isEmpty else {
@@ -388,7 +388,7 @@ public class FirebaseHandler {
             // retrieving the next 25 cities.
             self.nextFriendsMemory = self.firestoreFriends
                 .whereField("id", in: ids)
-                .limit(to: 10)
+                .limit(to: 50)
                 .start(afterDocument: lastSnapshot)
             
             // Use the query for pagination.
@@ -406,7 +406,7 @@ public class FirebaseHandler {
         } else {
             first = firestoreFriends
                 .whereField("id", in: ids)
-                .limit(to: 10)
+                .limit(to: 50)
         }
         
         guard !ids.isEmpty else {
@@ -432,7 +432,7 @@ public class FirebaseHandler {
             self.nextFriendsMemory = self.firestoreFriends
                 .whereField("id", in: ids)
                 .start(afterDocument: lastSnapshot)
-                .limit(to: 10)
+                .limit(to: 50)
             
             completion?(.success(discoveries))
         }

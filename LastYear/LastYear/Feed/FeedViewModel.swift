@@ -10,7 +10,11 @@ import SwiftUI
 
 public class FeedViewModel: ObservableObject {
     
-    @Published var loading = false
+    @Published var loading = false {
+        didSet {
+            print("loading: \(loading) memories: \(friendsMemories.count)")
+        }
+    }
     @Published var friendsMemories: [DiscoveryUpload] = []
     
     init() {
@@ -34,7 +38,14 @@ public class FeedViewModel: ObservableObject {
                 print(error.localizedDescription)
                 self?.changeLoading(to: false)
             case .success(let discoveries):
-                self?.friendsMemories = discoveries
+                let twentyFourHours: TimeInterval = 60 * 60 * 24
+                let fun = discoveries.filter { upload in
+                    if let date = upload.timePostedDate {
+                        return Date.now.timeIntervalSince(date) < twentyFourHours
+                    }
+                    return false
+                }
+                self?.friendsMemories = fun
                 self?.changeLoading(to: false)
             }
         }

@@ -100,10 +100,6 @@ public class PhotosViewModel: ObservableObject {
         let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
         
         countFound = results.countOfAssets(with: .image)
-        
-//        DispatchQueue.main.async {
-//        LocalNotificationCenter.shared.checkPermissionAndScheduleTomorrows(with: results.countOfAssets(with: .image))
-//        }
 
         print("Images found:", countFound!)
         
