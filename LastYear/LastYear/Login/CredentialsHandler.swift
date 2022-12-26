@@ -23,10 +23,10 @@ struct CredentialsHandler {
         
     static func setPassword(credentials: Credentials) throws {
         let account = credentials.email
-        let password = credentials.password
-        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+        let password = credentials.password.data(using: String.Encoding.utf8)!
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccount as String: account,
-                                    kSecAttrLabel as String: "lastyear",
+                                    kSecAttrService as String: "lastyear",
                                     kSecValueData as String: password]
                 
         let status = SecItemAdd(query as CFDictionary, nil)
@@ -34,10 +34,10 @@ struct CredentialsHandler {
     }
     
     static func getPassword() throws -> Credentials {
-        let query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecMatchLimit as String: kSecMatchLimitAll,
                                     kSecReturnAttributes as String: true,
-                                    kSecAttrLabel as String: "lastyear",
+                                    kSecAttrService as String: "lastyear",
                                     kSecReturnData as String: true]
         
         var item: CFTypeRef?
@@ -45,7 +45,8 @@ struct CredentialsHandler {
         guard status != errSecItemNotFound else { throw KeychainError.noPassword }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
         
-        guard let existingItem = item as? [String : Any],
+        guard let item,
+            let existingItem = item as? [String: Any],
             let passwordData = existingItem[kSecValueData as String] as? Data,
             let password = String(data: passwordData, encoding: String.Encoding.utf8),
             let account = existingItem[kSecAttrAccount as String] as? String

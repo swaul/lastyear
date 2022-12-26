@@ -76,3 +76,5 @@ extension Date {
         return Calendar.current.dateComponents([.second], from: date, to: self).second ?? 0
     }
 }
+
+let appId = "6443778155"

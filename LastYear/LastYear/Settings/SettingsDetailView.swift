@@ -18,6 +18,9 @@ struct SettingsDetailView: View {
                 .ignoresSafeArea()
             List(item.options, id: \.id) { option in
                 SettingsRow(option: option, user: user)
+                    .onTapGesture {
+                        
+                    }
             }
             .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)

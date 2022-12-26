@@ -5,9 +5,12 @@
 //  Created by Paul Kühnel on 07.11.22.
 //
 
+import Combine
 import SwiftUI
 import AWSS3
 import AWSCore
+
+let didLogout = PassthroughSubject<Void, Never>()
 
 struct ProfileView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
@@ -18,6 +21,7 @@ struct ProfileView: View {
     
     @State var uiImage: UIImage? = nil
     @State var noImage: Bool = false
+    @State var logoutDialogShowing = false
     
     var options: [MenuSection] = optionset
     
@@ -39,20 +43,31 @@ struct ProfileView: View {
                         Section(option.name) {
                             ForEach(option.items) { item in
                                 if item.options.isEmpty {
-                                    Button {
-                                        print(item.name)
-                                    } label: {
-                                        Text(item.name)
-                                            .font(Font.custom("Poppins-Regular", size: 20))
-                                            .foregroundColor(.white)
+                                    if let action = item.action {
+                                        Button(action: action, label: {
+                                            Text(item.name)
+                                                .font(Font.custom("Poppins-Regular", size: 20))
+                                                .foregroundColor(.white)
+                                        })
+                                    } else {
+                                        Button {
+                                            print(item.name)
+                                        } label: {
+                                            Text(item.name)
+                                                .font(Font.custom("Poppins-Regular", size: 20))
+                                                .foregroundColor(.white)
+                                        }
                                     }
+
                                 } else {
-                                    NavigationLink {
-                                        SettingsDetailView(item: item, user: user!)
-                                    } label: {
-                                        Text(item.name)
-                                            .font(Font.custom("Poppins-Regular", size: 20))
-                                            .foregroundColor(.white)
+                                    if let user {
+                                        NavigationLink {
+                                            SettingsDetailView(item: item, user: user)
+                                        } label: {
+                                            Text(item.name)
+                                                .font(Font.custom("Poppins-Regular", size: 20))
+                                                .foregroundColor(.white)
+                                        }
                                     }
                                 }
                             }
@@ -64,7 +79,7 @@ struct ProfileView: View {
                     
                     Section {
                         Button {
-                            print("Logout")
+                            logoutDialogShowing = true
                         } label: {
                             HStack {
                                 Spacer()
@@ -93,6 +108,15 @@ struct ProfileView: View {
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
+                .alert(isPresented: $logoutDialogShowing) {
+                    Alert(
+                        title: Text("Sign out"),
+                        message: Text("Do you want to sign out?"),
+                        primaryButton: .destructive(Text("Logout"), action: {
+                            logout()
+                        }),
+                        secondaryButton: .cancel())
+                }
             }
             if networkMonitor.status == .disconnected {
                 ZStack {
@@ -153,6 +177,7 @@ struct ProfileView: View {
                 print(error.localizedDescription)
             case .success():
                 print("logged out")
+                didLogout.send()
                 AuthService.shared.logOut()
             }
         }
@@ -225,6 +250,7 @@ struct MenuItem: Equatable, Identifiable {
     var id: String
     var name: String
     var options: [Option]
+    var action: (() -> Void)? = nil
 }
 
 class Option: Identifiable, ObservableObject {
@@ -298,7 +324,12 @@ let optionset = [
             MenuItem(
                 id: "shareLastYear",
                 name: "share LastYear",
-                options: []
+                options: [],
+                action: {
+                    if let url = URL(string: "itms-apps://itunes.apple.com/app/\(appId)") {
+                        UIApplication.shared.open(url)
+                    }
+                }
             ),
         ])
 ]
