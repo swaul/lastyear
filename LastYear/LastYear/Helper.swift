@@ -47,6 +47,28 @@ struct Helper {
             }
         }
     }
+    
+    static func savePostOfToday() {
+        let id = Formatters.dateTimeFormatter.string(from: Date.now)
+        if let defaults = UserDefaults(suiteName: appGroupName) {
+            defaults.set(id, forKey: "postedToday")
+        }
+    }
+    
+    static func checkPostOfToday() -> Bool {
+        if let defaults = UserDefaults(suiteName: appGroupName) {
+            if let value = defaults.value(forKey: "postedToday") as? String {
+                let datePosted = Formatters.dateTimeFormatter.date(from: value)!
+                if datePosted.timeIntervalSince(Date.now) < (60 * 60 * 24) {
+                    return true
+                } else {
+                    defaults.removeObject(forKey: "postedToday")
+                    return false
+                }
+            }
+        }
+        return false
+    }
 }
 
 extension Date {

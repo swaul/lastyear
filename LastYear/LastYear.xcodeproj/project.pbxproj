@@ -22,6 +22,7 @@
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
 		9E835E79293540DF0098810A /* HappyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E835E78293540DF0098810A /* HappyPanel.swift */; };
 		9E835E7F2935460B0098810A /* Shared in Frameworks */ = {isa = PBXBuildFile; productRef = 9E835E7E2935460B0098810A /* Shared */; };
+		9E852454295A0DEF00B4D550 /* ShareLastYearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E852453295A0DEF00B4D550 /* ShareLastYearView.swift */; };
 		9E98039228E1C8770036AFEC /* PermissionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E98039128E1C8770036AFEC /* PermissionHandler.swift */; };
 		9EAADB1E28E1E03D00F93097 /* PhotosViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */; };
 		9EAADB2028E1F86C00F93097 /* AllPhotosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */; };
@@ -141,6 +142,7 @@
 		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
 		9E835E78293540DF0098810A /* HappyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HappyPanel.swift; sourceTree = "<group>"; };
 		9E835E7D293545C30098810A /* Shared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Shared; path = "../../Downloads/HappyPanel-master/Shared"; sourceTree = "<group>"; };
+		9E852453295A0DEF00B4D550 /* ShareLastYearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLastYearView.swift; sourceTree = "<group>"; };
 		9E98039128E1C8770036AFEC /* PermissionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionHandler.swift; sourceTree = "<group>"; };
 		9EAADB1D28E1E03D00F93097 /* PhotosViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosViewModel.swift; sourceTree = "<group>"; };
 		9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllPhotosView.swift; sourceTree = "<group>"; };
@@ -290,8 +292,10 @@
 				9EBDE8E528DDDD4B00264AF3 /* PhotoData.swift */,
 				9ECC338C29203B6B0007C9C9 /* ImageView.swift */,
 				9EBDE93428E195DD00264AF3 /* PhotoDetailView.swift */,
+				9E852453295A0DEF00B4D550 /* ShareLastYearView.swift */,
 				9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */,
 				9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */,
+				9EBDE8E328DDDCE900264AF3 /* PhotoCard.swift */,
 			);
 			path = Photo;
 			sourceTree = "<group>";
@@ -314,7 +318,6 @@
 				9EBDE92C28DE507600264AF3 /* LYUser.swift */,
 				9EBDE8D728DDD58A00264AF3 /* MainView.swift */,
 				9EBDE8D528DDD58A00264AF3 /* LastYearApp.swift */,
-				9EBDE8E328DDDCE900264AF3 /* PhotoCard.swift */,
 				9EBDE93028DE660F00264AF3 /* LoadingView.swift */,
 			);
 			path = Main;
@@ -671,6 +674,7 @@
 				9ECC335F2918EEC90007C9C9 /* FriendsView.swift in Sources */,
 				9EBDE93328E18DCE00264AF3 /* PermissionView.swift in Sources */,
 				9ED25DEA29488A8000438645 /* SettingsDetailView.swift in Sources */,
+				9E852454295A0DEF00B4D550 /* ShareLastYearView.swift in Sources */,
 				9ECC336A291AEFF90007C9C9 /* DiscoveryView.swift in Sources */,
 				9EBEE6F128E5E15600F9FCCC /* PrivacyView.swift in Sources */,
 				9EBDE8E928DDED0800264AF3 /* WelcomeView.swift in Sources */,
@@ -743,7 +747,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = LYwidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 952G7Q23AZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LYwidget/Info.plist;
@@ -755,7 +759,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -773,7 +777,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_ENTITLEMENTS = LYwidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 952G7Q23AZ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = LYwidget/Info.plist;
@@ -785,7 +789,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear.widget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -920,7 +924,7 @@
 				CODE_SIGN_ENTITLEMENTS = LastYear/LastYear.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LastYear/Preview Content\"";
 				DEVELOPMENT_TEAM = 952G7Q23AZ;
 				ENABLE_PREVIEWS = YES;
@@ -938,7 +942,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -960,7 +964,7 @@
 				CODE_SIGN_ENTITLEMENTS = LastYear/LastYear.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"LastYear/Preview Content\"";
 				DEVELOPMENT_TEAM = 952G7Q23AZ;
 				ENABLE_PREVIEWS = YES;
@@ -978,7 +982,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3;
+				MARKETING_VERSION = 1.3.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lichtenberg.lastyear;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

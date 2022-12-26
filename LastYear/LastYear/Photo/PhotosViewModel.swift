@@ -77,6 +77,7 @@ public class PhotosViewModel: ObservableObject {
     }
     
     func reloadPhotos() {
+        dateOneYearAgo = Calendar.current.date(byAdding: .year, value: -1, to: Date.now)
         allPhotos.removeAll()
         getAllPhotos()
     }

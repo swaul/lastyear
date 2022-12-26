@@ -8,6 +8,8 @@
 import SwiftUI
 import ImageViewer
 import Photos
+import AWSS3
+import AWSCore
 
 struct AllPhotosView: View {
     
@@ -16,6 +18,9 @@ struct AllPhotosView: View {
     @State var selecting: Bool = false
     @State var detail: Bool = false
     @State var selected: String? = nil
+    
+    @State var postedImage: Image? = nil
+    @State var imageZoomed: Bool = false
     
     let layout = [
         GridItem(.flexible()),
@@ -53,6 +58,28 @@ struct AllPhotosView: View {
                     }
                 }
             }
+            if Helper.checkPostOfToday(), let postedImage {
+                HStack {
+                    if !imageZoomed {
+                        Text("Your post of today")
+                            .transition(.scale(scale: 0, anchor: UnitPoint(x: 1, y: 1)))
+                    }
+                    
+                    postedImage
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(
+                            idealWidth: imageZoomed ? (UIScreen.screenWidth - 24) : .infinity,
+                            maxHeight: imageZoomed ? .infinity : 60)
+                        .cornerRadius(8)
+                        .onTapGesture {
+                            withAnimation {
+                                imageZoomed.toggle()
+                            }
+                        }
+                }
+            }
+            
             ScrollView {
                 VStack {
                     let sortedImages = photoViewModel.allPhotos.sorted()
@@ -95,6 +122,11 @@ struct AllPhotosView: View {
                             .padding(.horizontal, 12)
                         }
                         .contentShape(Rectangle())
+                        .onAppear {
+                            if sortedImages.isEmpty {
+                                expanded = true
+                            }
+                        }
                         if expanded {
                             let sortedScreenshots = photoViewModel.allPhotos.filter { $0.photoType == .screenshot }.sorted()
                             LazyVGrid(columns: layout, spacing: 0) {
@@ -132,6 +164,11 @@ struct AllPhotosView: View {
                         }
                     }
                 }
+                .task {
+                    if Helper.checkPostOfToday() {
+                        await getPost()
+                    }
+                }
             }
         }
         .fullScreenCover(isPresented: $detail) {
@@ -144,14 +181,28 @@ struct AllPhotosView: View {
         detail = true
     }
     
-    func loadImageAsset(asset: String, targetSize: CGSize = PHImageManagerMaximumSize, completion: ((Image?) -> Void)?) async {
-        guard let uiImage = try? await PhotoLibraryService.shared
-            .fetchImage(
-                byLocalIdentifier: asset,
-                targetSize: targetSize
-            ) else {
-            return
+    func getPost() async {
+        Task {
+            guard postedImage == nil, let user = AuthService.shared.loggedInUser else { return }
+            let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
+                print("percentage done:", progress.fractionCompleted)
+            }
+            let request = AWSS3TransferUtility.default()
+            let expression = AWSS3TransferUtilityDownloadExpression()
+            expression.progressBlock = progressBlock
+            
+            request.downloadData(fromBucket: "lastyearapp", key: user.id, expression: expression) { task, url, data, error in
+                guard let data = data else { return }
+                withAnimation {
+                    self.postedImage = Image(uiImage: UIImage(data: data) ?? UIImage(named: "fallback")!)
+                }
+            }
         }
-        completion?(Image(uiImage: uiImage))
     }
+}
+
+extension UIScreen{
+    static let screenWidth = UIScreen.main.bounds.size.width
+    static let screenHeight = UIScreen.main.bounds.size.height
+    static let screenSize = UIScreen.main.bounds.size
 }

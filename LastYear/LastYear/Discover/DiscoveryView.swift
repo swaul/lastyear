@@ -20,6 +20,7 @@ struct DiscoveryView: View {
     @State var userPP: Image? = nil
     @State var image: Image? = nil
     @State var id: String = ""
+    @State var description: String?
     @State var currentDownload = 0.0
     @State var downloadDone = false
     @State var timePosted: Double
@@ -175,6 +176,11 @@ struct DiscoveryView: View {
                     getLikes()
                 }
                 .padding(.horizontal, 8)
+            }
+            if let description, !description.isEmpty {
+                Text(description)
+                    .font(Font.custom("Poppins-Regular", size: 14))
+                    .foregroundColor(Color.white)
             }
         }
         .sheet(isPresented: $showEmoji) {

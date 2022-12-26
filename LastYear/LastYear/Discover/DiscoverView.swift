@@ -38,7 +38,7 @@ struct DiscoverView: View {
                                 if interval < twentyFourHours {
                                     
                                     let reactions = reactionsMapped(reactions: discovery.reactions)
-                                    DiscoveryView(user: discovery.user, id: discovery.id, timePosted: interval, likes: discovery.likes, screen: screen, reactions: reactions)
+                                    DiscoveryView(user: discovery.user, id: discovery.id, description: discovery.description, timePosted: interval, likes: discovery.likes, screen: screen, reactions: reactions)
                                         .environmentObject(friendsViewModel)
                                         .onAppear {
                                             if index == 0 && index == viewModel.discoveries.count {

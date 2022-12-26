@@ -14,7 +14,7 @@ struct PhotoCard: View {
     @State var loading: Bool = false
     @State private var image: Image?
     @Binding var selecting: Bool
-    
+        
     var formatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM.yyyy"
@@ -72,11 +72,11 @@ struct PhotoCard: View {
                         .aspectRatio(1, contentMode: .fit)
                     Image(systemName: "exclamationmark.circle")
                         .foregroundColor(.red)
-                        .onTapGesture {
-                            Task {
-                                await loadImageAsset()
-                            }
-                        }
+                }
+                .onTapGesture {
+                    Task {
+                        await loadImageAsset()
+                    }
                 }
             } else {
                 // Otherwise, show a gray rectangle with a
@@ -109,17 +109,24 @@ struct PhotoCard: View {
         targetSize: CGSize = PHImageManagerMaximumSize
     ) async {
         loading = true
-        guard let uiImage = try? await PhotoLibraryService.shared
-            .fetchImage(
-                byLocalIdentifier: asset.assetID,
-                targetSize: targetSize
-            ) else {
-            loading = false
+        print("sudoku started loading", asset.assetID)
+        do {
+            guard let uiImage = try await PhotoLibraryService.shared
+                .fetchImage(
+                    byLocalIdentifier: asset.assetID,
+                    targetSize: targetSize
+                ) else {
+                loading = false
                 image = nil
+                print("sudoku Couldnt loadd image", asset.assetID)
                 return
             }
-        loading = false
-        image = Image(uiImage: uiImage)
+            loading = false
+            print("sudoku Loaded image", asset.assetID)
+            image = Image(uiImage: uiImage)
+        } catch let error {
+            print(error)
+        }
     }
 }
 

@@ -28,218 +28,75 @@ struct PhotoDetailView: View {
     @State var isShowingiMessages = false
     @State var isShowingShare = false
     @State var shareToLastYearShowing = false
-    @State var currentUpload = 0.0
-    @State var uploadDone = false
     @State var toolbarShowing: Bool = true
     
     var body: some View {
-        ZStack {
-            Color("backgroundColor")
-                .ignoresSafeArea()
-            VStack {
-                ZStack {
-                    if let selectedImage, let image = Image(uiImage: selectedImage) {
-                        ImageViewer(image: .constant(image), viewerShown: $fullscreenImage, closeButtonTopRight: false)
-                            .ignoresSafeArea()
-                            .onChange(of: fullscreenImage) { newValue in
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                            .onTapGesture {
-                                withAnimation {
-                                    toolbarShowing.toggle()
+        NavigationView {
+            ZStack {
+                Color("backgroundColor")
+                    .ignoresSafeArea()
+                VStack {
+                    ZStack {
+                        if let selectedImage, let image = Image(uiImage: selectedImage) {
+                            ImageViewer(image: .constant(image), viewerShown: $fullscreenImage, closeButtonTopRight: false)
+                                .ignoresSafeArea()
+                                .onChange(of: fullscreenImage) { newValue in
+                                    presentationMode.wrappedValue.dismiss()
                                 }
-                            }
-                    } else {
-                        Rectangle()
-                            .foregroundColor(.gray)
-                            .aspectRatio(1, contentMode: .fit)
-                        ProgressView()
+                                .onTapGesture {
+                                    withAnimation {
+                                        toolbarShowing.toggle()
+                                    }
+                                }
+                        } else {
+                            Rectangle()
+                                .foregroundColor(.gray)
+                                .aspectRatio(1, contentMode: .fit)
+                            ProgressView()
+                        }
                     }
-                }
-                .ignoresSafeArea()
-                .task {
-                    await loadImageAsset()
-                }
-                .onChange(of: selected) { _ in
-                    Task {
+                    .ignoresSafeArea()
+                    .task {
                         await loadImageAsset()
                     }
-                }
-                // Finally, when the view disappears, we need to free it
-                // up from the memory
-                .onDisappear {
-                    selectedImage = nil
+                    .onChange(of: selected) { _ in
+                        Task {
+                            await loadImageAsset()
+                        }
+                    }
+                    // Finally, when the view disappears, we need to free it
+                    // up from the memory
+                    .onDisappear {
+                        selectedImage = nil
+                    }
+                    .ignoresSafeArea()
+                    Spacer()
                 }
                 .ignoresSafeArea()
-                Spacer()
-            }
-            .ignoresSafeArea()
-            if toolbarShowing {
-                VStack {
-                    toolbarTop
-                        .background(.thinMaterial)
-                        .animation(.easeInOut, value: toolbarShowing)
-                        .transition(.move(edge: .top))
-                    Spacer()
-                    toolbarBot
-                        .background(.thinMaterial)
-                        .animation(.easeInOut, value: toolbarShowing)
-                        .transition(.move(edge: .bottom))
-                }
-            }
-        }
-        .sheet(isPresented: $isShowingiMessages) {
-            MessageComposeView(recipients: [], body: "Look at my memory from LastYear", attachment: selectedImage) { messageSent in
-                print("MessageComposeView with message sent? \(messageSent)")
-            }
-        }
-        .sheet(isPresented: $isShowingShare) {
-            ActivityViewController(activityItems: [selectedImage!])
-        }
-        .sheet(isPresented: $shareToLastYearShowing) {
-            if #available(iOS 16.0, *) {
-                VStack {
-                    if currentUpload == 0 {
-                    
-                            VStack {
-                                Button {
-                                    shareLastYear()
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "person.2")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(maxWidth: 30)
-                                            .padding(.trailing, 20)
-                                        VStack(alignment: .leading) {
-                                            Text("Friends")
-                                                .font(Font.custom("Poppins-Bold", size: 24))
-                                                .foregroundColor(Color.white)
-                                            Text("Share with all your friends")
-                                                .font(Font.custom("Poppins-Regular", size: 18))
-                                                .foregroundColor(Color.white)
-                                        }
-                                        Spacer()
-                                    }
-                                    .contentShape(Rectangle())
-                                    .padding()
-                                    .background(Color("gray"))
-                                    .cornerRadius(8)
-                                }
-                                
-                                Button {
-                                    shareLastYear(toPublic: true)
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "magnifyingglass")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .frame(maxWidth: 30)
-                                            .padding(.trailing, 20)
-                                        VStack(alignment: .leading) {
-                                            Text("Discovery")
-                                                .font(Font.custom("Poppins-Bold", size: 24))
-                                                .foregroundColor(Color.white)
-                                            Text("Share with all LastYear users")
-                                                .font(Font.custom("Poppins-Regular", size: 18))
-                                                .foregroundColor(Color.white)
-                                        }
-                                        Spacer()
-                                    }
-                                    .contentShape(Rectangle())
-                                    .padding()
-                                    .background(Color("gray"))
-                                    .cornerRadius(8)
-                                }
-                            }
-                            .padding(.horizontal)
-                        Text("Share!")
-                            .font(Font.custom("Poppins-Bold", size: 28))
-                    } else if uploadDone {
-                        Text("Upload done")
-                            .font(.title)
-                            .foregroundColor(.green)
-                    } else {
-                        VStack {
-                            Text("\(Int(currentUpload.rounded())) %")
-                            ProgressView(value: currentUpload, total: 100.0)
-                                .padding(.horizontal)
-                            Text("Uploading")
-                                .padding()
-                        }
-                    }
-                }
-                .presentationDetents([.fraction(0.4)])
-            } else {
-                VStack {
-                    if currentUpload == 0 {
-                        Button {
-                            shareLastYear()
-                        } label: {
-                            HStack {
-                                Image(systemName: "person.2")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 25)
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("Friends")
-                                        .font(Font.custom("Poppins-Bold", size: 24))
-                                        .foregroundColor(Color.white)
-                                    Text("Share with all your friends")
-                                        .font(Font.custom("Poppins-Regular", size: 18))
-                                        .foregroundColor(Color.white)
-                                }
-                            }
-                            .contentShape(Rectangle())
-                            .padding()
-                            .background(Color("gray"))
-                            .cornerRadius(8)
-                        }
-                        .padding()
-                        Button {
-                            shareLastYear(toPublic: true)
-                        } label: {
-                            HStack {
-                                Image(systemName: "magnifyingglass")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 25)
-                                Spacer()
-                                VStack(alignment: .leading) {
-                                    Text("Discovery")
-                                        .font(Font.custom("Poppins-Bold", size: 24))
-                                        .foregroundColor(Color.white)
-                                    Text("Share with all LastYear users")
-                                        .font(Font.custom("Poppins-Regular", size: 18))
-                                        .foregroundColor(Color.white)
-                                }
-                            }
-                            .contentShape(Rectangle())
-                            .padding()
-                            .background(Color("gray"))
-                            .cornerRadius(8)
-                        }
-                        .padding()
-                        Text("Share!")
-                            .font(Font.custom("Poppins-Bold", size: 28))
-                    } else if uploadDone {
-                        Text("Upload done")
-                            .font(.title)
-                            .foregroundColor(.green)
-                    } else {
-                        VStack {
-                            Text("\(Int(currentUpload.rounded())) %")
-                            ProgressView(value: currentUpload, total: 100.0)
-                                .padding(.horizontal)
-                            Text("Uploading")
-                                .padding()
-                        }
+                if toolbarShowing {
+                    VStack {
+                        toolbarTop
+                            .background(.thinMaterial)
+                            .animation(.easeInOut, value: toolbarShowing)
+                            .transition(.move(edge: .top))
+                        Spacer()
+                        toolbarBot
+                            .background(.thinMaterial)
+                            .animation(.easeInOut, value: toolbarShowing)
+                            .transition(.move(edge: .bottom))
                     }
                 }
             }
+            .sheet(isPresented: $isShowingiMessages) {
+                MessageComposeView(recipients: [], body: "Look at my memory from LastYear", attachment: selectedImage) { messageSent in
+                    print("MessageComposeView with message sent? \(messageSent)")
+                }
+            }
+            .sheet(isPresented: $isShowingShare) {
+                ActivityViewController(activityItems: [selectedImage!])
+            }
+            .navigationBarHidden(true)
         }
-        .navigationBarHidden(true)
     }
     
     func loadImageAsset(
@@ -324,8 +181,8 @@ struct PhotoDetailView: View {
                     .frame(width: 32)
             }
             Spacer()
-            Button {
-                shareToLastYearShowing = true
+            NavigationLink {
+                ShareLastYearView(selectedImage: selectedImage, selected: $selected)
             } label: {
                 VStack(spacing: 4) {
                     Text("Share to")
@@ -339,91 +196,6 @@ struct PhotoDetailView: View {
             }
         }
         .padding()
-    }
-    
-    func findCompression(image: UIImage) -> Double {
-        let numbers = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
-        
-        for number in numbers {
-            if let data = image.jpegData(compressionQuality: number), data.count <= 1000000 {
-                return number
-            } else {
-                continue
-            }
-        }
-        
-        return 0.1
-    }
-    
-    func shareLastYear(toPublic: Bool = false) {
-        Task {
-            guard let user = AuthService.shared.loggedInUser, let selected else { return }
-            
-            guard
-                let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: selected),
-                let data = image.jpegData(compressionQuality: findCompression(image: image))
-            else { return }
-            
-            let progressBlock: AWSS3TransferUtilityProgressBlock = { task, progress in
-                print("percentage done:", progress.fractionCompleted)
-                withAnimation {
-                    currentUpload = progress.fractionCompleted * 100
-                }
-            }
-            let request = AWSS3TransferUtility.default()
-            let expression = AWSS3TransferUtilityUploadExpression()
-            expression.progressBlock = progressBlock
-            
-            request.uploadData(data, bucket: "lastyearapp", key: user.id, contentType: "image/jpeg", expression: expression) { task, error in
-                if let error {
-                    print(error.localizedDescription)
-                } else {
-                    if task.status == .completed {
-                        let upload = DiscoveryUpload(id: user.id, likes: [], timePosted: Formatters.dateTimeFormatter.string(from: Date.now), user: user.userName, reactions: [])
-                        
-                        if toPublic {
-                            shareToPublicStory(upload: upload)
-                        } else {
-                            shareToFriendsStory(upload: upload)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    func shareToPublicStory(upload: DiscoveryUpload) {
-        FirebaseHandler.shared.shareMemory(to: ._public, discovery: upload) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(()):
-                withAnimation {
-                    self.uploadDone = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        self.shareToLastYearShowing = false
-                    }
-                    self.shareToFriendsStory(upload: upload)
-                }
-            }
-        }
-    }
-    
-    func shareToFriendsStory(upload: DiscoveryUpload) {
-        FirebaseHandler.shared.shareMemory(to: .friends, discovery: upload) { result in
-            switch result {
-            case .failure(let error):
-                print(error.localizedDescription)
-            case .success(()):
-                withAnimation {
-                    self.uploadDone = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        self.shareToLastYearShowing = false
-                    }
-                }
-            }
-        }
-        
     }
     
     func shareToStory() {
@@ -551,4 +323,18 @@ extension String {
         // 6
     }
     
+}
+
+extension View {
+    func navigate<Content: View>(_ condition: Binding<Bool>, content: Content) -> some View {
+        if condition.wrappedValue {
+            return AnyView(overlay(
+                NavigationLink(
+                    destination: content,
+                    isActive: condition
+                ) {}
+            ))
+        }
+        return AnyView(self)
+    }
 }
