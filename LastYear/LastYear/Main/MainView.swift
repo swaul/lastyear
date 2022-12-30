@@ -74,6 +74,9 @@ struct MainView: View {
             .onReceive(didLogout) { _ in
                 selection = 2
             }
+            .onAppear {
+                ReviewHandler.requestReview()
+            }
         }
     }
     

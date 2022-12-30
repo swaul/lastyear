@@ -104,6 +104,7 @@
 		9ED25DEC2948A35300438645 /* SettingsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED25DEB2948A35300438645 /* SettingsRow.swift */; };
 		9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */; };
 		9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD18A428EE23F2004DC8A6 /* ShareView.swift */; };
+		9EF932AE295E8B6D00E98193 /* Rate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF932AD295E8B6D00E98193 /* Rate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -220,6 +221,7 @@
 		9ED25DEB2948A35300438645 /* SettingsRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRow.swift; sourceTree = "<group>"; };
 		9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToiMessageView.swift; sourceTree = "<group>"; };
 		9EDD18A428EE23F2004DC8A6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
+		9EF932AD295E8B6D00E98193 /* Rate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -473,6 +475,7 @@
 				9EAADB2828E2FBD000F93097 /* SettingsView.swift */,
 				9ED25DE729487EAF00438645 /* NotificationSettingsView.swift */,
 				9ED25DEB2948A35300438645 /* SettingsRow.swift */,
+				9EF932AD295E8B6D00E98193 /* Rate.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -679,6 +682,7 @@
 				9EBEE6F128E5E15600F9FCCC /* PrivacyView.swift in Sources */,
 				9EBDE8E928DDED0800264AF3 /* WelcomeView.swift in Sources */,
 				9EBDE92B28DE0EEA00264AF3 /* PasswordView.swift in Sources */,
+				9EF932AE295E8B6D00E98193 /* Rate.swift in Sources */,
 				9ECC33662919283C0007C9C9 /* DiscoverViewModel.swift in Sources */,
 				9EBDE8E428DDDCE900264AF3 /* PhotoCard.swift in Sources */,
 				9ECC339429218B8C0007C9C9 /* NetworkError.swift in Sources */,

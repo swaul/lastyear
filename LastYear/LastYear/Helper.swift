@@ -59,7 +59,7 @@ struct Helper {
         if let defaults = UserDefaults(suiteName: appGroupName) {
             if let value = defaults.value(forKey: "postedToday") as? String {
                 let datePosted = Formatters.dateTimeFormatter.date(from: value)!
-                if datePosted.timeIntervalSince(Date.now) < (60 * 60 * 24) {
+                if Date.now.timeIntervalSince(datePosted) < (60 * 60 * 24) {
                     return true
                 } else {
                     defaults.removeObject(forKey: "postedToday")

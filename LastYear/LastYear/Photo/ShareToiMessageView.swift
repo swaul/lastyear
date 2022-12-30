@@ -34,7 +34,7 @@ struct MessageComposeView: UIViewControllerRepresentable {
         controller.messageComposeDelegate = context.coordinator
         controller.recipients = recipients
         controller.body = body
-        controller.addAttachmentData(imageData, typeIdentifier: "image/png", filename: "lastyear")
+        controller.addAttachmentData(imageData, typeIdentifier: "image/png", filename: "lastyear.png")
 
         return controller
     }

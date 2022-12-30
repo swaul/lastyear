@@ -136,7 +136,7 @@ struct LoginView: View {
                 }
                 print("[LOG] - Login failed with error", error)
             case .success(let user):
-                print("[LOG] - User logged in with", user.email)
+                print("[LOG] - User logged in with", user.email ?? "No email")
                 loading = false
                 let credentials = Credentials(email: email, password: password)
                 do {
@@ -154,7 +154,7 @@ struct LoginView: View {
             let credentials = try CredentialsHandler.getPassword()
             tryBiometricAuthentication(password: credentials.password, email: credentials.email)
         } catch let error {
-            print("[LOG] - Failed to get Credentials from Keychain")
+            print("[LOG] - Failed to get Credentials from Keychain", error)
         }
     }
     
@@ -178,7 +178,6 @@ struct LoginView: View {
               // 5
                 self.email = email
                 self.password = password
-                self.login()
             } else {
               // 6
               if let errorString = error?.localizedDescription {

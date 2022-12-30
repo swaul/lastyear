@@ -22,6 +22,8 @@ struct ProfileView: View {
     @State var uiImage: UIImage? = nil
     @State var noImage: Bool = false
     @State var logoutDialogShowing = false
+    @State var shareDialogShowing = false
+    @State var rateDialogShowing = false
     
     var options: [MenuSection] = optionset
     
@@ -33,79 +35,8 @@ struct ProfileView: View {
                 Text("Settings")
                     .font(Font.custom("Poppins-Bold", size: 26))
                     .foregroundColor(.white)
-                List {
-                    NavigationLink {
-                        UserView(noImage: $noImage, uiImage: $uiImage, user: user ?? nil)
-                    } label: {
-                        userView
-                    }
-                    ForEach(options) { option in
-                        Section(option.name) {
-                            ForEach(option.items) { item in
-                                if item.options.isEmpty {
-                                    if let action = item.action {
-                                        Button(action: action, label: {
-                                            Text(item.name)
-                                                .font(Font.custom("Poppins-Regular", size: 20))
-                                                .foregroundColor(.white)
-                                        })
-                                    } else {
-                                        Button {
-                                            print(item.name)
-                                        } label: {
-                                            Text(item.name)
-                                                .font(Font.custom("Poppins-Regular", size: 20))
-                                                .foregroundColor(.white)
-                                        }
-                                    }
-
-                                } else {
-                                    if let user {
-                                        NavigationLink {
-                                            SettingsDetailView(item: item, user: user)
-                                        } label: {
-                                            Text(item.name)
-                                                .font(Font.custom("Poppins-Regular", size: 20))
-                                                .foregroundColor(.white)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    Spacer(minLength: 60)
-                        .listRowBackground(Color.clear)
-                    
-                    Section {
-                        Button {
-                            logoutDialogShowing = true
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Sign out")
-                                    .font(Font.custom("Poppins-Regular", size: 20))
-                                    .foregroundColor(.red)
-                                Spacer()
-                            }
-                        }
-                        .listRowBackground(Color.red.opacity(0.2))
-                    }
-                    Section {
-                        Button {
-                            print("Delete Acc")
-                        } label: {
-                            HStack {
-                                Spacer()
-                                Text("Delete Account")
-                                    .font(Font.custom("Poppins-Regular", size: 20))
-                                    .foregroundColor(.red)
-                                Spacer()
-                            }
-                        }
-                        .listRowBackground(Color.red.opacity(0.2))
-                    }
-                }
+                
+                menuList
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)
                 .alert(isPresented: $logoutDialogShowing) {
@@ -129,6 +60,65 @@ struct ProfileView: View {
                 .transition(.move(edge: .top))
                 .frame(height: 40)
             }
+        }
+    }
+    
+    var menuList: some View {
+        List {
+            NavigationLink {
+                UserView(noImage: $noImage, uiImage: $uiImage, user: user ?? nil)
+            } label: {
+                userView
+            }
+            ForEach(options) { option in
+                Section(option.name) {
+                    ForEach(option.items) { item in
+                        FunView(item: item, user: user)
+                    }
+                }
+            }
+            
+            Spacer(minLength: 60)
+                .listRowBackground(Color.clear)
+            
+            logoutPart
+            
+            deleteAcc
+        }
+
+    }
+    
+    var logoutPart: some View {
+        Section {
+            Button {
+                logoutDialogShowing = true
+            } label: {
+                HStack {
+                    Spacer()
+                    Text("Sign out")
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.red)
+                    Spacer()
+                }
+            }
+            .listRowBackground(Color.red.opacity(0.2))
+        }
+    }
+    
+    var deleteAcc: some View {
+        Section {
+            Button {
+                print("Delete Acc")
+            } label: {
+                HStack {
+                    Spacer()
+                    Text("Delete Account")
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.red)
+                    Spacer()
+                }
+            }
+            .listRowBackground(Color.red.opacity(0.2))
         }
     }
     
@@ -236,6 +226,57 @@ struct ProfileView_Previews: PreviewProvider {
     }
 }
 
+struct FunView: View {
+    
+    @State var item: MenuItem
+    var user: LYUser?
+
+    var body: some View {
+        if item.options.isEmpty {
+            if let action = item.action {
+                Button(action: action, label: {
+                    Text(item.name)
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.white)
+                })
+            } else if item.name.contains("rate") {
+                Button {
+                    ReviewHandler.requestReviewManually()
+                } label: {
+                    Text(item.name)
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.white)
+                }
+            } else if item.name.contains("share") {
+                ShareLink(item: URL(string: "itms-apps://itunes.apple.com/app/\(appId)")!) {
+                    Text(item.name)
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.white)
+                }
+            } else {
+                Button {
+                    print(item.name)
+                } label: {
+                    Text(item.name)
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.white)
+                }
+            }
+        } else {
+            if let user {
+                NavigationLink {
+                    SettingsDetailView(item: item, user: user)
+                } label: {
+                    Text(item.name)
+                        .font(Font.custom("Poppins-Regular", size: 20))
+                        .foregroundColor(.white)
+                }
+            }
+        }
+    }
+    
+}
+
 struct MenuSection: Identifiable {
     var id: String
     var name: String
@@ -324,12 +365,12 @@ let optionset = [
             MenuItem(
                 id: "shareLastYear",
                 name: "share LastYear",
-                options: [],
-                action: {
-                    if let url = URL(string: "itms-apps://itunes.apple.com/app/\(appId)") {
-                        UIApplication.shared.open(url)
-                    }
-                }
+                options: []
+//                action: {
+//                    if let url = URL(string: "itms-apps://itunes.apple.com/app/\(appId)") {
+//
+//                    }
+//                }
             ),
         ])
 ]

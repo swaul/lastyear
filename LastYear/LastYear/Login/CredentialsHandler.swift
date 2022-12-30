@@ -44,9 +44,9 @@ struct CredentialsHandler {
         let status = SecItemCopyMatching(query as CFDictionary, &item)
         guard status != errSecItemNotFound else { throw KeychainError.noPassword }
         guard status == errSecSuccess else { throw KeychainError.unhandledError(status: status) }
-        
-        guard let item,
-            let existingItem = item as? [String: Any],
+            
+        guard let item = item as? NSArray,
+              let existingItem = item.firstObject as? [String: Any],
             let passwordData = existingItem[kSecValueData as String] as? Data,
             let password = String(data: passwordData, encoding: String.Encoding.utf8),
             let account = existingItem[kSecAttrAccount as String] as? String
