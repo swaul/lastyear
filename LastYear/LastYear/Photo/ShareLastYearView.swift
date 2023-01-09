@@ -8,15 +8,22 @@
 import SwiftUI
 import AWSS3
 import AWSCore
+import Mantis
 
 struct ShareLastYearView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    @State var originalImage: UIImage?
     
     @State var selectedImage: UIImage?
     @State var currentUpload = 0.0
     @State var uploadDone = false
     @Binding var selected: String?
     @State var description: String = ""
+    @State var goto: Bool = false
+    @State var showCropper: Bool = false
+    @State private var cropShapeType: Mantis.CropShapeType = .rect
+    @State private var presetFixedRatioType: Mantis.PresetFixedRatioType = .alwaysUsingOnePresetFixedRatio(ratio: 0.8)
     
     @FocusState var descriptionFocus
     
@@ -30,8 +37,16 @@ struct ShareLastYearView: View {
                         if let selectedImage {
                             Image(uiImage: selectedImage)
                                 .resizable()
-                                .aspectRatio(contentMode: .fit)
+                                .aspectRatio(0.8, contentMode: .fill)
+                                .clipped()
                                 .padding(.horizontal)
+                                .onTapGesture(perform: {
+                                    showCropper = true
+                                })
+                                .fullScreenCover(isPresented: $showCropper, content: {
+                                    ImageCropper(gotoImageEdit: $goto, image: $originalImage, croppedImage: $selectedImage, cropShapeType: $cropShapeType, presetFixedRatioType: $presetFixedRatioType)
+                                        .ignoresSafeArea()
+                                })
                         }
                         if currentUpload == 0 {
                             TextField("Beschreibung", text: $description)
@@ -142,7 +157,7 @@ struct ShareLastYearView: View {
             guard let user = AuthService.shared.loggedInUser, let selected else { return }
             
             guard
-                let image = try await PhotoLibraryService.shared.fetchImage(byLocalIdentifier: selected),
+                let image = selectedImage,
                 let data = image.jpegData(compressionQuality: findCompression(image: image))
             else { return }
             

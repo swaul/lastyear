@@ -31,6 +31,7 @@ struct ProfileView: View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
+            
             VStack {
                 Text("Settings")
                     .font(Font.custom("Poppins-Bold", size: 26))
@@ -49,6 +50,7 @@ struct ProfileView: View {
                         secondaryButton: .cancel())
                 }
             }
+            .padding(.top, 8)
             if networkMonitor.status == .disconnected {
                 ZStack {
                     Color.red.ignoresSafeArea()

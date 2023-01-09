@@ -10,11 +10,7 @@ import SwiftUI
 
 public class FeedViewModel: ObservableObject {
     
-    @Published var loading = false {
-        didSet {
-            print("loading: \(loading) memories: \(friendsMemories.count)")
-        }
-    }
+    @Published var loading = false
     @Published var friendsMemories: [DiscoveryUpload] = []
     
     init() {

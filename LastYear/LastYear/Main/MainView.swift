@@ -22,7 +22,7 @@ struct MainView: View {
         ZStack {
             Color("backgroundColor")
                 .ignoresSafeArea()
-            TabView(selection: $selection) {
+            TabView() {
                 FriendsView()
                     .environmentObject(friendsViewModel)
                     .environmentObject(networkMonitor)
@@ -32,28 +32,36 @@ struct MainView: View {
                     .tag(0)
                     .badge(authService.requests)
                 
-                DiscoverView()
+//                DiscoverView()
+//                    .environmentObject(networkMonitor)
+//                    .environmentObject(friendsViewModel)
+//                    .tabItem {
+//                        Label("Discover", systemImage: "magnifyingglass")
+//                    }
+//                    .tag(1)
+//
+//                FeedView()
+//                    .environmentObject(friendsViewModel)
+//                    .environmentObject(networkMonitor)
+//                    .tabItem {
+//                        Label("Home", systemImage: "house")
+//                    }
+//                    .tag(2)
+                
+                HomeView()
                     .environmentObject(networkMonitor)
                     .environmentObject(friendsViewModel)
                     .tabItem {
-                        Label("Discover", systemImage: "magnifyingglass")
+                        Label("Home", systemImage: "magnifyingglass")
                     }
                     .tag(1)
-
-                FeedView()
-                    .environmentObject(friendsViewModel)
-                    .environmentObject(networkMonitor)
-                    .tabItem {
-                        Label("Home", systemImage: "house")
-                    }
-                    .tag(2)
 
                 MemoriesView()
                     .environmentObject(networkMonitor)
                     .tabItem {
                         Label("Memories", systemImage: "photo")
                     }
-                    .tag(3)
+                    .tag(2)
                     .badge(fotoService.todaysPhotos)
 
                 ProfileView()
@@ -62,7 +70,7 @@ struct MainView: View {
                         Image(systemName: "person")
                         Text("Profile")
                     }
-                    .tag(4)
+                    .tag(3)
             }
             .task {
                 if let userDefaults = UserDefaults(suiteName: appGroupName) {

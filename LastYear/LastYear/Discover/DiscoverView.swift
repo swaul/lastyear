@@ -23,7 +23,7 @@ struct DiscoverView: View {
                     viewModel.getDiscoveries()
                 }
             if viewModel.discoveries.isEmpty && !viewModel.loading {
-                Text("You need more friends..")
+                Text("It's quiet out here..")
             } else {
                 GeometryReader { reader in
                     
@@ -58,33 +58,33 @@ struct DiscoverView: View {
                     .offset(x: screen.width)
                 }
             }
-            VStack(spacing: 0) {
-                if networkMonitor.status == .disconnected {
-                    ZStack {
-                        Color.red.ignoresSafeArea()
-                        NetworkError()
-                    }
-                    .transition(.move(edge: .top))
-                    .frame(height: 40)
-                } else {
-                    ZStack {
-                        Image("logoSmall")
-                            .padding(2)
-                            .background(Color("backgroundColor"))
-                            .cornerRadius(8)
-                            .opacity(viewModel.loading ? 0.0 : 1.0 )
-
-                        //                            .overlay(Color("backgroundColor").opacity(viewModel.loading ? 1.0 : 0.0 ))
-                        if viewModel.loading {
-                            ProgressView()
-                        }
-                    }
-                    .padding(2)
-                    .background(Color("backgroundColor"))
-                    .cornerRadius(8)
-                }
-                Spacer()
-            }
+//            VStack(spacing: 0) {
+//                if networkMonitor.status == .disconnected {
+//                    ZStack {
+//                        Color.red.ignoresSafeArea()
+//                        NetworkError()
+//                    }
+//                    .transition(.move(edge: .top))
+//                    .frame(height: 40)
+//                } else {
+//                    ZStack {
+//                        Image("logoSmall")
+//                            .padding(2)
+//                            .background(Color("backgroundColor"))
+//                            .cornerRadius(8)
+//                            .opacity(viewModel.loading ? 0.0 : 1.0 )
+//
+//                        //                            .overlay(Color("backgroundColor").opacity(viewModel.loading ? 1.0 : 0.0 ))
+//                        if viewModel.loading {
+//                            ProgressView()
+//                        }
+//                    }
+//                    .padding(2)
+//                    .background(Color("backgroundColor"))
+//                    .cornerRadius(8)
+//                }
+//                Spacer()
+//            }
         }
     }
     
@@ -111,7 +111,7 @@ struct DiscoverView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
+struct DiscoverView_Previews: PreviewProvider {
     static var previews: some View {
         DiscoverView()
     }

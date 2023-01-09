@@ -82,11 +82,12 @@ struct AllPhotosView: View {
             
             ScrollView {
                 VStack {
-                    let sortedImages = photoViewModel.allPhotos.sorted()
+                    let sortedImages = photoViewModel.allPhotos.sorted().filter { $0.photoType != .screenshot }
                     LazyVGrid(columns: layout, spacing: 0) {
-                        ForEach(sortedImages.filter { $0.photoType != .screenshot }) { photo in
+                        ForEach(sortedImages) { photo in
                             PhotoCard(asset: photo, selecting: $selecting)
                                 .padding(4)
+                                .layoutPriority(1)
                                 .onTapGesture {
                                     withAnimation {
                                         if selecting {
@@ -133,6 +134,7 @@ struct AllPhotosView: View {
                                 ForEach(sortedScreenshots) { photo in
                                     PhotoCard(asset: photo, selecting: $selecting)
                                         .padding(4)
+                                        .layoutPriority(1)
                                         .onTapGesture {
                                             withAnimation {
                                                 if selecting {

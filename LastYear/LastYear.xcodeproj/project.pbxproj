@@ -20,6 +20,7 @@
 		9E6461A72922076200F4141C /* UserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6461A62922076200F4141C /* UserView.swift */; };
 		9E6A85AB290294B8008EBAFE /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EAADB2128E2633B00F93097 /* Formatters.swift */; };
 		9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */; };
+		9E74FFB6296BD5C6001D545B /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E74FFB5296BD5C6001D545B /* HomeView.swift */; };
 		9E835E79293540DF0098810A /* HappyPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E835E78293540DF0098810A /* HappyPanel.swift */; };
 		9E835E7F2935460B0098810A /* Shared in Frameworks */ = {isa = PBXBuildFile; productRef = 9E835E7E2935460B0098810A /* Shared */; };
 		9E852454295A0DEF00B4D550 /* ShareLastYearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E852453295A0DEF00B4D550 /* ShareLastYearView.swift */; };
@@ -105,6 +106,8 @@
 		9EDD18A028ECC858004DC8A6 /* ShareToiMessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */; };
 		9EDD18A528EE23F2004DC8A6 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EDD18A428EE23F2004DC8A6 /* ShareView.swift */; };
 		9EF932AE295E8B6D00E98193 /* Rate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF932AD295E8B6D00E98193 /* Rate.swift */; };
+		9EF932B2295FAC9A00E98193 /* ImageCropper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EF932B1295FAC9A00E98193 /* ImageCropper.swift */; };
+		9EF932B5295FAD2700E98193 /* Mantis in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF932B4295FAD2700E98193 /* Mantis */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +144,7 @@
 		9E6461A42921AC5000F4141C /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		9E6461A62922076200F4141C /* UserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserView.swift; sourceTree = "<group>"; };
 		9E6A85AC2902BA8A008EBAFE /* CredentialsHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialsHandler.swift; sourceTree = "<group>"; };
+		9E74FFB5296BD5C6001D545B /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		9E835E78293540DF0098810A /* HappyPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HappyPanel.swift; sourceTree = "<group>"; };
 		9E835E7D293545C30098810A /* Shared */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Shared; path = "../../Downloads/HappyPanel-master/Shared"; sourceTree = "<group>"; };
 		9E852453295A0DEF00B4D550 /* ShareLastYearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLastYearView.swift; sourceTree = "<group>"; };
@@ -222,6 +226,7 @@
 		9EDD189F28ECC858004DC8A6 /* ShareToiMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareToiMessageView.swift; sourceTree = "<group>"; };
 		9EDD18A428EE23F2004DC8A6 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		9EF932AD295E8B6D00E98193 /* Rate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rate.swift; sourceTree = "<group>"; };
+		9EF932B1295FAC9A00E98193 /* ImageCropper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCropper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -238,6 +243,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9EF932B5295FAD2700E98193 /* Mantis in Frameworks */,
 				9E272815290B4671000C2E64 /* FirebaseMessaging in Frameworks */,
 				9EBDE92328DDFFEB00264AF3 /* FirebaseCrashlytics in Frameworks */,
 				9E27280C2903FEFA000C2E64 /* ImageViewer in Frameworks */,
@@ -298,6 +304,7 @@
 				9EAADB1F28E1F86C00F93097 /* AllPhotosView.swift */,
 				9ECC338A291F52030007C9C9 /* PhotoLibraryService.swift */,
 				9EBDE8E328DDDCE900264AF3 /* PhotoCard.swift */,
+				9EF932B1295FAC9A00E98193 /* ImageCropper.swift */,
 			);
 			path = Photo;
 			sourceTree = "<group>";
@@ -488,6 +495,7 @@
 				9ECC336729192CE30007C9C9 /* DiscoveryUpload.swift */,
 				9ECC3369291AEFF90007C9C9 /* DiscoveryView.swift */,
 				9E835E78293540DF0098810A /* HappyPanel.swift */,
+				9E74FFB5296BD5C6001D545B /* HomeView.swift */,
 			);
 			path = Discover;
 			sourceTree = "<group>";
@@ -568,6 +576,7 @@
 				9ECC3386291EA6200007C9C9 /* AWSCore */,
 				9ECC3388291EA6200007C9C9 /* AWSS3 */,
 				9E835E7E2935460B0098810A /* Shared */,
+				9EF932B4295FAD2700E98193 /* Mantis */,
 			);
 			productName = LastYear;
 			productReference = 9EBDE8D228DDD58A00264AF3 /* LastYear.app */;
@@ -606,6 +615,7 @@
 				9E27280A2903FEFA000C2E64 /* XCRemoteSwiftPackageReference "swiftui-image-viewer" */,
 				9ECC336229190BEB0007C9C9 /* XCRemoteSwiftPackageReference "AlertToast" */,
 				9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */,
+				9EF932B3295FAD2700E98193 /* XCRemoteSwiftPackageReference "Mantis" */,
 			);
 			productRefGroup = 9EBDE8D328DDD58A00264AF3 /* Products */;
 			projectDirPath = "";
@@ -692,6 +702,7 @@
 				9EAADB2928E2FBD000F93097 /* SettingsView.swift in Sources */,
 				9ECC338D29203B6B0007C9C9 /* ImageView.swift in Sources */,
 				9E6A85AD2902BA8A008EBAFE /* CredentialsHandler.swift in Sources */,
+				9E74FFB6296BD5C6001D545B /* HomeView.swift in Sources */,
 				9EBDE91C28DDFD4200264AF3 /* LoginView.swift in Sources */,
 				9EBDE93128DE660F00264AF3 /* LoadingView.swift in Sources */,
 				9EBDE91728DDF8FE00264AF3 /* EmailView.swift in Sources */,
@@ -708,6 +719,7 @@
 				9E6461A72922076200F4141C /* UserView.swift in Sources */,
 				9EAADB2D28E37FED00F93097 /* NotificationCenter.swift in Sources */,
 				9EBDE92D28DE507600264AF3 /* LYUser.swift in Sources */,
+				9EF932B2295FAC9A00E98193 /* ImageCropper.swift in Sources */,
 				9EBDE8E628DDDD4B00264AF3 /* PhotoData.swift in Sources */,
 				9EBDE8D628DDD58A00264AF3 /* LastYearApp.swift in Sources */,
 				9E835E79293540DF0098810A /* HappyPanel.swift in Sources */,
@@ -1064,6 +1076,14 @@
 				minimumVersion = 2.28.0;
 			};
 		};
+		9EF932B3295FAD2700E98193 /* XCRemoteSwiftPackageReference "Mantis" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/guoyingtao/Mantis.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.1.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1125,6 +1145,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9ECC3383291EA6200007C9C9 /* XCRemoteSwiftPackageReference "aws-sdk-ios-spm" */;
 			productName = AWSS3;
+		};
+		9EF932B4295FAD2700E98193 /* Mantis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9EF932B3295FAD2700E98193 /* XCRemoteSwiftPackageReference "Mantis" */;
+			productName = Mantis;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -50,32 +50,6 @@ struct FeedView: View {
                     .offset(x: screen.width)
                 }
             }
-            VStack(spacing: 0) {
-                if networkMonitor.status == .disconnected {
-                    ZStack {
-                        Color.red.ignoresSafeArea()
-                        NetworkError()
-                    }
-                    .transition(.move(edge: .top))
-                    .frame(height: 40)
-                } else {
-                    ZStack {
-                        Image("logoSmall")
-                            .padding(2)
-                            .background(Color("backgroundColor"))
-                            .cornerRadius(8)
-                            .opacity(friendsViewModel.loading ? 0.0 : 1.0 )
-                        //                            .overlay(Color("backgroundColor").opacity(friendsViewModel.loading ? 1.0 : 0.0 ))
-                        if friendsViewModel.loading {
-                            ProgressView()
-                        }
-                    }
-                    .padding(2)
-                    .background(Color("backgroundColor"))
-                    .cornerRadius(8)
-                }
-                Spacer()
-            }
         }
         .task {
             feedViewModel.getMemories()

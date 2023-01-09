@@ -182,7 +182,7 @@ struct PhotoDetailView: View {
             }
             Spacer()
             NavigationLink {
-                ShareLastYearView(selectedImage: selectedImage, selected: $selected)
+                ShareLastYearView(originalImage: selectedImage, selectedImage: selectedImage, selected: $selected)
             } label: {
                 VStack(spacing: 4) {
                     Text("Share to")

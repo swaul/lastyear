@@ -24,7 +24,14 @@ class DiscoverViewModel: ObservableObject {
                 self?.changeLoading(to: false)
             case .success(let discoveries):
                 print("Found: Loaded \(discoveries.count) discoveries")
-                self?.discoveries = discoveries
+                let twentyFourHours: TimeInterval = 60 * 60 * 24
+                let fun = discoveries.filter { upload in
+                    if let date = upload.timePostedDate {
+                        return Date.now.timeIntervalSince(date) < twentyFourHours
+                    }
+                    return false
+                }
+                self?.discoveries = fun
                 self?.changeLoading(to: false)
             }
         }
